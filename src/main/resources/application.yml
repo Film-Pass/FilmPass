@@ -1,6 +1,6 @@
 spring:
   config:
-    import: optional:file:.env
+    import: optional:file:.env[.properties]
   application:
     name: FilmPass
 
@@ -14,13 +14,13 @@ spring:
     hibernate:
       ddl-auto: create
     properties:
-        dialect: org.hibernate.dialect.MySQL8Dialect
-        show_sql: true
-        format_sql: true
-        highlight_sql: true
-        use_sql_comments: true
-        jdbc:
-          batch_size: 100
+      dialect: org.hibernate.dialect.MySQL8Dialect
+      show_sql: true
+      format_sql: true
+      highlight_sql: true
+      use_sql_comments: true
+      jdbc:
+        batch_size: 100
 
   cache:
     type: redis
@@ -34,6 +34,6 @@ server:
   error:
     include-message: always
 
-#jwt:
-#  secret:
-#    key: ${SECRET_KEY}
+jwt:
+  secret:
+    key: ${SECRET_KEY}

@@ -3,7 +3,7 @@ name: Bug report
 about: Create a report to help us improve
 title: ''
 labels: ''
-assignees: ''
+assignees: yesiam01, Gwon-YJ, YoungJae1118, imtaehun, SeungSooHan0409
 
 ---
 

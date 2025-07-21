@@ -3,7 +3,7 @@ name: Feature request
 about: Suggest an idea for this project
 title: ''
 labels: ''
-assignees: Gwon-YJ, imtaehun, SeungSooHan0409, yesiam01, YoungJae1118
+assignees: ''
 
 ---
 

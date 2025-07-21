@@ -1,40 +1,59 @@
 package com.example.filmpass.domain.review.entity;
 
-import com.example.filmpass.domain.movie.entity.Movie;
-import com.example.filmpass.domain.user.entity.User;
-import com.example.filmpass.global.common.BaseEntity;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
+@Getter
 @Entity
 @Table(name = "reviews")
-@Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Review extends BaseEntity {
+public class Review {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; // 리뷰 아이디
+    @Column(name = "review_id")
+    private Long reviewId;
+
+    @Column(name = "movie_id", nullable = false)
+    private Long movieId;
 
     @Column(nullable = false)
-    private int rating; // 평점
+    private Integer rating;
 
-    @Column(nullable = false, length = 1000)
-    private String content; // 리뷰 내용
+    @Column(columnDefinition = "TEXT", nullable = false)
+    private String content;
 
+    @Column(nullable = false)
+    private String author;
 
-    private Boolean deleted = false; // 삭제 여부 (soft delete)
-    private LocalDateTime deletedAt; // 삭제일
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime createdAt;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "movie_id", nullable = false)
-    private Movie movie; // 영화 식별자
+    @Column(name = "updated_at", nullable = false)
+    private LocalDateTime updatedAt;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user; // 유저 아이디
+    @Column(name = "is_deleted", nullable = false)
+    private boolean isDeleted;
+
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
+
+    protected Review() {
+    }
+
+    public Review(Long movieId, Integer rating, String content, String author) {
+        this.movieId = movieId;
+        this.rating = rating;
+        this.content = content;
+        this.author = author;
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+        this.isDeleted = false;
+    }
+
+    public void softDelete() {
+        this.isDeleted = true;
+        this.deletedAt = LocalDateTime.now();
+    }
 }

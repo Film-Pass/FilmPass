@@ -1,6 +1,6 @@
 spring:
   config:
-    import: optional:file:.env[.properties]
+    import: optional:file:.env
   application:
     name: FilmPass
 
@@ -34,6 +34,6 @@ server:
   error:
     include-message: always
 
-jwt:
-  secret:
-    key: ${SECRET_KEY}
+#jwt:
+#  secret:
+#    key: ${SECRET_KEY}

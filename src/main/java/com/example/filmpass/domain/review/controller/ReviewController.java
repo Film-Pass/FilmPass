@@ -24,4 +24,14 @@ public class ReviewController {
         ApiResponse<ReviewResponseDto> responseBody = ApiResponse.success(response, "리뷰가 등록되었습니다.");
         return ResponseEntity.status(HttpStatus.CREATED).body(responseBody);
     }
+
+    //리뷰 수정
+    @PatchMapping("/{reviewId}")
+    public ResponseEntity<ApiResponse<ReviewResponseDto>> updateReview(
+            @PathVariable Long reviewId,
+            @RequestBody ReviewRequestDto request
+    ) {
+        ReviewResponseDto response = reviewService.updateReview(reviewId, request);
+        return ResponseEntity.ok(ApiResponse.success(response, "리뷰가 수정되었습니다."));
+    }
 }

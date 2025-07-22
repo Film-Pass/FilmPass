@@ -42,4 +42,15 @@ public class ReviewService {
         return ReviewResponseDto.from(saved);
     }
 
+    //리뷰 수정
+    public ReviewResponseDto updateReview(Long reviewId, ReviewRequestDto request) {
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new CustomException(ErrorCode.REVIEW_NOT_FOUND));
+
+        Movie movie = movieRepository.findById(request.getMovieId())
+                .orElseThrow(() -> new CustomException(ErrorCode.MOVIE_NOT_FOUND));
+
+        review.update(request.getRating(), request.getContent(), movie);
+        return ReviewResponseDto.from(review);
+    }
 }

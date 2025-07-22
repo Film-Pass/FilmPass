@@ -24,10 +24,11 @@ public class ReviewService {
     private final MovieRepository movieRepository;
     private final UserRepository userRepository;  // UserRepository도 필요
 
+    //리뷰 생성
     public ReviewResponseDto createReview(ReviewRequestDto request) {
         Movie movie = movieRepository.findById(request.getMovieId())
                 .orElseThrow(() -> new CustomException(ErrorCode.MOVIE_NOT_FOUND));
-        User user = userRepository.findById(request.getUserId())  // ReviewRequestDto에 userId 추가 필요
+        User user = userRepository.findById(request.getUserId())
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         Review review = new Review(
@@ -40,4 +41,5 @@ public class ReviewService {
         Review saved = reviewRepository.save(review);
         return ReviewResponseDto.from(saved);
     }
+
 }

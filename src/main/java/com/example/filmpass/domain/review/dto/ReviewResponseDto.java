@@ -19,10 +19,10 @@ public class ReviewResponseDto {
     public static ReviewResponseDto from(Review review) {
         return new ReviewResponseDto(
                 review.getReviewId(),
-                review.getMovie().getId(),        // movieId는 review.getMovie()에서 꺼내야 함
+                review.getMovie().getId(),
                 review.getRating(),
                 review.getContent(),
-                review.getUser().getNickname(),   // author는 review.getUser()에서 꺼내야 함 (유저명 getter 메서드 이름에 맞게 수정)
+                review.getUser().getNickname(),
                 review.getCreatedAt()
         );
     }

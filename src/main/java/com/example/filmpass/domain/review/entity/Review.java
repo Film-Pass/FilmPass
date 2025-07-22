@@ -64,4 +64,11 @@ public class Review {
         this.deletedAt = LocalDateTime.now();
     }
 
+    public void update(Integer rating, String content, Movie movie) {
+        this.rating = rating;
+        this.content = content;
+        this.movie = movie;
+        this.updatedAt = LocalDateTime.now();
+    }
+
 }

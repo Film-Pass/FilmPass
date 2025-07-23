@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 public class MovieController {
     private final MovieService movieService;
 
+    //영화 수정
     @PatchMapping("/{movieId}")
     public ApiResponse<Movie> updateMovieApi(@PathVariable Long movieId, @RequestBody String title, String url, String description, String director, String runningTime) {
         return movieService.updateMovie(movieId, title, url, description, director, runningTime);

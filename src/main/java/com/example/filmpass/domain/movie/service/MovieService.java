@@ -13,6 +13,7 @@ import java.util.Optional;
 public class MovieService {
     private final MoviceRepository moviceRepository;
 
+    //영화 수정
     public ApiResponse<Movie> updateMovie(Long movieId, String newTitle, String newUrl, String newDescription, String newDirector, String newRunningTime) {
         Optional<Movie> findMovie = moviceRepository.findById(movieId);
 

@@ -3,21 +3,28 @@ package com.example.filmpass.domain.auth.service;
 import com.example.filmpass.domain.auth.dto.AuthData;
 import com.example.filmpass.domain.auth.dto.LoginRequestDto;
 import com.example.filmpass.domain.auth.dto.SignUpRequestDto;
+import com.example.filmpass.domain.auth.entity.RefreshToken;
+import com.example.filmpass.domain.auth.repository.RefreshTokenRepository;
 import com.example.filmpass.domain.user.entity.User;
 import com.example.filmpass.domain.user.repository.UserRepository;
 import com.example.filmpass.global.common.ApiResponse;
 import com.example.filmpass.global.config.JwtUtil;
 import com.example.filmpass.global.exception.CustomException;
 import com.example.filmpass.global.exception.ErrorCode;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
 public class AuthService {
 
     private final UserRepository userRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
 
@@ -55,9 +62,7 @@ public class AuthService {
 
 
     // 로그인 로직
-    public ApiResponse<String> login(LoginRequestDto requestDto) {
-
-
+    public ApiResponse<String> login(LoginRequestDto requestDto, HttpServletResponse response) {
 
         // 값 꺼내기
         String email = requestDto.getEmail();
@@ -68,8 +73,7 @@ public class AuthService {
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND)
         );
 
-        String encodedPassword = userRepository.findByEmail(requestDto.getEmail())
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND)).getPassword();
+        String encodedPassword = user.getPassword();
 
         // 비밀번호 검증
         boolean isMatch = passwordEncoder.matches(password, encodedPassword);
@@ -79,9 +83,26 @@ public class AuthService {
         }
 
         // 토큰 생성
-        String jwt = jwtUtil.createToken(user.getId(), user.getNickname(), user.getRole());
+        String accessToken = jwtUtil.createToken(user.getId(), user.getNickname(), user.getRole());
+        String refreshToken = jwtUtil.createRefreshToken(user.getId(), user.getNickname(), user.getRole());
 
-        return ApiResponse.success(jwt, "로그인 성공!");
+        // RefreshToken 객체 생성
+        LocalDateTime expiredAt = jwtUtil.extractExpiredAt(refreshToken);
+        RefreshToken refresh = new RefreshToken(refreshToken, LocalDateTime.now(), expiredAt, user);
+
+        // RefreshToken 저장
+        refreshTokenRepository.save(refresh);
+
+        // Cookie 에 RefreshToken 세팅
+        Cookie cookie = new Cookie("refreshToken", refreshToken);
+        cookie.setHttpOnly(true); // JavaScript 접근 불가 -> XSS 방지
+        cookie.setSecure(false); // HTTPS 에서만 전송할건지 여부
+        cookie.setPath("/"); // 모든 경로에 대해 쿠키 포함
+        cookie.setMaxAge(7 * 24 * 60 * 60); // 만료기간 7일
+
+        response.addCookie(cookie);
+
+        return ApiResponse.success(accessToken, "로그인 성공!");
 
     }
 

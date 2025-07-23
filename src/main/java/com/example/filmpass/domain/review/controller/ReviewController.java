@@ -29,7 +29,7 @@ public class ReviewController {
         return ResponseEntity.status(HttpStatus.CREATED).body(responseBody);
     }
 
-    //리뷰 수정
+    // 리뷰 수정
     @PatchMapping("/{reviewId}")
     public ResponseEntity<ApiResponse<ReviewResponseDto>> updateReview(
             @PathVariable Long reviewId,
@@ -39,13 +39,22 @@ public class ReviewController {
         return ResponseEntity.ok(ApiResponse.success(response, "리뷰가 수정되었습니다."));
     }
 
-    @GetMapping("/all")
-    public ResponseEntity<ApiResponse<Page<ReviewResponseDto>>> getAllReviews(
+    // 영화별 리뷰 목록 조회
+    @GetMapping("/{movieId}/reviewId")
+    public ResponseEntity<ApiResponse<Page<ReviewResponseDto>>> getReviewsByMovie(
+            @PathVariable Long movieId,
             @PageableDefault(page = 0, size = 10, sort = "createdAt", direction = Sort.Direction.DESC)
             Pageable pageable
     ) {
-        Page<ReviewResponseDto> reviews = reviewService.getAllReviews(pageable);
-        return ResponseEntity.ok(ApiResponse.success(reviews, "리뷰 목록이 조회되었습니다."));
+        Page<ReviewResponseDto> reviews = reviewService.getReviewsByMovie(movieId, pageable);
+        return ResponseEntity.ok(ApiResponse.success(reviews, "해당 영화 리뷰 목록 조회 완료"));
+    }
+
+    // 리뷰 삭제
+    @DeleteMapping("/{reviewId}")
+    public ResponseEntity<ApiResponse<Void>> deleteReview(@PathVariable Long reviewId) {
+        reviewService.deleteReview(reviewId);
+        return ResponseEntity.ok(ApiResponse.success(null, "리뷰가 삭제되었습니다."));
     }
 
 }

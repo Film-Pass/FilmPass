@@ -1,5 +1,6 @@
 package com.example.filmpass.domain.auth.conroller;
 
+import com.example.filmpass.domain.auth.dto.LoginRequestDto;
 import com.example.filmpass.domain.auth.dto.SignUpRequestDto;
 import com.example.filmpass.domain.auth.service.AuthService;
 import com.example.filmpass.global.common.ApiResponse;
@@ -25,4 +26,12 @@ public class AuthController {
 
     }
 
+    @PostMapping("/api/auth/login")
+    public ResponseEntity<ApiResponse<?>> login(
+            @RequestBody LoginRequestDto requestDto
+            ) {
+
+        return ResponseEntity.ok(authService.login(requestDto));
+
+    }
 }

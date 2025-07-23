@@ -1,13 +1,12 @@
 package com.example.filmpass.domain.theater.entity;
 
-import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 
+import jakarta.persistence.*;
+import lombok.*;
+
+@Getter
 @Entity
 @Table(name = "theaters")
-@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Theater {
 
@@ -19,5 +18,10 @@ public class Theater {
     private String name;      // 극장 이름
 
     @Column(nullable = false)
-    private String address;   // 극장 주소
+    private String location;   // 극장 주소
+
+    public Theater(String name, String location) {
+        this.name = name;
+        this.location = location;
+    }
 }

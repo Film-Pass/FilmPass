@@ -56,5 +56,4 @@ public class ReviewController {
         reviewService.deleteReview(reviewId);
         return ResponseEntity.ok(ApiResponse.success(null, "리뷰가 삭제되었습니다."));
     }
-
 }

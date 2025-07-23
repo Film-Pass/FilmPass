@@ -4,7 +4,6 @@ import com.example.filmpass.domain.user.enums.UserRole;
 import com.example.filmpass.global.exception.CustomException;
 import com.example.filmpass.global.exception.ErrorCode;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -15,6 +14,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.security.Key;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Base64;
 import java.util.Date;
 
@@ -22,8 +23,9 @@ import java.util.Date;
 @Component
 public class JwtUtil {
 
-    private static final String BEARER_PREFIX ="Bearer ";
-    private static final long TOKEN_TIME = 60 * 60 * 1000L; // 만료시간 60분
+    private static final String BEARER_PREFIX = "Bearer ";
+    private static final long ACCESS_TOKEN_TIME = 60 * 60 * 1000L; // 만료시간 60분
+    private static final long REFRESH_TOKEN_TIME = 60 * 60 * 1000 * 24 * 7L; // 만료시간 7일
 
     @Value("${jwt.secret.key}")
     private String secretKey;
@@ -32,8 +34,8 @@ public class JwtUtil {
 
     @PostConstruct
     public void init() {
-
-        byte[] bytes = Base64.getDecoder().decode(secretKey);
+        log.info("secretKey(raw) = '{}'", secretKey); // 실제 값 확인용
+        byte[] bytes = Base64.getDecoder().decode(secretKey.trim());
         key = Keys.hmacShaKeyFor(bytes);
 
     }
@@ -48,10 +50,34 @@ public class JwtUtil {
                      .setSubject(String.valueOf(userId))
                      .claim("nickname", nickname)
                      .claim("userRole", userRole.name())
-                     .setExpiration(new Date(date.getTime() + TOKEN_TIME))
+                     .setExpiration(new Date(date.getTime() + ACCESS_TOKEN_TIME))
                      .setIssuedAt(date)
                      .signWith(key, signatureAlgorithm)
                      .compact();
+    }
+
+    // RefreshToken 생성 메서드
+    public String createRefreshToken(Long userId, String nickname, UserRole userRole) {
+        Date date = new Date();
+
+        return Jwts.builder()
+                        .setSubject(String.valueOf(userId))
+                        .claim("nickname", nickname)
+                        .claim("userRole", userRole)
+                        .setExpiration(new Date(date.getTime() + REFRESH_TOKEN_TIME))
+                        .setIssuedAt(date) // 발급일
+                        .signWith(key, signatureAlgorithm) // 암호화 알고리즘
+                        .compact();
+    }
+
+    // Token 의 만료일을 추출하는 메서드
+    public LocalDateTime extractExpiredAt(String token) {
+
+        return extractClaims(token)
+                .getExpiration()
+                .toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDateTime();
     }
 
     // 토큰에서 bearer 제거

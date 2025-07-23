@@ -4,6 +4,7 @@ import com.example.filmpass.domain.theater.dto.TheaterResponse;
 import com.example.filmpass.domain.theater.service.TheaterService;
 import com.example.filmpass.global.common.ApiResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

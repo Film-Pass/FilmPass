@@ -1,5 +1,6 @@
 package com.example.filmpass.domain.movie.service;
 
+import com.example.filmpass.domain.movie.dto.UpdateMovieRequest;
 import com.example.filmpass.domain.movie.entity.Movie;
 import com.example.filmpass.domain.movie.repository.MoviceRepository;
 import com.example.filmpass.global.common.ApiResponse;
@@ -14,7 +15,12 @@ public class MovieService {
     private final MoviceRepository moviceRepository;
 
     //영화 수정
-    public ApiResponse<Movie> updateMovie(Long movieId, String newTitle, String newUrl, String newDescription, String newDirector, String newRunningTime) {
+    public ApiResponse<Movie> updateMovie(Long movieId, UpdateMovieRequest updateMovieRequest) {
+        String newTitle = updateMovieRequest.getTitle();
+        String newUrl = updateMovieRequest.getUrl();
+        String newDescription = updateMovieRequest.getDescription();
+        String newDirector = updateMovieRequest.getDirector();
+        String newRunningTime = updateMovieRequest.getRunningTime();
         Optional<Movie> findMovie = moviceRepository.findById(movieId);
 
         if (findMovie.isEmpty()) {

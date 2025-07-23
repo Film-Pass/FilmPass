@@ -1,5 +1,6 @@
 package com.example.filmpass.domain.movie.controller;
 
+import com.example.filmpass.domain.movie.dto.UpdateMovieRequest;
 import com.example.filmpass.domain.movie.entity.Movie;
 import com.example.filmpass.domain.movie.service.MovieService;
 import com.example.filmpass.global.common.ApiResponse;
@@ -14,8 +15,8 @@ public class MovieController {
 
     //영화 수정
     @PatchMapping("/{movieId}")
-    public ApiResponse<Movie> updateMovieApi(@PathVariable Long movieId, @RequestBody String title, String url, String description, String director, String runningTime) {
-        return movieService.updateMovie(movieId, title, url, description, director, runningTime);
+    public ApiResponse<Movie> updateMovieApi(@PathVariable Long movieId, @RequestBody UpdateMovieRequest updateMovieRequest) {
+        return movieService.updateMovie(movieId, updateMovieRequest);
     }
 
 }

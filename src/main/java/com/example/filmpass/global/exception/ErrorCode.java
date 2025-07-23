@@ -7,6 +7,9 @@ import org.springframework.http.HttpStatus;
 public enum ErrorCode {
 
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."),
+    THEATER_ALREADY_EXISTS(HttpStatus.BAD_REQUEST,"극장이 이미 존재합니다."),
+    // 극장 단건 조회로 추가
+    THEATER_NOT_FOUND(HttpStatus.NOT_FOUND, "극장 정보를 조회할 수 없습니다."),
     INVALID_INPUT(HttpStatus.BAD_REQUEST, "입력 값이 유효하지 않습니다.");
 
     private final HttpStatus code;

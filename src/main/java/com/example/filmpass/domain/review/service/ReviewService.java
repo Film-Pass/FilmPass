@@ -2,7 +2,7 @@ package com.example.filmpass.domain.review.service;
 
 
 import com.example.filmpass.domain.movie.entity.Movie;
-import com.example.filmpass.domain.movie.repository.MovieRepository;
+import com.example.filmpass.domain.movie.repository.MoviceRepository;
 import com.example.filmpass.domain.review.dto.ReviewRequestDto;
 import com.example.filmpass.domain.review.dto.ReviewResponseDto;
 import com.example.filmpass.domain.review.entity.Review;
@@ -21,7 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class ReviewService {
 
     private final ReviewRepository reviewRepository;
-    private final MovieRepository movieRepository;
+    private final MoviceRepository movieRepository;
     private final UserRepository userRepository;  // UserRepository도 필요
 
     //리뷰 생성

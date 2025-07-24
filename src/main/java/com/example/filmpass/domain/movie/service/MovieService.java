@@ -1,7 +1,7 @@
 package com.example.filmpass.domain.movie.service;
 
 import com.example.filmpass.domain.movie.entity.Movie;
-import com.example.filmpass.domain.movie.repository.MovieRepository;
+import com.example.filmpass.domain.movie.repository.MoviceRepository;
 import com.example.filmpass.global.common.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -11,7 +11,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class MovieService {
-    private final MovieRepository movieRepository;
+    private final MoviceRepository movieRepository;
 
     //영화 삭제
     public ApiResponse<Object> deleteMovie(Long movieId) {

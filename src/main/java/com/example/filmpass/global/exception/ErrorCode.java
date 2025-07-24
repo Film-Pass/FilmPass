@@ -6,7 +6,6 @@ import org.springframework.http.HttpStatus;
 @Getter
 public enum ErrorCode {
 
-    USER_NOT_FOUND(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."),
     // 극장 단건 조회로 추가
     THEATER_NOT_FOUND(HttpStatus.NOT_FOUND, "극장을 찾을 수 없습니다."),
     INVALID_INPUT(HttpStatus.BAD_REQUEST, "입력 값이 유효하지 않습니다."),
@@ -23,8 +22,7 @@ public enum ErrorCode {
 
     // User
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."),
-    DELETED_USER(HttpStatus.BAD_REQUEST, "이미 탈퇴한 유저입니다.");
-    WRONG_TOKEN(HttpStatus.BAD_REQUEST, "잘못된 JWT 입니다."),
+    DELETED_USER(HttpStatus.BAD_REQUEST, "이미 탈퇴한 유저입니다."),
     THEATER_ALREADY_EXISTS(HttpStatus.BAD_REQUEST,"극장이 이미 존재합니다.");
 
     private final HttpStatus code;

@@ -5,12 +5,6 @@ import com.example.filmpass.domain.movie.entity.Movie;
 import com.example.filmpass.domain.movie.service.MovieService;
 import com.example.filmpass.global.common.ApiResponse;
 import com.example.filmpass.domain.movie.dto.FindMovieRequest;
-import com.example.filmpass.domain.movie.entity.Movie;
-import com.example.filmpass.domain.movie.service.MovieService;
-import com.example.filmpass.global.common.ApiResponse;
-import com.example.filmpass.domain.movie.entity.Movie;
-import com.example.filmpass.domain.movie.service.MovieService;
-import com.example.filmpass.global.common.ApiResponse;
 import com.example.filmpass.domain.movie.dto.MovieCreateRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -42,7 +36,7 @@ public class MovieController {
        return movieService.findAllMovie();
     }
 
-    //영화 수정
+    //영화 검색
     @PostMapping("/{movieId}")
     public ApiResponse<Optional<Movie>> findMovieApi(@PathVariable Long movieId, @RequestBody FindMovieRequest findMovieRequest) {
         return movieService.findMovie(movieId, findMovieRequest);

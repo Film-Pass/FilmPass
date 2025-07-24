@@ -29,6 +29,14 @@ public class Movie {
     @Column(nullable = false)
     private String title; // 영화 이름
 
+    public Movie(String runningTime, String director, String description, String title, String posterUrl) {
+        this.runningTime = runningTime;
+        this.director = director;
+        this.description = description;
+        this.title = title;
+        this.posterUrl = posterUrl;
+    }
+
 
     public void updateMovie(String title, String posterUrl, String description, String director, String runningTime) {
         this.title = title;

@@ -1,14 +1,13 @@
 package com.example.filmpass.domain.theater.service;
 
-
-import com.example.filmpass.domain.theater.dto.PagedResponse;
+import com.example.filmpass.domain.theater.dto.TheaterRequest;
 import com.example.filmpass.domain.theater.dto.TheaterResponse;
 import com.example.filmpass.domain.theater.entity.Theater;
 import com.example.filmpass.domain.theater.repository.TheaterRepository;
 import com.example.filmpass.global.exception.CustomException;
 import com.example.filmpass.global.exception.ErrorCode;
-import com.example.filmpass.domain.theater.dto.TheaterRequest;
 import jakarta.transaction.Transactional;
+import com.example.filmpass.domain.theater.dto.PagedResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -62,6 +61,20 @@ public class TheaterService {
     public TheaterResponse getTheaterById(Long id) {
         Theater theater = theaterRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.THEATER_NOT_FOUND));
+
+        return new TheaterResponse(
+                theater.getId(),
+                theater.getName(),
+                theater.getLocation()
+        );
+    }
+
+    // 극장 수정
+    public TheaterResponse updateTheater(Long id, TheaterRequest request) {
+        Theater theater = theaterRepository.findById(id)
+                .orElseThrow(() -> new CustomException(ErrorCode.THEATER_NOT_FOUND));
+
+        theater.update(request.getName(), request.getLocation());
 
         return new TheaterResponse(
                 theater.getId(),

@@ -5,6 +5,11 @@ import com.example.filmpass.domain.theater.dto.PagedResponse;
 import com.example.filmpass.domain.theater.dto.TheaterResponse;
 import com.example.filmpass.domain.theater.entity.Theater;
 import com.example.filmpass.domain.theater.repository.TheaterRepository;
+import com.example.filmpass.domain.theater.dto.TheaterResponse;
+import com.example.filmpass.domain.theater.entity.Theater;
+import com.example.filmpass.domain.theater.repository.TheaterRepository;
+import com.example.filmpass.global.exception.CustomException;
+import com.example.filmpass.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -33,6 +38,21 @@ public class TheaterService {
                 page.getTotalPages(),
                 page.getTotalElements(),
                 page.isLast()
+        );
+    }
+
+    private final TheaterRepository theaterRepository;
+
+
+    // 극장 단건 조회
+    public TheaterResponse getTheaterById(Long id) {
+        Theater theater = theaterRepository.findById(id)
+                .orElseThrow(() -> new CustomException(ErrorCode.THEATER_NOT_FOUND));
+
+        return new TheaterResponse(
+                theater.getId(),
+                theater.getName(),
+                theater.getLocation()
         );
     }
 }

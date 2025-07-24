@@ -19,6 +19,7 @@ public class TheaterService {
 
     private final TheaterRepository theaterRepository;
 
+    //극장 목록 조회
     public PagedResponse<TheaterResponse> getAllTheaters(Pageable pageable) {
         Page<Theater> page = theaterRepository.findAll(pageable);
         List<TheaterResponse> content = page.stream()

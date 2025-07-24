@@ -29,4 +29,15 @@ public class User extends BaseEntity {
 
     private Boolean deleted = false; // 삭제 여부 (soft delete)
     private LocalDateTime deletedAt; // 삭제일
+
+    @Column(nullable = false)
+    private String name;
+
+
+    public User(String email, String password, String nickname, String name) {
+        this.email = email;
+        this.password = password;
+        this.nickname = nickname;
+        this.name = name;
+    }
 }

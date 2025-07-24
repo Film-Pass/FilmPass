@@ -16,6 +16,7 @@ import java.util.List;
 public class MovieController {
     private final MovieService movieService;
 
+    //영화 목록 조회
     @GetMapping
     public ApiResponse<List<Movie>> findAllMovieApi() {
        return movieService.findAllMovie();

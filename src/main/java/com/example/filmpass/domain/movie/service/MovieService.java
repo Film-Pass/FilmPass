@@ -13,7 +13,7 @@ import java.util.List;
 public class MovieService {
     private final MoviceRepository moviceRepository;
 
-    //영화 목록 전체 조회
+    //영화 전체 조회
     public ApiResponse<List<Movie>> findAllMovie() {
         List<Movie> movieList = moviceRepository.findAll();
         if(movieList.isEmpty()) {

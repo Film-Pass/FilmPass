@@ -2,6 +2,7 @@ package com.example.filmpass.domain.auth.service;
 
 import com.example.filmpass.domain.auth.dto.AuthData;
 import com.example.filmpass.domain.auth.dto.LoginRequestDto;
+import com.example.filmpass.domain.auth.dto.RoleReuqestDto;
 import com.example.filmpass.domain.auth.dto.SignUpRequestDto;
 import com.example.filmpass.domain.auth.entity.RefreshToken;
 import com.example.filmpass.domain.auth.repository.RefreshTokenRepository;
@@ -128,6 +129,21 @@ public class AuthService {
         response.addCookie(cookie);
 
         return ApiResponse.success(null, "로그아웃 성공!");
+    }
+
+
+    // 유저 권한 변경 로직
+    public ApiResponse<String> changeRole(RoleReuqestDto request, Long id) {
+
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        user.setRole(request.getUserRole());
+
+        userRepository.save(user);
+
+        return ApiResponse.success(user.getRole().name(), "권한 변경 성공!");
+
     }
 
 }

@@ -1,8 +1,10 @@
 package com.example.filmpass.domain.auth.conroller;
 
+import com.example.filmpass.domain.auth.dto.LoginRequestDto;
 import com.example.filmpass.domain.auth.dto.SignUpRequestDto;
 import com.example.filmpass.domain.auth.service.AuthService;
 import com.example.filmpass.global.common.ApiResponse;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -25,4 +27,13 @@ public class AuthController {
 
     }
 
+    @PostMapping("/api/auth/login")
+    public ResponseEntity<ApiResponse<?>> login(
+            @RequestBody LoginRequestDto requestDto,
+            HttpServletResponse response
+            ) {
+
+        return ResponseEntity.ok(authService.login(requestDto, response));
+
+    }
 }

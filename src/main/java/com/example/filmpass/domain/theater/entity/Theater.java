@@ -19,5 +19,17 @@ public class Theater {
     private String name;      // 극장 이름
 
     @Column(nullable = false)
-    private String address;   // 극장 주소
+    private String location;   // 극장 주소
+
+    // 극장 등록
+    public Theater(String name, String location) {
+        this.name = name;
+        this.location = location;
+    }
+
+    // 극장 수정
+    public void update(String name, String location) {
+        this.name = name;
+        this.location = location;
+    }
 }

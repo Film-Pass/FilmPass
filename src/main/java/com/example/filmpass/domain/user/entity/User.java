@@ -1,5 +1,6 @@
 package com.example.filmpass.domain.user.entity;
 
+import com.example.filmpass.domain.user.enums.UserRole;
 import com.example.filmpass.global.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -29,4 +30,18 @@ public class User extends BaseEntity {
 
     private Boolean deleted = false; // 삭제 여부 (soft delete)
     private LocalDateTime deletedAt; // 삭제일
+
+    @Column(nullable = false)
+    private String name;
+
+    @Enumerated(EnumType.STRING)
+    private UserRole role =UserRole.GUEST;
+
+
+    public User(String email, String password, String nickname, String name) {
+        this.email = email;
+        this.password = password;
+        this.nickname = nickname;
+        this.name = name;
+    }
 }

@@ -5,9 +5,6 @@ import com.example.filmpass.domain.theater.dto.PagedResponse;
 import com.example.filmpass.domain.theater.dto.TheaterResponse;
 import com.example.filmpass.domain.theater.entity.Theater;
 import com.example.filmpass.domain.theater.repository.TheaterRepository;
-import com.example.filmpass.domain.theater.dto.TheaterResponse;
-import com.example.filmpass.domain.theater.entity.Theater;
-import com.example.filmpass.domain.theater.repository.TheaterRepository;
 import com.example.filmpass.global.exception.CustomException;
 import com.example.filmpass.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -40,9 +37,6 @@ public class TheaterService {
                 page.isLast()
         );
     }
-
-    private final TheaterRepository theaterRepository;
-
 
     // 극장 단건 조회
     public TheaterResponse getTheaterById(Long id) {

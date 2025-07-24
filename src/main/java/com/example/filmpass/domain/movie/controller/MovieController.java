@@ -37,7 +37,6 @@ public class MovieController {
     public ApiResponse<List<Movie>> findAllMovieApi() {
        return movieService.findAllMovie();
     }
-    private final MovieService movieService;
 
     //영화 수정
     @PostMapping("/{movieId}")

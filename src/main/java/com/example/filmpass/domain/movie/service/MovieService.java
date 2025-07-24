@@ -2,7 +2,7 @@ package com.example.filmpass.domain.movie.service;
 
 import com.example.filmpass.domain.movie.dto.FindMovieRequest;
 import com.example.filmpass.domain.movie.entity.Movie;
-import com.example.filmpass.domain.movie.repository.MoviceRepository;
+import com.example.filmpass.domain.movie.repository.MovieRepository;
 import com.example.filmpass.global.common.ApiResponse;
 import com.example.filmpass.domain.movie.dto.MovieCreateRequest;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +15,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class MovieService {
-    private final MoviceRepository moviceRepository;
+    private final MovieRepository moviceRepository;
 
     //영화 등록 CreateMovie
     public ApiResponse<String> movieCreate(MovieCreateRequest movieCreateRequest){

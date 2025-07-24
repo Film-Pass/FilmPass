@@ -14,21 +14,25 @@ spring:
     hibernate:
       ddl-auto: create
     properties:
-        dialect: org.hibernate.dialect.MySQL8Dialect
-        show_sql: true
-        format_sql: true
-        highlight_sql: true
-        use_sql_comments: true
-        jdbc:
-          batch_size: 100
-
-  cache:
-    type: redis
+      dialect: org.hibernate.dialect.MySQL8Dialect
+      show_sql: true
+      format_sql: true
+      highlight_sql: true
+      use_sql_comments: true
+      jdbc:
+        batch_size: 100
 
   data:
     redis:
       host: 127.0.0.1
       port: 6379
+    web:
+      pageable:
+        max-page-size: 100
+        one-indexed-parameters: false
+
+  cache:
+    type: redis
 
 server:
   error:

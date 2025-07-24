@@ -2,18 +2,13 @@ package com.example.filmpass.domain.movie.service;
 
 import com.example.filmpass.domain.movie.dto.FindMovieDetailResponse;
 import com.example.filmpass.domain.movie.entity.Movie;
-import com.example.filmpass.domain.movie.repository.MoviceRepository;
-import com.example.filmpass.global.common.ApiResponse;
-import com.example.filmpass.domain.movie.dto.UpdateMovieRequest;
-import com.example.filmpass.domain.movie.entity.Movie;
 import com.example.filmpass.domain.movie.repository.MovieRepository;
 import com.example.filmpass.global.common.ApiResponse;
+import com.example.filmpass.domain.movie.dto.UpdateMovieRequest;
 import com.example.filmpass.domain.movie.dto.FindMovieRequest;
 import com.example.filmpass.domain.movie.dto.MovieCreateRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 import java.util.Optional;
 
@@ -87,11 +82,10 @@ public class MovieService {
         movieRepository.save(movie);
         return ApiResponse.success(movie, "수정이 정상적으로 완료되었습니다.");
     }
-    private final MoviceRepository moviceRepository;
 
     //영화 상세 조회
     public ApiResponse<Object> findMovieDtail(Long movieId) {
-        Optional<Movie> optionalMovie = moviceRepository.findById(movieId);
+        Optional<Movie> optionalMovie = movieRepository.findById(movieId);
         if(optionalMovie.isEmpty()) {
             return ApiResponse.error("Id에 해당하는 영화를 찾을 수 없습니다.");
         }

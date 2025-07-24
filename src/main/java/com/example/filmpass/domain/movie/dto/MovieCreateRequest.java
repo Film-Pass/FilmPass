@@ -15,7 +15,7 @@ public class MovieCreateRequest {
         this.runningTime = runningTime;
         this.director = director;
         this.description = description;
-        this.movieName = movieName;
         this.movieImage = movieImage;
+        this.movieName = movieName;
     }
 }

@@ -20,4 +20,9 @@ public class Theater {
 
     @Column(nullable = false)
     private String location;   // 극장 주소
+
+    public Theater(String name, String location) {
+        this.name = name;
+        this.location = location;
+    }
 }

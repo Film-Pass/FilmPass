@@ -4,13 +4,6 @@ import com.example.filmpass.domain.theater.dto.TheaterResponse;
 import com.example.filmpass.domain.theater.service.TheaterService;
 import com.example.filmpass.global.common.ApiResponse;
 import com.example.filmpass.domain.theater.dto.PagedResponse;
-import com.example.filmpass.domain.theater.dto.TheaterResponse;
-import com.example.filmpass.domain.theater.service.TheaterService;
-import com.example.filmpass.global.common.ApiResponse;
-import com.example.filmpass.domain.theater.dto.TheaterRequest;
-import com.example.filmpass.domain.theater.dto.TheaterResponse;
-import com.example.filmpass.domain.theater.service.TheaterService;
-import com.example.filmpass.global.common.ApiResponse;
 import com.example.filmpass.domain.theater.dto.TheaterRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -20,14 +13,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
 import org.springframework.http.HttpStatus;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
-
 
 @RestController
 @RequiredArgsConstructor
@@ -59,9 +47,7 @@ public class TheaterController {
         return ResponseEntity.ok(ApiResponse.success(theaters, "극장 목록 조회 성공"));
     }
 
-    private final TheaterService theaterService;
-
-   // 극장 수정
+    // 극장 수정
     @PatchMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')") // 관리자만 수정 가능
     public ResponseEntity<ApiResponse<TheaterResponse>> updateTheater(

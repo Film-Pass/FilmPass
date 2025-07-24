@@ -1,6 +1,5 @@
 package com.example.filmpass.domain.review.service;
 
-
 import com.example.filmpass.domain.movie.entity.Movie;
 import com.example.filmpass.domain.movie.repository.MovieRepository;
 import com.example.filmpass.domain.review.dto.ReviewRequestDto;
@@ -12,6 +11,8 @@ import com.example.filmpass.domain.user.repository.UserRepository;
 import com.example.filmpass.global.exception.CustomException;
 import com.example.filmpass.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,12 +23,13 @@ public class ReviewService {
 
     private final ReviewRepository reviewRepository;
     private final MovieRepository movieRepository;
-    private final UserRepository userRepository;  // UserRepository도 필요
+    private final UserRepository userRepository;
 
-    //리뷰 생성
+    // 리뷰 생성
     public ReviewResponseDto createReview(ReviewRequestDto request) {
         Movie movie = movieRepository.findById(request.getMovieId())
                 .orElseThrow(() -> new CustomException(ErrorCode.MOVIE_NOT_FOUND));
+
         User user = userRepository.findById(request.getUserId())
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
@@ -42,7 +44,7 @@ public class ReviewService {
         return ReviewResponseDto.from(saved);
     }
 
-    //리뷰 수정
+    // 리뷰 수정
     public ReviewResponseDto updateReview(Long reviewId, ReviewRequestDto request) {
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new CustomException(ErrorCode.REVIEW_NOT_FOUND));
@@ -52,5 +54,11 @@ public class ReviewService {
 
         review.update(request.getRating(), request.getContent(), movie);
         return ReviewResponseDto.from(review);
+    }
+
+    // 리뷰 목록 조회
+    public Page<ReviewResponseDto> getAllReviews(Pageable pageable) {
+        return reviewRepository.findAllByIsDeletedFalse(pageable)
+                .map(ReviewResponseDto::from);
     }
 }

@@ -7,6 +7,7 @@ import com.example.filmpass.domain.auth.dto.SignUpRequestDto;
 import com.example.filmpass.domain.auth.entity.RefreshToken;
 import com.example.filmpass.domain.auth.repository.RefreshTokenRepository;
 import com.example.filmpass.domain.user.entity.User;
+import com.example.filmpass.domain.user.enums.UserRole;
 import com.example.filmpass.domain.user.repository.UserRepository;
 import com.example.filmpass.global.common.ApiResponse;
 import com.example.filmpass.global.config.JwtUtil;
@@ -142,6 +143,11 @@ public class AuthService {
         // 본인 권한만 수정하도록 검증
         if(!user.getId().equals(principal.getUserId())) {
             throw new CustomException(ErrorCode.CHANGE_BLOCKED);
+        }
+
+        // ADMIN 만 권한변경 가능하도록 검증
+        if(principal.getUserRole() != UserRole.ADMIN) {
+            throw new CustomException(ErrorCode.NOT_ADMIN);
         }
 
         user.setRole(request.getUserRole());

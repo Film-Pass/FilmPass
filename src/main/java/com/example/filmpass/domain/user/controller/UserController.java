@@ -37,4 +37,15 @@ public class UserController {
 
     }
 
+    @GetMapping("/api/users/{id}")
+    public ResponseEntity<ApiResponse<?>> getUser(
+        @PathVariable Long id,
+        @AuthenticationPrincipal UserPrincipal principal
+        ) {
+
+        return ResponseEntity.ok(userService.getUser(id, principal));
+
+    }
+
+
 }

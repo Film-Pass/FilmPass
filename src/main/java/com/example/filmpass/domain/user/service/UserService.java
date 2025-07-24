@@ -2,6 +2,7 @@ package com.example.filmpass.domain.user.service;
 
 import com.example.filmpass.domain.user.dto.PageResponseDto;
 import com.example.filmpass.domain.user.dto.UserDeleteDto;
+import com.example.filmpass.domain.user.dto.UserDetailsResponseDto;
 import com.example.filmpass.domain.user.entity.User;
 import com.example.filmpass.domain.user.enums.UserRole;
 import com.example.filmpass.domain.user.repository.UserRepository;
@@ -66,6 +67,32 @@ public class UserService {
         Page<PageResponseDto> response = users.map(User::pageToDto);
 
         return ApiResponse.success(response, "유저목록 조회성공!");
+    }
+
+
+    // 유저 단건 조회
+    public ApiResponse<UserDetailsResponseDto> getUser(Long id, UserPrincipal principal) {
+
+        // 권한 확인
+        if(principal.getUserRole() != UserRole.ADMIN) {
+            throw new CustomException(ErrorCode.NOT_ADMIN);
+        }
+
+
+            User user = userRepository.findById(id)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        UserDetailsResponseDto response = new UserDetailsResponseDto(
+                user.getId(),
+                user.getName(),
+                user.getEmail(),
+                user.getNickname(),
+                user.getDeletedAt(),
+                user.getRole().name()
+        );
+
+        return ApiResponse.success(response,"유저정보 조회성공!");
+
     }
 
 }

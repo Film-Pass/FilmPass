@@ -16,6 +16,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
@@ -62,6 +63,7 @@ public class AuthService {
 
 
     // 로그인 로직
+    @Transactional
     public ApiResponse<String> login(LoginRequestDto requestDto, HttpServletResponse response) {
 
         // 값 꺼내기

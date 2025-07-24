@@ -18,32 +18,30 @@ public class Review {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "review_id")
-    private Long reviewId; // 리뷰 ID
+    private Long reviewId;
 
     @Column(nullable = false)
-    private Integer rating; // 평점
+    private Integer rating;
 
     @Column(columnDefinition = "TEXT", nullable = false)
-    private String content; // 리뷰 내용
+    private String content;
 
     @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt; // 작성일
+    private LocalDateTime createdAt;
 
     @Column(name = "updated_at", nullable = false)
-    private LocalDateTime updatedAt; // 수정일
+    private LocalDateTime updatedAt;
 
     @Column(name = "is_deleted", nullable = false)
-    private boolean isDeleted; // 삭제 여부
+    private boolean isDeleted;
 
     @Column(name = "deleted_at")
-    private LocalDateTime deletedAt; // 삭제일시
+    private LocalDateTime deletedAt;
 
-    // movie_id 외래키, Movie 엔티티 연관관계
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "movie_id", nullable = false)
     private Movie movie;
 
-    // user_id 외래키, User 엔티티 연관관계
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
@@ -62,6 +60,13 @@ public class Review {
     public void softDelete() {
         this.isDeleted = true;
         this.deletedAt = LocalDateTime.now();
+    }
+
+    public void update(Integer rating, String content, Movie movie) {
+        this.rating = rating;
+        this.content = content;
+        this.movie = movie;
+        this.updatedAt = LocalDateTime.now();
     }
 
 }

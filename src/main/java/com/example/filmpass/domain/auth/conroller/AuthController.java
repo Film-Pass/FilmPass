@@ -53,10 +53,11 @@ public class AuthController {
     @PatchMapping("/api/auth/{id}")
     public ResponseEntity<ApiResponse<?>> changeRole(
             @RequestBody RoleReuqestDto request,
-            @PathVariable Long id
+            @PathVariable Long id,
+            @AuthenticationPrincipal UserPrincipal principal
             ) {
 
-        return ResponseEntity.ok(authService.changeRole(request, id));
+        return ResponseEntity.ok(authService.changeRole(request, id, principal));
 
     }
 

@@ -10,6 +10,7 @@ import com.example.filmpass.domain.user.entity.User;
 import com.example.filmpass.domain.user.repository.UserRepository;
 import com.example.filmpass.global.common.ApiResponse;
 import com.example.filmpass.global.config.JwtUtil;
+import com.example.filmpass.global.config.UserPrincipal;
 import com.example.filmpass.global.exception.CustomException;
 import com.example.filmpass.global.exception.ErrorCode;
 import jakarta.servlet.http.Cookie;
@@ -133,10 +134,15 @@ public class AuthService {
 
 
     // 유저 권한 변경 로직
-    public ApiResponse<String> changeRole(RoleReuqestDto request, Long id) {
+    public ApiResponse<String> changeRole(RoleReuqestDto request, Long id, UserPrincipal principal) {
 
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        // 본인 권한만 수정하도록 검증
+        if(!user.getId().equals(principal.getUserId())) {
+            throw new CustomException(ErrorCode.CHANGE_BLOCKED);
+        }
 
         user.setRole(request.getUserRole());
 

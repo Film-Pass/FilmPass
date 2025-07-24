@@ -1,5 +1,8 @@
 package com.example.filmpass.domain.movie.dto;
 
+import lombok.Getter;
+
+@Getter
 public class FindMovieDetailResponse {
     private String movieName;
     private String director;

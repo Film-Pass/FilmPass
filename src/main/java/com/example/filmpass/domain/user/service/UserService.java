@@ -1,5 +1,6 @@
 package com.example.filmpass.domain.user.service;
 
+import com.example.filmpass.domain.user.dto.UserInfoChangeRequestDto;
 import com.example.filmpass.domain.user.dto.UserInfoResponseDto;
 import com.example.filmpass.domain.user.dto.PasswordRequestDto;
 import com.example.filmpass.domain.user.dto.UserDetailsResponseDto;
@@ -117,6 +118,42 @@ public class UserService {
         return ApiResponse.success(response, "내 정보 조회 성공!");
 
 
+
+    }
+
+
+    // 유저 정보 수정 로직
+    public ApiResponse<UserInfoResponseDto> changeUserInfo(
+            UserInfoChangeRequestDto request,
+            UserPrincipal principal,
+            Long id) {
+
+        // 요청받은 id 로 유저 조회
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        // 로그인한 유저의 id와 변경요청할 유저의 id 를 비교  - 다른 유저의 정보를 수정하려하는지 확인하려는 목적
+        if(!user.getId().equals(principal.getUserId())) {
+            throw new CustomException(ErrorCode.CHANGE_BLOCKED);
+        }
+
+        // 정보수정하기
+        user.setName(request.getName());
+        user.setEmail(request.getEmail());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setNickname(request.getNickname());
+
+        userRepository.save(user);
+
+        // 응답 생성 및 반환
+        UserInfoResponseDto response = new UserInfoResponseDto(
+                user.getId(),
+                user.getName(),
+                user.getEmail(),
+                user.getNickname()
+        );
+
+        return ApiResponse.success(response, "회원 정보가 수정되었습니다.");
 
     }
 

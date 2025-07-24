@@ -3,12 +3,12 @@ package com.example.filmpass.domain.user.dto;
 import lombok.Getter;
 
 @Getter
-public class UserDeleteDto {
+public class PasswordRequestDto {
 
     private String password;
 
 
-    public UserDeleteDto(String password) {
+    public PasswordRequestDto(String password) {
         this.password = password;
     }
 }

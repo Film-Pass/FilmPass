@@ -7,6 +7,9 @@ import com.example.filmpass.global.common.ApiResponse;
 import com.example.filmpass.global.exception.CustomException;
 import com.example.filmpass.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -41,6 +44,16 @@ public class UserService {
         userRepository.save(user);
 
         return ApiResponse.success(null, "회원 탈퇴가 완료되었습니다");
+
+    }
+
+
+    // 유저 목록 조회
+    public ApiResponse<Page<User>> getUsers(int page, int size) {
+
+        Pageable pageable = PageRequest.of(page-1, size);
+
+        Page<User> users = userRepository.findAllByDeletedAtIsNullOrderByCreatedAtDesc(pageable);
 
     }
 

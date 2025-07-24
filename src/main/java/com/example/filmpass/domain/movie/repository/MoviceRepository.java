@@ -6,8 +6,4 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface MoviceRepository extends JpaRepository<Movie, Long> {
-    Optional<Movie> findByTitle(String title);
-    Optional<Movie> findByDirector(String director);
-
-    List<Movie> id(Long id);
 }

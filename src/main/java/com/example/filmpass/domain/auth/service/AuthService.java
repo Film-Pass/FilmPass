@@ -62,6 +62,7 @@ public class AuthService {
     }
 
     // 로그인 로직
+    @Transactional
     public ApiResponse<String> login(LoginRequestDto requestDto, HttpServletResponse response) {
 
         // 값 꺼내기

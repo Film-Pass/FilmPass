@@ -1,12 +1,13 @@
 package com.example.filmpass.domain.theater.entity;
 
-
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-@Getter
 @Entity
 @Table(name = "theaters")
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Theater {
 

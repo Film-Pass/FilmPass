@@ -1,6 +1,6 @@
 package com.example.filmpass.domain.user.entity;
 
-import com.example.filmpass.domain.user.dto.PageResponseDto;
+import com.example.filmpass.domain.user.dto.UserInfoResponseDto;
 import com.example.filmpass.domain.user.enums.UserRole;
 import com.example.filmpass.global.common.BaseEntity;
 import jakarta.persistence.*;
@@ -47,9 +47,9 @@ public class User extends BaseEntity {
         this.name = name;
     }
 
-    public static PageResponseDto pageToDto(User user) {
+    public static UserInfoResponseDto pageToDto(User user) {
 
-        return new PageResponseDto(
+        return new UserInfoResponseDto(
                 user.getId(),
                 user.getName(),
                 user.getEmail(),

@@ -46,7 +46,7 @@ public class ReviewService {
 
     // 리뷰 수정
     public ReviewResponseDto updateReview(Long reviewId, ReviewRequestDto request) {
-        Review review = reviewRepository.findById(reviewId)
+        Review review = reviewRepository.findByReviewIdAndIsDeletedFalse(reviewId)
                 .orElseThrow(() -> new CustomException(ErrorCode.REVIEW_NOT_FOUND));
 
         Movie movie = movieRepository.findById(request.getMovieId())
@@ -57,8 +57,18 @@ public class ReviewService {
     }
 
     // 리뷰 목록 조회
-    public Page<ReviewResponseDto> getAllReviews(Pageable pageable) {
-        return reviewRepository.findAllByIsDeletedFalse(pageable)
+    public Page<ReviewResponseDto> getReviewsByMovie(Long movieId, Pageable pageable) {
+        Movie movie = movieRepository.findById(movieId)
+                .orElseThrow(() -> new CustomException(ErrorCode.MOVIE_NOT_FOUND));
+        return reviewRepository.findAllByMovieAndIsDeletedFalse(movie, pageable)
                 .map(ReviewResponseDto::from);
+    }
+
+    // 리뷰 삭제
+    public void deleteReview(Long reviewId) {
+        Review review = reviewRepository.findByReviewIdAndIsDeletedFalse(reviewId)
+                .orElseThrow(() -> new CustomException(ErrorCode.REVIEW_NOT_FOUND));
+        review.softDelete();
+        reviewRepository.save(review);
     }
 }

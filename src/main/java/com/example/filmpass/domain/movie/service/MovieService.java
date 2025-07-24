@@ -1,12 +1,10 @@
 package com.example.filmpass.domain.movie.service;
 
 import com.example.filmpass.domain.movie.entity.Movie;
-import com.example.filmpass.domain.movie.repository.MoviceRepository;
-import com.example.filmpass.global.common.ApiResponse;
-import com.example.filmpass.domain.movie.dto.FindMovieDetailResponse;
-import com.example.filmpass.domain.movie.entity.Movie;
 import com.example.filmpass.domain.movie.repository.MovieRepository;
 import com.example.filmpass.global.common.ApiResponse;
+import com.example.filmpass.domain.movie.dto.FindMovieDetailResponse;
+import com.example.filmpass.domain.movie.repository.MovieRepository;
 import com.example.filmpass.domain.movie.dto.UpdateMovieRequest;
 import com.example.filmpass.domain.movie.dto.FindMovieRequest;
 import com.example.filmpass.domain.movie.dto.MovieCreateRequest;
@@ -14,9 +12,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
-
-import java.util.Optional;
-
 import java.util.List;
 
 @Service
@@ -100,7 +95,6 @@ public class MovieService {
 
         return ApiResponse.success(findMovieDetailResponse, "영화 상세 조회 성공");
     }
-    private final MoviceRepository movieRepository;
 
     //영화 삭제
     public ApiResponse<Object> deleteMovie(Long movieId) {

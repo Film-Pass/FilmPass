@@ -14,5 +14,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByEmail(String email);
 
-    Page<User> findAllByDeletedAtIsNullOrderByCreatedAtDesc(Pageable pageable);
+    Page<User> findAllByOrderByCreatedAtDesc(Pageable pageable);
 }

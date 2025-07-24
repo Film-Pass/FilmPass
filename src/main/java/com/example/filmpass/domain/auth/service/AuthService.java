@@ -82,6 +82,11 @@ public class AuthService {
             throw new CustomException(ErrorCode.PASSWORD_MISMATCH);
         }
 
+        // RefreshToken 있으면 삭제
+        if(refreshTokenRepository.existsByUser_Id(user.getId())) {
+            refreshTokenRepository.deleteByUser_Id(user.getId());
+        }
+
         // 토큰 생성
         String accessToken = jwtUtil.createToken(user.getId(), user.getNickname(), user.getRole());
         String refreshToken = jwtUtil.createRefreshToken(user.getId(), user.getNickname(), user.getRole());

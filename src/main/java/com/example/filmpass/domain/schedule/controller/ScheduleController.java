@@ -18,4 +18,13 @@ public class ScheduleController {
         scheduleService.createSchedule(requestDto);
         return ResponseEntity.ok("상영 일정이 등록되었습니다.");
     }
+
+    @PatchMapping("/{scheduleId}")
+    public ResponseEntity<String> updateSchedule(
+            @PathVariable Long scheduleId,
+            @RequestBody ScheduleRequestDto requestDto
+    ) {
+        scheduleService.updateSchedule(scheduleId, requestDto);
+        return ResponseEntity.ok("상영 일정이 수정되었습니다.");
+    }
 }

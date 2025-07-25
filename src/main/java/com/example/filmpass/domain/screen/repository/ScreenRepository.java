@@ -1,7 +1,7 @@
 package com.example.filmpass.domain.screen.repository;
 
-import com.example.filmpass.domain.schedule.entity.Schedule;
+import com.example.filmpass.domain.screen.entity.Screen;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface ScreenRepository extends JpaRepository<Schedule, Long> {
+public interface ScreenRepository extends JpaRepository<Screen, Long> {
 }

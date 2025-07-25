@@ -39,4 +39,10 @@ public class Schedule {
         this.screen = screen;
         this.movie = movie;
     }
+    public void update(LocalDateTime startAt, LocalDateTime endAt, Screen screen, Movie movie) {
+        this.startAt = startAt;
+        this.endAt = endAt;
+        this.screen = screen;
+        this.movie = movie;
+    }
 }

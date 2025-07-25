@@ -1,20 +1,21 @@
 package com.example.filmpass.domain.movie.controller;
 
-import com.example.filmpass.domain.movie.dto.UpdateMovieRequest;
-import com.example.filmpass.domain.movie.entity.Movie;
 import com.example.filmpass.domain.movie.service.MovieService;
 import com.example.filmpass.global.common.ApiResponse;
+import com.example.filmpass.domain.movie.dto.UpdateMovieRequest;
+import com.example.filmpass.domain.movie.entity.Movie;
 import com.example.filmpass.domain.movie.dto.FindMovieRequest;
 import com.example.filmpass.domain.movie.dto.MovieCreateRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -53,5 +54,11 @@ public class MovieController {
     @GetMapping("/{movieId}")
     public ApiResponse<Object> findMovieDetail(@PathVariable Long movieId) {
         return movieService.findMovieDtail(movieId);
+    }
+
+    //영화 삭제
+    @DeleteMapping("/{movieId}")
+    public ApiResponse<Object> deleteMovieApi(@PathVariable Long movieId) {
+        return movieService.deleteMovie(movieId);
     }
 }

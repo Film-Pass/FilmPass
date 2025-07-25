@@ -29,6 +29,7 @@ public class ScheduleService {
         Movie movie = movieRepository.findById(requestDto.getMovieId())
                 .orElseThrow(() -> new CustomException(ErrorCode.MOVIE_NOT_FOUND));
 
+
         Schedule schedule = new Schedule(
                 requestDto.getStartAt(),
                 requestDto.getEndAt(),
@@ -38,7 +39,7 @@ public class ScheduleService {
 
         scheduleRepository.save(schedule);
     }
-
+  
     // 스케줄 수정
     public ScheduleResponseDto updateSchedule(Long scheduleId, ScheduleRequestDto request) {
         Schedule schedule = scheduleRepository.findById(scheduleId)

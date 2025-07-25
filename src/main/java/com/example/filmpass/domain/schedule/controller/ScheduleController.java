@@ -19,6 +19,7 @@ public class ScheduleController {
         return ResponseEntity.ok("상영 일정이 등록되었습니다.");
     }
 
+
     @PatchMapping("/{scheduleId}")
     public ResponseEntity<String> updateSchedule(
             @PathVariable Long scheduleId,

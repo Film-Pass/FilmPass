@@ -23,6 +23,8 @@ public enum ErrorCode {
     // User
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."),
     DELETED_USER(HttpStatus.BAD_REQUEST, "이미 탈퇴한 유저입니다."),
+    NOT_ADMIN(HttpStatus.BAD_REQUEST, "관리자 권한이 없습니다."),
+
     THEATER_ALREADY_EXISTS(HttpStatus.BAD_REQUEST,"극장이 이미 존재합니다.");
 
     private final HttpStatus code;

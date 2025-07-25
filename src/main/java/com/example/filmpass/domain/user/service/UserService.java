@@ -1,12 +1,18 @@
 package com.example.filmpass.domain.user.service;
 
+import com.example.filmpass.domain.user.dto.PageResponseDto;
 import com.example.filmpass.domain.user.dto.UserDeleteDto;
 import com.example.filmpass.domain.user.entity.User;
+import com.example.filmpass.domain.user.enums.UserRole;
 import com.example.filmpass.domain.user.repository.UserRepository;
 import com.example.filmpass.global.common.ApiResponse;
+import com.example.filmpass.global.config.UserPrincipal;
 import com.example.filmpass.global.exception.CustomException;
 import com.example.filmpass.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -42,6 +48,24 @@ public class UserService {
 
         return ApiResponse.success(null, "회원 탈퇴가 완료되었습니다");
 
+    }
+
+
+    // 유저 목록 조회
+    public ApiResponse<Page<PageResponseDto>> getUsers(int page, int size, UserPrincipal principal) {
+
+        // 권한 확인
+        if(principal.getUserRole() != UserRole.ADMIN) {
+            throw new CustomException(ErrorCode.NOT_ADMIN);
+        }
+
+        Pageable pageable = PageRequest.of(page-1, size);
+
+        Page<User> users = userRepository.findAllByOrderByCreatedAtDesc(pageable);
+
+        Page<PageResponseDto> response = users.map(User::pageToDto);
+
+        return ApiResponse.success(response, "유저목록 조회성공!");
     }
 
 }

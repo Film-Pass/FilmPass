@@ -1,7 +1,15 @@
 package com.example.filmpass.domain.seat.controller;
 
+
+import com.example.filmpass.domain.seat.dto.PagedResponse;
+import com.example.filmpass.domain.seat.dto.SeatResponse;
 import com.example.filmpass.domain.seat.service.SeatService;
+import com.example.filmpass.global.common.ApiResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -12,6 +20,11 @@ public class SeatController {
 
     private final SeatService seatService;
 
-
-
+    // 좌석 목록 조회
+    @GetMapping
+    public ResponseEntity<ApiResponse<PagedResponse<SeatResponse>>> getSeats(
+            @PageableDefault(size = 10, sort = "id") Pageable pageable) {
+        PagedResponse<SeatResponse> response = seatService.getSeats(pageable);
+        return ResponseEntity.ok(ApiResponse.success(response, "좌석 목록 조회 성공"));
+    }
 }

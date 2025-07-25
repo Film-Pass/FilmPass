@@ -5,9 +5,11 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "seats")
+@Setter
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Seat {
@@ -22,4 +24,9 @@ public class Seat {
 
     @Column(nullable = false)
     private String seat_Number; // 좌석 이름 (예: A1, B2)
+
+    public Seat(Screen screen, String seat_Number) {
+        this.screen = screen;
+        this.seat_Number = seat_Number;
+    }
 }

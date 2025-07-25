@@ -1,6 +1,7 @@
 package com.example.filmpass.domain.auth.conroller;
 
 import com.example.filmpass.domain.auth.dto.LoginRequestDto;
+import com.example.filmpass.domain.auth.dto.RoleReuqestDto;
 import com.example.filmpass.domain.auth.dto.SignUpRequestDto;
 import com.example.filmpass.domain.auth.service.AuthService;
 import com.example.filmpass.global.common.ApiResponse;
@@ -10,9 +11,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -50,4 +49,16 @@ public class AuthController {
         return ResponseEntity.ok(authService.logout(userId, response));
 
     }
+
+    @PatchMapping("/api/auth/{id}")
+    public ResponseEntity<ApiResponse<?>> changeRole(
+            @RequestBody RoleReuqestDto request,
+            @PathVariable Long id,
+            @AuthenticationPrincipal UserPrincipal principal
+            ) {
+
+        return ResponseEntity.ok(authService.changeRole(request, id, principal));
+
+    }
+
 }

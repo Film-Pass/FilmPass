@@ -1,11 +1,10 @@
 package com.example.filmpass.domain.user.controller;
 
-import com.example.filmpass.domain.user.dto.UserDeleteDto;
+import com.example.filmpass.domain.user.dto.PasswordRequestDto;
 import com.example.filmpass.domain.user.service.UserService;
 import com.example.filmpass.global.common.ApiResponse;
 import com.example.filmpass.global.config.UserPrincipal;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +17,7 @@ public class UserController {
 
     @DeleteMapping("/api/users/{id}")
     public ResponseEntity<ApiResponse<?>> deleteUser(
-            @RequestBody UserDeleteDto requestDto,
+            @RequestBody PasswordRequestDto requestDto,
             @PathVariable Long id
             ) {
 
@@ -44,6 +43,16 @@ public class UserController {
         ) {
 
         return ResponseEntity.ok(userService.getUser(id, principal));
+
+    }
+
+    @PostMapping("/api/users/me")
+    public ResponseEntity<ApiResponse<?>> getMyProfile(
+            @RequestBody PasswordRequestDto requestDto,
+            @AuthenticationPrincipal UserPrincipal principal
+    ) {
+
+        return ResponseEntity.ok(userService.getMyProfile(requestDto ,principal));
 
     }
 

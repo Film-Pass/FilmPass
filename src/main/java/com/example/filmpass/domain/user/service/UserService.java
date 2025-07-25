@@ -1,7 +1,7 @@
 package com.example.filmpass.domain.user.service;
 
-import com.example.filmpass.domain.user.dto.PageResponseDto;
-import com.example.filmpass.domain.user.dto.UserDeleteDto;
+import com.example.filmpass.domain.user.dto.UserInfoResponseDto;
+import com.example.filmpass.domain.user.dto.PasswordRequestDto;
 import com.example.filmpass.domain.user.dto.UserDetailsResponseDto;
 import com.example.filmpass.domain.user.entity.User;
 import com.example.filmpass.domain.user.enums.UserRole;
@@ -27,7 +27,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     // 회원 탈퇴 로직
-    public ApiResponse<?> deleteUser(Long id, UserDeleteDto requestDto) {
+    public ApiResponse<?> deleteUser(Long id, PasswordRequestDto requestDto) {
 
         // 유저 조회
         User user = userRepository.findById(id)
@@ -53,7 +53,7 @@ public class UserService {
 
 
     // 유저 목록 조회
-    public ApiResponse<Page<PageResponseDto>> getUsers(int page, int size, UserPrincipal principal) {
+    public ApiResponse<Page<UserInfoResponseDto>> getUsers(int page, int size, UserPrincipal principal) {
 
         // 권한 확인
         if(principal.getUserRole() != UserRole.ADMIN) {
@@ -64,7 +64,7 @@ public class UserService {
 
         Page<User> users = userRepository.findAllByOrderByCreatedAtDesc(pageable);
 
-        Page<PageResponseDto> response = users.map(User::pageToDto);
+        Page<UserInfoResponseDto> response = users.map(User::pageToDto);
 
         return ApiResponse.success(response, "유저목록 조회성공!");
     }
@@ -92,6 +92,31 @@ public class UserService {
         );
 
         return ApiResponse.success(response,"유저정보 조회성공!");
+
+    }
+
+
+    // 내 정보 조회 로직
+    public ApiResponse<UserInfoResponseDto> getMyProfile(PasswordRequestDto requestDto, UserPrincipal principal) {
+
+        User user = userRepository.findById(principal.getUserId())
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        // 비밀번호 검증 (타인이 내 컴퓨터로 정보 조회하는걸 방지)
+        if(!passwordEncoder.matches(requestDto.getPassword(), user.getPassword())) {
+            throw new CustomException(ErrorCode.PASSWORD_MISMATCH);
+        }
+
+        UserInfoResponseDto response = new UserInfoResponseDto(
+                user.getId(),
+                user.getName(),
+                user.getEmail(),
+                user.getNickname()
+        );
+
+        return ApiResponse.success(response, "내 정보 조회 성공!");
+
+
 
     }
 

@@ -11,7 +11,8 @@ public enum ErrorCode {
     INVALID_INPUT(HttpStatus.BAD_REQUEST, "입력 값이 유효하지 않습니다."),
     MOVIE_NOT_FOUND(HttpStatus.NOT_FOUND, "영화를 찾을 수 없습니다."),
     REVIEW_NOT_FOUND(HttpStatus.NOT_FOUND, "리뷰를 찾을 수 없습니다."),
-
+    // 상영관
+    SCREEN_NOT_FOUND(HttpStatus.NOT_FOUND,"상영관을 찾을 수 없습니다" ),
     SCREEN_NOT_FOUND(HttpStatus.NOT_FOUND, "영화를 찾을 수 없습니다."),
     SCHEDULE_NOT_FOUND(HttpStatus.NOT_FOUND, "날짜를 찾을 수 없습니다."),
 

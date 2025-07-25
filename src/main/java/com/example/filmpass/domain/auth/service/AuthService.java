@@ -2,13 +2,16 @@ package com.example.filmpass.domain.auth.service;
 
 import com.example.filmpass.domain.auth.dto.AuthData;
 import com.example.filmpass.domain.auth.dto.LoginRequestDto;
+import com.example.filmpass.domain.auth.dto.RoleReuqestDto;
 import com.example.filmpass.domain.auth.dto.SignUpRequestDto;
 import com.example.filmpass.domain.auth.entity.RefreshToken;
 import com.example.filmpass.domain.auth.repository.RefreshTokenRepository;
 import com.example.filmpass.domain.user.entity.User;
+import com.example.filmpass.domain.user.enums.UserRole;
 import com.example.filmpass.domain.user.repository.UserRepository;
 import com.example.filmpass.global.common.ApiResponse;
 import com.example.filmpass.global.config.JwtUtil;
+import com.example.filmpass.global.config.UserPrincipal;
 import com.example.filmpass.global.exception.CustomException;
 import com.example.filmpass.global.exception.ErrorCode;
 import jakarta.servlet.http.Cookie;
@@ -128,6 +131,37 @@ public class AuthService {
         response.addCookie(cookie);
 
         return ApiResponse.success(null, "로그아웃 성공!");
+    }
+
+
+    // 유저 권한 변경 로직
+    public ApiResponse<String> changeRole(RoleReuqestDto request, Long id, UserPrincipal principal) {
+
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        // 본인 권한만 수정하도록 검증
+        if(!user.getId().equals(principal.getUserId())) {
+            throw new CustomException(ErrorCode.CHANGE_BLOCKED);
+        }
+
+        // ADMIN 만 권한변경 가능하도록 검증
+        if(principal.getUserRole() != UserRole.ADMIN) {
+            throw new CustomException(ErrorCode.NOT_ADMIN);
+        }
+
+        // 입력한 권한이 현재 권한과 같은 Role 인지 검증
+        if(principal.getUserRole() == request.getUserRole()) {
+            throw new CustomException(ErrorCode.CANNOT_CHANGE_SAME_ROLE);
+        }
+
+
+        user.setRole(request.getUserRole());
+
+        userRepository.save(user);
+
+        return ApiResponse.success(user.getRole().name(), "권한 변경 성공!");
+
     }
 
 }

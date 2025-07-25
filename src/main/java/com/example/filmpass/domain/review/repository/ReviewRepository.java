@@ -16,4 +16,3 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     Page<Review> findAllByMovieAndIsDeletedFalse(Movie movie, Pageable pageable);
 
 }
-

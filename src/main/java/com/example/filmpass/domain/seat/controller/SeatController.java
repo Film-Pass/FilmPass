@@ -1,8 +1,8 @@
 package com.example.filmpass.domain.seat.controller;
 
-    
 import com.example.filmpass.domain.seat.dto.PagedResponse;
 import com.example.filmpass.domain.seat.dto.SeatRequest;
+import com.example.filmpass.domain.seat.dto.PagedResponse;
 import com.example.filmpass.domain.seat.dto.SeatResponse;
 import com.example.filmpass.domain.seat.service.SeatService;
 import com.example.filmpass.global.common.ApiResponse;
@@ -12,6 +12,9 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
@@ -26,7 +29,7 @@ public class SeatController {
         SeatResponse createdSeat = seatService.createSeat(request);
         return ResponseEntity.ok(ApiResponse.success(createdSeat, "좌석 등록 성공"));
     }
-
+  
     // 좌석 목록 조회
     @GetMapping
     public ResponseEntity<ApiResponse<PagedResponse<SeatResponse>>> getSeats(

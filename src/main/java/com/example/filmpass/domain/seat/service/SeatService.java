@@ -1,6 +1,5 @@
 package com.example.filmpass.domain.seat.service;
 
-
 import com.example.filmpass.domain.screen.entity.Screen;
 import com.example.filmpass.domain.screen.repository.ScreenRepository;
 import com.example.filmpass.domain.seat.dto.PagedResponse;
@@ -10,6 +9,10 @@ import com.example.filmpass.domain.seat.entity.Seat;
 import com.example.filmpass.domain.seat.repository.SeatRepository;
 import com.example.filmpass.global.exception.CustomException;
 import com.example.filmpass.global.exception.ErrorCode;
+import com.example.filmpass.domain.seat.dto.PagedResponse;
+import com.example.filmpass.domain.seat.dto.SeatResponse;
+import com.example.filmpass.domain.seat.entity.Seat;
+import com.example.filmpass.domain.seat.repository.SeatRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

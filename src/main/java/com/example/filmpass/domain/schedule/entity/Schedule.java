@@ -3,7 +3,6 @@ package com.example.filmpass.domain.schedule.entity;
 import com.example.filmpass.domain.movie.entity.Movie;
 import com.example.filmpass.domain.screen.entity.Screen;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -12,25 +11,38 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "schedules")
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 public class Schedule {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; // 스케줄 아이디
+    @Column(name = "schedule_id")
+    private Long id;
 
-    @Column(nullable = false)
-    private LocalDateTime startTime; // 시작 시간
+    @Column(name = "start_at", nullable = false)
+    private LocalDateTime startAt;
 
-    @Column(nullable = false)
-    private LocalDateTime endTime;   // 종료 시간
+    @Column(name = "end_at", nullable = false)
+    private LocalDateTime endAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "screen_id", nullable = false)
-    private Screen screen; // 상영관 식별자
+    private Screen screen;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private Movie movie;   // 영화 식별자
+    @JoinColumn(name = "movie_id", nullable = false)
+    private Movie movie;
 
+    public Schedule(LocalDateTime startAt, LocalDateTime endAt, Screen screen, Movie movie) {
+        this.startAt = startAt;
+        this.endAt = endAt;
+        this.screen = screen;
+        this.movie = movie;
+    }
+    public void update(LocalDateTime startAt, LocalDateTime endAt, Screen screen, Movie movie) {
+        this.startAt = startAt;
+        this.endAt = endAt;
+        this.screen = screen;
+        this.movie = movie;
+    }
 }
-

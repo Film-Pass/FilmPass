@@ -1,6 +1,7 @@
 package com.example.filmpass.domain.user.controller;
 
 import com.example.filmpass.domain.user.dto.PasswordRequestDto;
+import com.example.filmpass.domain.user.dto.UserInfoChangeRequestDto;
 import com.example.filmpass.domain.user.service.UserService;
 import com.example.filmpass.global.common.ApiResponse;
 import com.example.filmpass.global.config.UserPrincipal;
@@ -8,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
 
 @RestController
 @RequiredArgsConstructor
@@ -53,6 +55,16 @@ public class UserController {
     ) {
 
         return ResponseEntity.ok(userService.getMyProfile(requestDto ,principal));
+
+    }
+
+    @PutMapping("/api/users/{id}")
+    public ResponseEntity<ApiResponse<?>> changeUserInfo(
+            @RequestBody UserInfoChangeRequestDto request,
+            @AuthenticationPrincipal UserPrincipal principal,
+            @PathVariable Long id) {
+
+        return ResponseEntity.ok(userService.changeUserInfo(request, principal, id));
 
     }
 

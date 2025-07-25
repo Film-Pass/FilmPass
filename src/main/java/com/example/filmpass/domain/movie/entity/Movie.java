@@ -29,12 +29,12 @@ public class Movie {
     @Column(nullable = false)
     private String title; // 영화 이름
 
-    public Movie(String runningTime, String director, String description, String title, String posterUrl) {
+    public Movie(String runningTime, String director, String description, String posterUrl, String title) {
         this.runningTime = runningTime;
         this.director = director;
         this.description = description;
-        this.title = title;
         this.posterUrl = posterUrl;
+        this.title = title;
     }
 
 

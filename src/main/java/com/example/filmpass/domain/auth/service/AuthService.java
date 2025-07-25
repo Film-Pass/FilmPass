@@ -150,6 +150,12 @@ public class AuthService {
             throw new CustomException(ErrorCode.NOT_ADMIN);
         }
 
+        // 입력한 권한이 현재 권한과 같은 Role 인지 검증
+        if(principal.getUserRole() == request.getUserRole()) {
+            throw new CustomException(ErrorCode.CANNOT_CHANGE_SAME_ROLE);
+        }
+
+
         user.setRole(request.getUserRole());
 
         userRepository.save(user);

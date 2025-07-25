@@ -36,4 +36,13 @@ public class Movie {
         this.title = title;
         this.posterUrl = posterUrl;
     }
+
+
+    public void updateMovie(String title, String posterUrl, String description, String director, String runningTime) {
+        this.title = title;
+        this.posterUrl = posterUrl;
+        this.description = description;
+        this.director = director;
+        this.runningTime = runningTime;
+    }
 }

@@ -16,7 +16,7 @@ public class Movie {
     private Long id; // 영화 식별자
 
     @Column(nullable = false)
-    private String runningTime; // 상영시간 시간  1시간 30분
+    private String runningTime; // 상영시간 (분 단위)
 
     @Column(nullable = false)
     private String director; // 감독

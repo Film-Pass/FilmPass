@@ -61,7 +61,6 @@ public class AuthService {
 
     }
 
-
     // 로그인 로직
     @Transactional
     public ApiResponse<String> login(LoginRequestDto requestDto, HttpServletResponse response) {
@@ -111,6 +110,24 @@ public class AuthService {
 
         return ApiResponse.success(accessToken, "로그인 성공!");
 
+    }
+
+
+    // 로그아웃 로직
+    @Transactional
+    public ApiResponse<AuthData> logout(Long userId, HttpServletResponse response) {
+
+        refreshTokenRepository.deleteByUser_Id(userId);
+
+        Cookie cookie = new Cookie("refreshToken", null);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(false);
+        cookie.setPath("/");
+        cookie.setMaxAge(0);
+
+        response.addCookie(cookie);
+
+        return ApiResponse.success(null, "로그아웃 성공!");
     }
 
 }

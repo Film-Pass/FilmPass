@@ -2,7 +2,6 @@ package com.example.filmpass.domain.seat.controller;
 
 import com.example.filmpass.domain.seat.dto.PagedResponse;
 import com.example.filmpass.domain.seat.dto.SeatRequest;
-import com.example.filmpass.domain.seat.dto.PagedResponse;
 import com.example.filmpass.domain.seat.dto.SeatResponse;
 import com.example.filmpass.domain.seat.service.SeatService;
 import com.example.filmpass.global.common.ApiResponse;
@@ -23,18 +22,26 @@ public class SeatController {
 
     private final SeatService seatService;
 
+    // 좌석 등록 (상영관 연관관계)
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<SeatResponse>> createSeat(@RequestBody SeatRequest request) {
         SeatResponse createdSeat = seatService.createSeat(request);
         return ResponseEntity.ok(ApiResponse.success(createdSeat, "좌석 등록 성공"));
     }
-  
+
     // 좌석 목록 조회
     @GetMapping
     public ResponseEntity<ApiResponse<PagedResponse<SeatResponse>>> getSeats(
             @PageableDefault(size = 10, sort = "id") Pageable pageable) {
         PagedResponse<SeatResponse> response = seatService.getSeats(pageable);
         return ResponseEntity.ok(ApiResponse.success(response, "좌석 목록 조회 성공"));
+    }
+
+    // 좌석 단건 조회
+    @GetMapping("/{seatId}")
+    public ResponseEntity<ApiResponse<SeatResponse>> getSeatById(@PathVariable Long seatId) {
+        SeatResponse seat = seatService.getSeatById(seatId);
+        return ResponseEntity.ok(ApiResponse.success(seat, "좌석 단건 조회 성공"));
     }
 }

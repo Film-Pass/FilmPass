@@ -9,6 +9,7 @@ import com.example.filmpass.domain.seat.entity.Seat;
 import com.example.filmpass.domain.seat.repository.SeatRepository;
 import com.example.filmpass.global.exception.CustomException;
 import com.example.filmpass.global.exception.ErrorCode;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,6 +19,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class SeatService {
 
@@ -28,7 +30,7 @@ public class SeatService {
     public SeatResponse createSeat(SeatRequest request) {
         // 상영관 존재 확인
         Screen screen = screenRepository.findById(request.getScreen_Id())
-                .orElseThrow(() ->  new CustomException(ErrorCode.SCREEN_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(ErrorCode.SCREEN_NOT_FOUND));
 
         // 2. 좌석 엔티티 생성
         Seat seat = new Seat(screen, request.getSeat_Number());
@@ -61,6 +63,19 @@ public class SeatService {
     public SeatResponse getSeatById(Long seatId) {
         Seat seat = seatRepository.findById(seatId)
                 .orElseThrow(() -> new CustomException(ErrorCode.SEAT_NOT_FOUND));
+        return new SeatResponse(seat.getId(), seat.getSeat_Number());
+    }
+
+    // 좌석 수정
+    public SeatResponse updateSeat(Long seatId, SeatRequest request) {
+        Seat seat = seatRepository.findById(seatId)
+                .orElseThrow(() -> new CustomException(ErrorCode.SEAT_NOT_FOUND));
+
+        Screen screen = screenRepository.findById(request.getScreen_Id())
+                .orElseThrow(() -> new CustomException(ErrorCode.SCREEN_NOT_FOUND));
+
+        seat.update(request.getSeat_Number(), screen);
+
         return new SeatResponse(seat.getId(), seat.getSeat_Number());
     }
 }

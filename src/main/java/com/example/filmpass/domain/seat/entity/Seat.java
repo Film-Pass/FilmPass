@@ -31,5 +31,5 @@ public class Seat {
     public void update(String seatNumber, Screen screen) {
         this.seat_Number = seatNumber;
         this.screen = screen;
-
+    }
 }

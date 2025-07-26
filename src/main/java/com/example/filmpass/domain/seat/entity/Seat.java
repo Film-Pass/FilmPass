@@ -27,4 +27,9 @@ public class Seat {
         this.screen = screen;
         this.seat_Number = seat_Number;
     }
+
+    public void update(String seatNumber, Screen screen) {
+        this.seat_Number = seatNumber;
+        this.screen = screen;
+
 }

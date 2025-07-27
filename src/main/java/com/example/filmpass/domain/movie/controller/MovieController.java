@@ -1,5 +1,6 @@
 package com.example.filmpass.domain.movie.controller;
 
+import com.example.filmpass.domain.movie.dto.FindMovieDetailResponse;
 import com.example.filmpass.domain.movie.service.MovieService;
 import com.example.filmpass.global.common.ApiResponse;
 import com.example.filmpass.domain.movie.dto.UpdateMovieRequest;
@@ -35,13 +36,13 @@ public class MovieController {
     //영화 목록 조회
     @GetMapping
     public ApiResponse<List<Movie>> findAllMovieApi() {
-       return movieService.findAllMovie();
+        return movieService.findAllMovie();
     }
 
     //영화 검색
-    @PostMapping("/{movieId}")
-    public ApiResponse<Optional<Movie>> findMovieApi(@PathVariable Long movieId, @RequestBody FindMovieRequest findMovieRequest) {
-        return movieService.findMovie(movieId, findMovieRequest);
+    @PostMapping("/search")
+    public ApiResponse<Movie> findMovieApi(@RequestBody FindMovieRequest findMovieRequest) {
+        return movieService.findMovie(findMovieRequest);
     }
 
     //영화 수정
@@ -52,7 +53,7 @@ public class MovieController {
 
     //영화 상세 조회
     @GetMapping("/{movieId}")
-    public ApiResponse<Object> findMovieDetail(@PathVariable Long movieId) {
+    public ApiResponse<FindMovieDetailResponse> findMovieDetail(@PathVariable Long movieId) {
         return movieService.findMovieDtail(movieId);
     }
 

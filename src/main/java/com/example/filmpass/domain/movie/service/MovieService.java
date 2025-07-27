@@ -8,7 +8,10 @@ import com.example.filmpass.domain.movie.repository.MovieRepository;
 import com.example.filmpass.domain.movie.dto.UpdateMovieRequest;
 import com.example.filmpass.domain.movie.dto.FindMovieRequest;
 import com.example.filmpass.domain.movie.dto.MovieCreateRequest;
+import com.example.filmpass.global.exception.CustomException;
+import com.example.filmpass.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -27,6 +30,19 @@ public class MovieService {
         String posterUrl = movieCreateRequest.getMovieImage();
         String title = movieCreateRequest.getMovieName();
 
+        if (title == null || title.trim().isEmpty()) {
+            throw new CustomException(ErrorCode.MOVIE_TITLE_REQUIRED);
+        }
+        if (director == null || director.trim().isEmpty()) {
+            throw new CustomException(ErrorCode.MOVIE_DIRECTOR_REQUIRED);
+        }
+        if (runningTime == null || runningTime.trim().isEmpty()) {
+            throw new CustomException(ErrorCode.MOVIE_RUNNING_TIME_REQUIRED);
+        }
+
+        if(movieRepository.findByTitle(title).isPresent()){
+            throw new CustomException(ErrorCode.MOVIE_ALREADY_EXISTS);
+        }
         Movie movie = new Movie(runningTime,director,description,posterUrl,title);
         movieRepository.save(movie);
 
@@ -37,30 +53,32 @@ public class MovieService {
     public ApiResponse<List<Movie>> findAllMovie() {
         List<Movie> movieList = movieRepository.findAll();
         if(movieList.isEmpty()) {
-            return ApiResponse.success(movieList,"영화가 존재하지 않습니다");
+            throw new CustomException(ErrorCode.MOVIE_LIST_NOT_FOUND);
         }
         return ApiResponse.success(movieList, "영화목록 조회 성공!");
     }
 
     //영화 검색
-    public ApiResponse<Optional<Movie>> findMovie(Long movieId, FindMovieRequest findMovieRequest) {
-        Long id = movieId;
+    public ApiResponse<Movie> findMovie(FindMovieRequest findMovieRequest) {
+        Long id = findMovieRequest.getId();
         String title = findMovieRequest.getTitle();
         String director = findMovieRequest.getDirector();
 
-        if(id !=null) {
-            Optional<Movie> movie = movieRepository.findById(id);
-            return ApiResponse.success(movie,"영화 검색 성공");
+        if (id != null) {
+            Movie movie = movieRepository.findById(id)
+                    .orElseThrow(() -> new CustomException(ErrorCode.MOVIE_NOT_FOUND_BY_ID));
+            return ApiResponse.success(movie, "영화 검색 성공");
+        } else if (title != null && !title.trim().isEmpty()) {
+            Movie movie = movieRepository.findByTitle(title)
+                    .orElseThrow(() -> new CustomException(ErrorCode.MOVIE_NOT_FOUND_BY_TITLE));
+            return ApiResponse.success(movie, "영화 검색 성공");
+        } else if (director != null && !director.trim().isEmpty()) {
+            Movie movie = movieRepository.findByDirector(director)
+                    .orElseThrow(() -> new CustomException(ErrorCode.MOVIE_NOT_FOUND_BY_DIRECTOR));
+            return ApiResponse.success(movie, "영화 검색 성공");
         }
-        else if(title != null){
-            Optional<Movie> movie = movieRepository.findByTitle(title);
-            return ApiResponse.success(movie,"영화 검색 성공");
-        }
-        else if(director != null){
-            Optional<Movie> movie = movieRepository.findByDirector(director);
-            return ApiResponse.success(movie,"영화 검색 성공");
-        }
-        return ApiResponse.error("입력값에 해당하는 영화가 존재하지 않습니다");
+
+        return ApiResponse.error("id, 제목, 감독 중 하나 이상의 값을 입력해주세요");
     }
 
     //영화 수정
@@ -70,42 +88,42 @@ public class MovieService {
         String newDescription = updateMovieRequest.getDescription();
         String newDirector = updateMovieRequest.getDirector();
         String newRunningTime = updateMovieRequest.getRunningTime();
-        Optional<Movie> findMovie = movieRepository.findById(movieId);
 
-        if (findMovie.isEmpty()) {
-            return ApiResponse.error("Id에 해당하는 Movie가 없습니다.");
+        if (newTitle == null || newTitle.trim().isEmpty()) {
+            throw new CustomException(ErrorCode.MOVIE_TITLE_REQUIRED);
         }
+        if (newDirector == null || newDirector.trim().isEmpty()) {
+            throw new CustomException(ErrorCode.MOVIE_DIRECTOR_REQUIRED);
+        }
+        if (newRunningTime == null || newRunningTime.trim().isEmpty()) {
+            throw new CustomException(ErrorCode.MOVIE_RUNNING_TIME_REQUIRED);
+        }
+        Movie alreadyMovie = movieRepository.findById(movieId)
+                .orElseThrow(()->new CustomException(ErrorCode.MOVIE_NOT_FOUND));
 
-        Movie movie = findMovie.get();
-        movie.updateMovie(newTitle, newUrl, newDescription, newDirector, newRunningTime);
 
-        movieRepository.save(movie);
-        return ApiResponse.success(movie, "수정이 정상적으로 완료되었습니다.");
+        alreadyMovie.updateMovie(newTitle, newUrl, newDescription, newDirector, newRunningTime);
+        movieRepository.save(alreadyMovie);
+        return ApiResponse.success(alreadyMovie, "수정이 정상적으로 완료되었습니다.");
     }
 
     //영화 상세 조회
-    public ApiResponse<Object> findMovieDtail(Long movieId) {
-        Optional<Movie> optionalMovie = movieRepository.findById(movieId);
-        if(optionalMovie.isEmpty()) {
-            return ApiResponse.error("Id에 해당하는 영화를 찾을 수 없습니다.");
-        }
+    public ApiResponse<FindMovieDetailResponse> findMovieDtail(Long movieId) {
+        Movie alreadyMovie = movieRepository.findById(movieId)
+                .orElseThrow(()-> new CustomException(ErrorCode.MOVIE_NOT_FOUND));
 
-        Movie movie = optionalMovie.get();
-        FindMovieDetailResponse findMovieDetailResponse = new FindMovieDetailResponse(movie.getTitle(), movie.getDirector(), movie.getDescription());
+        FindMovieDetailResponse findMovieDetailResponse = new FindMovieDetailResponse(alreadyMovie.getTitle(), alreadyMovie.getDirector(), alreadyMovie.getDescription());
 
         return ApiResponse.success(findMovieDetailResponse, "영화 상세 조회 성공");
     }
 
     //영화 삭제
     public ApiResponse<Object> deleteMovie(Long movieId) {
-        Optional<Movie> findMovie = movieRepository.findById(movieId);
+        Movie alreadyMovie = movieRepository.findById(movieId)
+                .orElseThrow(()-> new CustomException(ErrorCode.MOVIE_NOT_FOUND));
 
-        if(findMovie.isEmpty()) {
-            ApiResponse.error("Id에 해당하는 영화가 없습니다");
-        }
-        Movie movie = findMovie.get();
         movieRepository.deleteById(movieId);
 
-        return ApiResponse.success(movie, "영화가 성공적으로 삭제되었습니다.");
+        return ApiResponse.success(alreadyMovie, "영화가 성공적으로 삭제되었습니다.");
     }
 }

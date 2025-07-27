@@ -30,7 +30,15 @@ public enum ErrorCode {
     NOT_ADMIN(HttpStatus.BAD_REQUEST, "관리자 권한이 없습니다."),
     CHANGE_BLOCKED(HttpStatus.BAD_REQUEST, "본인의 정보만 수정할 수 있습니다."),
 
-    THEATER_ALREADY_EXISTS(HttpStatus.BAD_REQUEST,"극장이 이미 존재합니다.");
+    THEATER_ALREADY_EXISTS(HttpStatus.BAD_REQUEST,"극장이 이미 존재합니다."),
+
+    // Reservation
+    RESERVATION_NOT_FOUND(HttpStatus.NOT_FOUND, "예매 정보를 찾을 수 없습니다."),
+    ALREADY_CANCELED(HttpStatus.BAD_REQUEST, "이미 취소된 예매입니다."),
+    NOT_YOUR_RESERVATION(HttpStatus.FORBIDDEN, "예매 정보에 접근할 수 없습니다."),
+    SEAT_ALREADY_RESERVED(HttpStatus.BAD_REQUEST, "이미 예약된 좌석이 포함되어 있습니다."),
+    SEAT_NOT_FOUND(HttpStatus.BAD_REQUEST, "존재하지 않는 좌석이 포함되어 있습니다."),
+    INVALID_SCHEDULE(HttpStatus.BAD_REQUEST, "상영 회차가 존재하지 않습니다.");
 
     private final HttpStatus code;
     private final String message;

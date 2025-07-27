@@ -1,9 +1,6 @@
 package com.example.filmpass.domain.reservation.service;
 
-import com.example.filmpass.domain.reservation.dto.ReservationDetailResponse;
-import com.example.filmpass.domain.reservation.dto.ReservationInfo;
-import com.example.filmpass.domain.reservation.dto.ReservationRequest;
-import com.example.filmpass.domain.reservation.dto.ReservationResponse;
+import com.example.filmpass.domain.reservation.dto.*;
 import com.example.filmpass.domain.reservation.entity.Reservation;
 import com.example.filmpass.domain.reservation.repository.ReservationRepository;
 import com.example.filmpass.domain.schedule.entity.Schedule;
@@ -14,6 +11,8 @@ import com.example.filmpass.domain.user.entity.User;
 import com.example.filmpass.domain.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -125,5 +124,23 @@ public class ReservationService {
                 reservationAt,
                 status
         );
+    }
+
+    @Transactional
+    public Page<ReservationSummaryResponse> getReservationList(Long userId, Pageable pageable) {
+
+        Page<Reservation> reservations = reservationRepository.findByUserId(userId, pageable);
+
+        return reservations.map(reservation -> {
+            String movieTitle = reservation.getSchedule().getMovie().getTitle();
+            LocalDateTime startAt = reservation.getSchedule().getStartAt();
+            String status;
+            if (reservation.isSoftDeleted()) {
+                status = "CANCELED";
+            } else {
+                status = "POSSIBLE";
+            }
+            return new ReservationSummaryResponse(reservation.getId(), movieTitle, startAt, status);
+        });
     }
 }

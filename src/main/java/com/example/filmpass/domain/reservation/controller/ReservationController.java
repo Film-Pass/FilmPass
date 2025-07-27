@@ -9,10 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/reservations")
@@ -28,6 +25,15 @@ public class ReservationController {
         Long userId = userPrincipal.getUserId();
         ReservationResponse response = reservationService.reserve(userId, request);
         return ResponseEntity.ok(ApiResponse.success(response, "예매 완료"));
+    }
 
+    @DeleteMapping("/{reservationId}")
+    public ResponseEntity<ApiResponse<Void>> cancelReservation(
+            @PathVariable Long reservationId,
+            @AuthenticationPrincipal UserPrincipal userPrincipal
+        ) {
+        Long userId = userPrincipal.getUserId();
+        reservationService.cancelReservation(userId, reservationId);
+        return ResponseEntity.ok(ApiResponse.success(null, "취소가 완료되었습니다."));
     }
 }

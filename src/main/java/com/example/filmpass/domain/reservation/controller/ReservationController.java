@@ -1,6 +1,7 @@
 package com.example.filmpass.domain.reservation.controller;
 
 import com.example.filmpass.domain.reservation.dto.ReservationRequest;
+import com.example.filmpass.domain.reservation.dto.ReservationResponse;
 import com.example.filmpass.domain.reservation.service.ReservationService;
 import com.example.filmpass.global.common.ApiResponse;
 import com.example.filmpass.global.config.UserPrincipal;
@@ -21,7 +22,7 @@ public class ReservationController {
     private final ReservationService reservationService;
 
     @PostMapping
-    public ResponseEntity<ApiResponse<ReservationReponse>> reserve(
+    public ResponseEntity<ApiResponse<ReservationResponse>> reserve(
             @RequestBody ReservationRequest request,
             @AuthenticationPrincipal UserPrincipal userPrincipal) {
         Long userId = userPrincipal.getUserId();

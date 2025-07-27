@@ -1,4 +1,4 @@
-package com.example.filmpass.domain.reservationinformation.entity;
+package com.example.filmpass.domain.reservation.entity;
 
 import com.example.filmpass.domain.schedule.entity.Schedule;
 import com.example.filmpass.domain.user.entity.User;

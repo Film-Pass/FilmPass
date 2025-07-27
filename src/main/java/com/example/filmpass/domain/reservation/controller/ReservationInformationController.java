@@ -1,4 +1,4 @@
-package com.example.filmpass.domain.reservationinformation.controller;
+package com.example.filmpass.domain.reservation.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.RestController;

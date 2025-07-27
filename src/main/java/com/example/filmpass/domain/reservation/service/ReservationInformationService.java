@@ -1,4 +1,4 @@
-package com.example.filmpass.domain.reservationinformation.service;
+package com.example.filmpass.domain.reservation.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

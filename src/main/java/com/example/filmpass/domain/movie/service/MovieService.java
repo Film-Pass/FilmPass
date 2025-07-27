@@ -1,16 +1,14 @@
 package com.example.filmpass.domain.movie.service;
 
+import com.example.filmpass.domain.movie.dto.*;
 import com.example.filmpass.domain.movie.entity.Movie;
 import com.example.filmpass.domain.movie.repository.MovieRepository;
 import com.example.filmpass.global.common.ApiResponse;
-import com.example.filmpass.domain.movie.dto.FindMovieDetailResponse;
 import com.example.filmpass.domain.movie.repository.MovieRepository;
-import com.example.filmpass.domain.movie.dto.UpdateMovieRequest;
-import com.example.filmpass.domain.movie.dto.FindMovieRequest;
-import com.example.filmpass.domain.movie.dto.MovieCreateRequest;
 import com.example.filmpass.global.exception.CustomException;
 import com.example.filmpass.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -50,12 +48,16 @@ public class MovieService {
     }
 
     //영화 전체 조회
-    public ApiResponse<List<Movie>> findAllMovie() {
-        List<Movie> movieList = movieRepository.findAll();
-        if(movieList.isEmpty()) {
+    public ApiResponse<FindMovieResponse<Movie>> findAllMovie(Pageable pageable) {
+        Page<Movie> moviePage = movieRepository.findAll(pageable);
+
+        if(moviePage.isEmpty()) {
             throw new CustomException(ErrorCode.MOVIE_LIST_NOT_FOUND);
         }
-        return ApiResponse.success(movieList, "영화목록 조회 성공!");
+
+        PageInfo pageInfo = new PageInfo(moviePage.getNumber(), moviePage.getTotalPages(), moviePage.getTotalElements(), moviePage.getSize(), moviePage.isLast());
+        FindMovieResponse<Movie> findMovieResponse = new FindMovieResponse(moviePage.getContent(), pageInfo);
+        return ApiResponse.success(findMovieResponse, "영화 조회 성공!");
     }
 
     //영화 검색

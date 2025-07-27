@@ -1,13 +1,11 @@
 package com.example.filmpass.domain.movie.controller;
 
-import com.example.filmpass.domain.movie.dto.FindMovieDetailResponse;
+import com.example.filmpass.domain.movie.dto.*;
 import com.example.filmpass.domain.movie.service.MovieService;
 import com.example.filmpass.global.common.ApiResponse;
-import com.example.filmpass.domain.movie.dto.UpdateMovieRequest;
 import com.example.filmpass.domain.movie.entity.Movie;
-import com.example.filmpass.domain.movie.dto.FindMovieRequest;
-import com.example.filmpass.domain.movie.dto.MovieCreateRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,8 +33,8 @@ public class MovieController {
 
     //영화 목록 조회
     @GetMapping
-    public ApiResponse<List<Movie>> findAllMovieApi() {
-        return movieService.findAllMovie();
+    public ApiResponse<FindMovieResponse<Movie>> findAllMovieApi(Pageable pageable) {
+        return movieService.findAllMovie(pageable);
     }
 
     //영화 검색

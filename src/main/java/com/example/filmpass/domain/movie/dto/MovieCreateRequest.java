@@ -11,7 +11,7 @@ public class MovieCreateRequest {
     private String movieImage;
 
 
-    public MovieCreateRequest(String runningTime, String director, String description, String movieImage, String movieName) {
+    public MovieCreateRequest(String movieName, String director, String description, String runningTime, String movieImage) {
         this.runningTime = runningTime;
         this.director = director;
         this.description = description;

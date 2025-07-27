@@ -16,7 +16,7 @@ public class Movie {
     private Long id; // 영화 식별자
 
     @Column(nullable = false)
-    private String runningTime; // 상영시간 (분 단위)
+    private String title; // 영화 이름
 
     @Column(nullable = false)
     private String director; // 감독
@@ -24,12 +24,14 @@ public class Movie {
     @Column(length = 4000)
     private String description; // 상세설명
 
+    @Column(nullable = false)
+    private String runningTime; // 상영시간 (?시간 ?분)
+
     private String posterUrl; // 영화 표지 이미지 URL
 
-    @Column(nullable = false)
-    private String title; // 영화 이름
 
-    public Movie(String runningTime, String director, String description, String posterUrl, String title) {
+
+    public Movie(String title, String director, String description, String runningTime, String posterUrl) {
         this.runningTime = runningTime;
         this.director = director;
         this.description = description;

@@ -29,11 +29,11 @@ public class SeatService {
     // 좌석 등록
     public SeatResponse createSeat(SeatRequest request) {
         // 상영관 존재 확인
-        Screen screen = screenRepository.findById(request.getScreen_Id())
+        Screen screen = screenRepository.findById(request.getScreenId())
                 .orElseThrow(() -> new CustomException(ErrorCode.SCREEN_NOT_FOUND));
 
         // 2. 좌석 엔티티 생성
-        Seat seat = new Seat(screen, request.getSeat_Number());
+        Seat seat = new Seat(screen, request.getSeatNumber());
 
         // 저장
         Seat savedSeat = seatRepository.save(seat);
@@ -71,10 +71,10 @@ public class SeatService {
         Seat seat = seatRepository.findById(seatId)
                 .orElseThrow(() -> new CustomException(ErrorCode.SEAT_NOT_FOUND));
 
-        Screen screen = screenRepository.findById(request.getScreen_Id())
+        Screen screen = screenRepository.findById(request.getScreenId())
                 .orElseThrow(() -> new CustomException(ErrorCode.SCREEN_NOT_FOUND));
 
-        seat.update(screen, request.getSeat_Number()) ;
+        seat.update(screen, request.getSeatNumber()) ;
 
         return new SeatResponse(seat.getId(), seat.getSeatNumber());
     }

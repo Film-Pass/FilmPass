@@ -28,7 +28,7 @@ public class Seat {
         this.seatNumber = seatNumber;
     }
 
-    public void update(Screen screen, String seatNumbe) {
+    public void update(Screen screen, String seatNumber) {
         this.screen = screen;
         this.seatNumber = seatNumber;
     }

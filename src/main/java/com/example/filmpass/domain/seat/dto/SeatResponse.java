@@ -7,5 +7,5 @@ import lombok.Getter;
 @AllArgsConstructor
 public class SeatResponse {
     private Long id;
-    private String seat_Number;
+    private String seatNumber;
 }

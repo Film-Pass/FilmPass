@@ -38,7 +38,7 @@ public class SeatService {
         // 저장
         Seat savedSeat = seatRepository.save(seat);
 
-        return new SeatResponse(savedSeat.getId(), savedSeat.getSeat_Number());
+        return new SeatResponse(savedSeat.getId(), savedSeat.getSeatNumber());
     }
 
     // 좌석 목록 조회 (페이징)
@@ -46,7 +46,7 @@ public class SeatService {
         Page<Seat> seatPage = seatRepository.findAll(pageable);
 
         List<SeatResponse> seatResponses = seatPage.getContent().stream()
-                .map(seat -> new SeatResponse(seat.getId(), seat.getSeat_Number()))
+                .map(seat -> new SeatResponse(seat.getId(), seat.getSeatNumber()))
                 .collect(Collectors.toList());
 
         return new PagedResponse<>(
@@ -63,7 +63,7 @@ public class SeatService {
     public SeatResponse getSeatById(Long seatId) {
         Seat seat = seatRepository.findById(seatId)
                 .orElseThrow(() -> new CustomException(ErrorCode.SEAT_NOT_FOUND));
-        return new SeatResponse(seat.getId(), seat.getSeat_Number());
+        return new SeatResponse(seat.getId(), seat.getSeatNumber());
     }
 
     // 좌석 수정
@@ -74,8 +74,8 @@ public class SeatService {
         Screen screen = screenRepository.findById(request.getScreen_Id())
                 .orElseThrow(() -> new CustomException(ErrorCode.SCREEN_NOT_FOUND));
 
-        seat.update(request.getSeat_Number(), screen);
+        seat.update(screen, request.getSeat_Number()) ;
 
-        return new SeatResponse(seat.getId(), seat.getSeat_Number());
+        return new SeatResponse(seat.getId(), seat.getSeatNumber());
     }
 }

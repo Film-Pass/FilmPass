@@ -20,16 +20,16 @@ public class Seat {
     @JoinColumn(name = "screen_id", nullable = false)
     private Screen screen; // 상영관 (Screen) 식별자 - 연관관계
 
-    @Column(nullable = false)
-    private String seat_Number; // 좌석 이름 (예: A1, B2)
+    @Column(name = "seat_id",nullable = false)
+    private String seatNumber; // 좌석 이름 (예: A1, B2)
 
     public Seat(Screen screen, String seat_Number) {
         this.screen = screen;
-        this.seat_Number = seat_Number;
+        this.seatNumber = seat_Number;
     }
 
-    public void update(String seatNumber, Screen screen) {
-        this.seat_Number = seatNumber;
+    public void update(Screen screen, String seatNumbe) {
         this.screen = screen;
+        this.seatNumber = seatNumber;
     }
 }

@@ -49,7 +49,7 @@ public class MovieService {
     }
 
     //영화 전체 조회
-    @Transactional
+    @Transactional(readOnly = true)
     public FindMovieResponse findAllMovie(Pageable pageable) {
         Page<Movie> moviePage = movieRepository.findAll(pageable);
 

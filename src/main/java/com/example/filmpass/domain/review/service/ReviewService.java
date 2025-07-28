@@ -26,8 +26,8 @@ public class ReviewService {
     private final UserRepository userRepository;
 
     // 리뷰 생성
-    public ReviewResponseDto createReview(ReviewRequestDto request, Long userId) {
-        User user = userRepository.findById(userId)
+    public ReviewResponseDto createReview(ReviewRequestDto request) {
+        User user = userRepository.findById(request.getUserId())
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         Movie movie = movieRepository.findById(request.getMovieId())

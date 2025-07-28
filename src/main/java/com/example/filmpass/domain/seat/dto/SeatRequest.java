@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SeatRequest {
-    private String seat_Number;    // 예: "A1"
-    private Long screen_Id;        // 어느 상영관 소속인지
+    private String seatNumber;    // 예: "A1"
+    private Long screenId;        // 어느 상영관 소속인지
 
 }

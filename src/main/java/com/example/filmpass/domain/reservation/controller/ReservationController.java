@@ -24,7 +24,7 @@ public class ReservationController {
     private final ReservationService reservationService;
 
     @PostMapping
-    public ResponseEntity<ApiResponse<ReservationResponse>> reserve(
+    public ResponseEntity<ApiResponse> reserve(
             @RequestBody ReservationRequest request,
             @AuthenticationPrincipal UserPrincipal userPrincipal) {
         Long userId = userPrincipal.getUserId();
@@ -33,7 +33,7 @@ public class ReservationController {
     }
 
     @DeleteMapping("/{reservationId}")
-    public ResponseEntity<ApiResponse<Void>> cancelReservation(
+    public ResponseEntity<ApiResponse> cancelReservation(
             @PathVariable Long reservationId,
             @AuthenticationPrincipal UserPrincipal userPrincipal
     ) {
@@ -43,7 +43,7 @@ public class ReservationController {
     }
 
     @GetMapping("/{reservationId}")
-    public ResponseEntity<ApiResponse<ReservationDetailResponse>> getReservationDetail(
+    public ResponseEntity<ApiResponse> getReservationDetail(
             @PathVariable Long reservationId,
             @AuthenticationPrincipal UserPrincipal userPrincipal
     ) {
@@ -53,7 +53,7 @@ public class ReservationController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<Page<ReservationSummaryResponse>>> getReservations(
+    public ResponseEntity<ApiResponse> getReservations(
             @AuthenticationPrincipal UserPrincipal userPrincipal,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size

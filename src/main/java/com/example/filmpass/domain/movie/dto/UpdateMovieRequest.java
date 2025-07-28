@@ -11,7 +11,7 @@ public class UpdateMovieRequest {
     String director;
     String runningTime;
 
-    public UpdateMovieRequest(String title, String url, String description, String director, String runningTime) {
+    public UpdateMovieRequest(String title, String director, String description, String runningTime, String url) {
         this.title = title;
         this.url = url;
         this.description = description;

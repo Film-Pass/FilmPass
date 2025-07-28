@@ -2,7 +2,7 @@ package com.example.filmpass.domain.auth.service;
 
 import com.example.filmpass.domain.auth.dto.AuthData;
 import com.example.filmpass.domain.auth.dto.LoginRequestDto;
-import com.example.filmpass.domain.auth.dto.RoleReuqestDto;
+import com.example.filmpass.domain.auth.dto.RoleRequestDto;
 import com.example.filmpass.domain.auth.dto.SignUpRequestDto;
 import com.example.filmpass.domain.auth.entity.RefreshToken;
 import com.example.filmpass.domain.auth.repository.RefreshTokenRepository;
@@ -10,6 +10,7 @@ import com.example.filmpass.domain.user.entity.User;
 import com.example.filmpass.domain.user.enums.UserRole;
 import com.example.filmpass.domain.user.repository.UserRepository;
 import com.example.filmpass.global.common.ApiResponse;
+import com.example.filmpass.global.common.ApiResponseObject;
 import com.example.filmpass.global.config.JwtUtil;
 import com.example.filmpass.global.config.UserPrincipal;
 import com.example.filmpass.global.exception.CustomException;
@@ -34,7 +35,7 @@ public class AuthService {
 
 
     // 회원가입 로직
-    public ApiResponse<AuthData> signUp(SignUpRequestDto requestDto) {
+    public ApiResponseObject signUp(SignUpRequestDto requestDto) {
 
         // 저장할 값 꺼내기
         String name = requestDto.getName();
@@ -60,7 +61,7 @@ public class AuthService {
 
         AuthData data = new AuthData(user.getEmail(), user.getNickname());
 
-        return ApiResponse.success(data, "회원가입 성공!");
+        return ApiResponseObject.success(data, "회원가입 성공!");
 
     }
 
@@ -135,7 +136,7 @@ public class AuthService {
 
 
     // 유저 권한 변경 로직
-    public ApiResponse<String> changeRole(RoleReuqestDto request, Long id, UserPrincipal principal) {
+    public ApiResponse<String> changeRole(RoleRequestDto request, Long id, UserPrincipal principal) {
 
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));

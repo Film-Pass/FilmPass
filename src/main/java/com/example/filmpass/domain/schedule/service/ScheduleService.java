@@ -1,7 +1,7 @@
 package com.example.filmpass.domain.schedule.service;
 
 import com.example.filmpass.domain.movie.entity.Movie;
-import com.example.filmpass.domain.movie.repository.MovieRepository;
+import com.example.filmpass.domain.movie.MovieRepository;
 import com.example.filmpass.domain.schedule.dto.ScheduleRequestDto;
 import com.example.filmpass.domain.schedule.dto.ScheduleResponseDto;
 import com.example.filmpass.domain.schedule.entity.Schedule;

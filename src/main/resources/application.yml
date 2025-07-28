@@ -14,13 +14,14 @@ spring:
     hibernate:
       ddl-auto: update
     properties:
-      dialect: org.hibernate.dialect.MySQL8Dialect
       show_sql: true
       format_sql: true
       highlight_sql: true
       use_sql_comments: true
       jdbc:
         batch_size: 100
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
 
   data:
     redis:

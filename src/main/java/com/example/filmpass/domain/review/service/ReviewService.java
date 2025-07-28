@@ -1,7 +1,7 @@
 package com.example.filmpass.domain.review.service;
 
 import com.example.filmpass.domain.movie.entity.Movie;
-import com.example.filmpass.domain.movie.repository.MovieRepository;
+import com.example.filmpass.domain.movie.MovieRepository;
 import com.example.filmpass.domain.review.dto.ReviewRequestDto;
 import com.example.filmpass.domain.review.dto.ReviewResponseDto;
 import com.example.filmpass.domain.review.entity.Review;
@@ -18,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class ReviewService {
 
     private final ReviewRepository reviewRepository;
@@ -26,6 +25,7 @@ public class ReviewService {
     private final UserRepository userRepository;
 
     // 리뷰 생성
+    @Transactional
     public ReviewResponseDto createReview(ReviewRequestDto request) {
         Movie movie = movieRepository.findById(request.getMovieId())
                 .orElseThrow(() -> new CustomException(ErrorCode.MOVIE_NOT_FOUND));
@@ -33,18 +33,14 @@ public class ReviewService {
         User user = userRepository.findById(request.getUserId())
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
-        Review review = new Review(
-                request.getRating(),
-                request.getContent(),
-                movie,
-                user
-        );
+        Review review = new Review(request.getRating(), request.getContent(), movie,user);
 
         Review saved = reviewRepository.save(review);
         return ReviewResponseDto.from(saved);
     }
 
     // 리뷰 수정
+    @Transactional
     public ReviewResponseDto updateReview(Long reviewId, ReviewRequestDto request) {
         Review review = reviewRepository.findByReviewIdAndIsDeletedFalse(reviewId)
                 .orElseThrow(() -> new CustomException(ErrorCode.REVIEW_NOT_FOUND));
@@ -57,14 +53,16 @@ public class ReviewService {
     }
 
     // 리뷰 목록 조회
+    @Transactional(readOnly = true)
     public Page<ReviewResponseDto> getReviewsByMovie(Long movieId, Pageable pageable) {
         Movie movie = movieRepository.findById(movieId)
                 .orElseThrow(() -> new CustomException(ErrorCode.MOVIE_NOT_FOUND));
-        return reviewRepository.findAllByMovieAndIsDeletedFalse(movie, pageable)
+        return reviewRepository.findAllByMovieAndIsDeleted(movie, false, pageable)
                 .map(ReviewResponseDto::from);
     }
 
     // 리뷰 삭제
+    @Transactional
     public void deleteReview(Long reviewId) {
         Review review = reviewRepository.findByReviewIdAndIsDeletedFalse(reviewId)
                 .orElseThrow(() -> new CustomException(ErrorCode.REVIEW_NOT_FOUND));

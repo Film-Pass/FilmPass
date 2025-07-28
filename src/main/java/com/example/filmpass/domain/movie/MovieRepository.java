@@ -1,4 +1,4 @@
-package com.example.filmpass.domain.movie.repository;
+package com.example.filmpass.domain.movie;
 
 import com.example.filmpass.domain.movie.entity.Movie;
 import org.springframework.data.jpa.repository.JpaRepository;

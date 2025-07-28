@@ -1,10 +1,11 @@
 package com.example.filmpass.domain.auth.conroller;
 
 import com.example.filmpass.domain.auth.dto.LoginRequestDto;
-import com.example.filmpass.domain.auth.dto.RoleReuqestDto;
+import com.example.filmpass.domain.auth.dto.RoleRequestDto;
 import com.example.filmpass.domain.auth.dto.SignUpRequestDto;
 import com.example.filmpass.domain.auth.service.AuthService;
 import com.example.filmpass.global.common.ApiResponse;
+import com.example.filmpass.global.common.ApiResponseObject;
 import com.example.filmpass.global.config.UserPrincipal;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -20,43 +21,22 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/api/auth/signup")
-    public ResponseEntity<ApiResponse<?>> signUp(
-            @Valid @RequestBody SignUpRequestDto requestDto
-    ) {
-
+    public ResponseEntity<ApiResponseObject> signUp(@Valid @RequestBody SignUpRequestDto requestDto) {
         return ResponseEntity.ok(authService.signUp(requestDto));
-
     }
 
     @PostMapping("/api/auth/login")
-    public ResponseEntity<ApiResponse<?>> login(
-            @RequestBody LoginRequestDto requestDto,
-            HttpServletResponse response
-            ) {
-
+    public ResponseEntity<ApiResponse<?>> login(@RequestBody LoginRequestDto requestDto, HttpServletResponse response) {
         return ResponseEntity.ok(authService.login(requestDto, response));
-
     }
 
     @PostMapping("/api/auth/logout")
-    public ResponseEntity<ApiResponse<?>> logout(
-            @AuthenticationPrincipal UserPrincipal principal,
-            HttpServletResponse response
-    ) {
-
-        Long userId = principal.getUserId();
-
-        return ResponseEntity.ok(authService.logout(userId, response));
-
+    public ApiResponse<?> logout(@AuthenticationPrincipal UserPrincipal principal, HttpServletResponse response) {
+        return authService.logout(principal.getUserId(), response);
     }
 
     @PatchMapping("/api/auth/{id}")
-    public ResponseEntity<ApiResponse<?>> changeRole(
-            @RequestBody RoleReuqestDto request,
-            @PathVariable Long id,
-            @AuthenticationPrincipal UserPrincipal principal
-            ) {
-
+    public ResponseEntity<ApiResponse<?>> changeRole(@RequestBody RoleRequestDto request, @PathVariable Long id, @AuthenticationPrincipal UserPrincipal principal) {
         return ResponseEntity.ok(authService.changeRole(request, id, principal));
 
     }

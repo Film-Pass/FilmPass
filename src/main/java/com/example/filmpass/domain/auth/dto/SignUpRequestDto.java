@@ -14,12 +14,12 @@ public class SignUpRequestDto {
     private String name;
 
     @NotBlank(message = "이메일을 입력해주세요.")
-    @Pattern(regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$",
+    @Pattern(regexp = Policy.EMAIL_PATTERN,
             message = "올바른 이메일 형식이 아닙니다.")
     private String email;
 
     @NotBlank(message = "비밀번호를 입력해주세요.")
-    @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>/?]).{8,20}$",
+    @Pattern(regexp = Policy.PASSWORD_PATTERN,
             message = "비밀번호는 영문, 숫자, 특수문자를 포함한 8~20자여야 합니다.")
     private String password;
 

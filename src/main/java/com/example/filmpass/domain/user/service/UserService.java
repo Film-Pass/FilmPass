@@ -7,7 +7,6 @@ import com.example.filmpass.domain.user.dto.UserDetailsResponseDto;
 import com.example.filmpass.domain.user.entity.User;
 import com.example.filmpass.domain.user.enums.UserRole;
 import com.example.filmpass.domain.user.repository.UserRepository;
-import com.example.filmpass.global.common.ApiResponse;
 import com.example.filmpass.global.config.UserPrincipal;
 import com.example.filmpass.global.exception.CustomException;
 import com.example.filmpass.global.exception.ErrorCode;
@@ -17,6 +16,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
@@ -28,7 +28,8 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     // 회원 탈퇴 로직
-    public ApiResponse<?> deleteUser(Long id, PasswordRequestDto requestDto) {
+    @Transactional
+    public void deleteUser(Long id, PasswordRequestDto requestDto) {
 
         // 유저 조회
         User user = userRepository.findById(id)
@@ -48,13 +49,11 @@ public class UserService {
         user.setDeletedAt(LocalDateTime.now());
         userRepository.save(user);
 
-        return ApiResponse.success(null, "회원 탈퇴가 완료되었습니다");
-
     }
 
 
     // 유저 목록 조회
-    public ApiResponse<Page<UserInfoResponseDto>> getUsers(int page, int size, UserPrincipal principal) {
+    public Page<UserInfoResponseDto> getUsers(int page, int size, UserPrincipal principal) {
 
         // 권한 확인
         if(principal.getUserRole() != UserRole.ADMIN) {
@@ -67,12 +66,12 @@ public class UserService {
 
         Page<UserInfoResponseDto> response = users.map(User::pageToDto);
 
-        return ApiResponse.success(response, "유저목록 조회성공!");
+        return response;
     }
 
 
     // 유저 단건 조회
-    public ApiResponse<UserDetailsResponseDto> getUser(Long id, UserPrincipal principal) {
+    public UserDetailsResponseDto getUser(Long id, UserPrincipal principal) {
 
         // 권한 확인
         if(principal.getUserRole() != UserRole.ADMIN) {
@@ -92,13 +91,13 @@ public class UserService {
                 user.getRole().name()
         );
 
-        return ApiResponse.success(response,"유저정보 조회성공!");
+        return response;
 
     }
 
 
     // 내 정보 조회 로직
-    public ApiResponse<UserInfoResponseDto> getMyProfile(PasswordRequestDto requestDto, UserPrincipal principal) {
+    public UserInfoResponseDto getMyProfile(PasswordRequestDto requestDto, UserPrincipal principal) {
 
         User user = userRepository.findById(principal.getUserId())
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
@@ -108,22 +107,19 @@ public class UserService {
             throw new CustomException(ErrorCode.PASSWORD_MISMATCH);
         }
 
-        UserInfoResponseDto response = new UserInfoResponseDto(
+        return new UserInfoResponseDto(
                 user.getId(),
                 user.getName(),
                 user.getEmail(),
                 user.getNickname()
         );
 
-        return ApiResponse.success(response, "내 정보 조회 성공!");
-
-
-
     }
 
 
     // 유저 정보 수정 로직
-    public ApiResponse<UserInfoResponseDto> changeUserInfo(
+    @Transactional
+    public UserInfoResponseDto changeUserInfo(
             UserInfoChangeRequestDto request,
             UserPrincipal principal,
             Long id) {
@@ -146,14 +142,14 @@ public class UserService {
         userRepository.save(user);
 
         // 응답 생성 및 반환
-        UserInfoResponseDto response = new UserInfoResponseDto(
+        return new UserInfoResponseDto(
                 user.getId(),
                 user.getName(),
                 user.getEmail(),
                 user.getNickname()
         );
 
-        return ApiResponse.success(response, "회원 정보가 수정되었습니다.");
+
 
     }
 

@@ -6,6 +6,8 @@ import com.example.filmpass.domain.review.service.ReviewService;
 import com.example.filmpass.global.common.ApiResponse;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -17,17 +19,27 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/reviews")
 @RequiredArgsConstructor
-public class ReviewController {
+public class ReviewController<CustomUserDetails> {
 
     private final ReviewService reviewService;
 
     // 리뷰 생성
     @PostMapping
-    public ResponseEntity<ApiResponse<ReviewResponseDto>> createReview(@RequestBody ReviewRequestDto request) {
-        ReviewResponseDto response = reviewService.createReview(request);
-        ApiResponse<ReviewResponseDto> responseBody = ApiResponse.success(response, "리뷰가 등록되었습니다.");
-        return ResponseEntity.status(HttpStatus.CREATED).body(responseBody);
+    public ResponseEntity<ApiResponse<ReviewResponseDto>> createReview(
+            @RequestBody ReviewRequestDto request,
+            Authentication authentication) {
+
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        String username = userDetails.getUsername();
+
+        Long userId = reviewService.getUserIdByUsername(username);
+        ReviewResponseDto response = reviewService.createReview(request, userId);
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ApiResponse.success(response, "리뷰가 등록되었습니다."));
     }
+
+
 
     // 리뷰 수정
     @PatchMapping("/{reviewId}")

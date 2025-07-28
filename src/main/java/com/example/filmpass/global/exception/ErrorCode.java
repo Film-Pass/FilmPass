@@ -14,7 +14,6 @@ public enum ErrorCode {
     // 상영관
     SCREEN_NOT_FOUND(HttpStatus.NOT_FOUND,"상영관을 찾을 수 없습니다" ),
     SCHEDULE_NOT_FOUND(HttpStatus.NOT_FOUND, "날짜를 찾을 수 없습니다."),
-
     // Auth
     EMAIL_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "이미 사용중인 이메일입니다."),
     NICKNAME_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "이미 사용중인 닉네임입니다."),
@@ -38,9 +37,9 @@ public enum ErrorCode {
     MOVIE_LIST_NOT_FOUND(HttpStatus.NOT_FOUND,"영화가 존재하지 않습니다"),
     MOVIE_NOT_FOUND_BY_ID(HttpStatus.NOT_FOUND,"ID값에 해당하는 영화가 존재하지 않습니다."),
     MOVIE_NOT_FOUND_BY_TITLE(HttpStatus.NOT_FOUND,"제목과 일치하는 영화가 존재하지 않습니다."),
-    MOVIE_NOT_FOUND_BY_DIRECTOR(HttpStatus.NOT_FOUND,"해당하는 작가의 영화가 존재하지 않습니다."),
+    MOVIE_NOT_FOUND_BY_DIRECTOR(HttpStatus.NOT_FOUND,"해당하는 감독의 영화가 존재하지 않습니다."),
     MOVIE_TITLE_REQUIRED(HttpStatus.BAD_REQUEST,"제목은 필수 항목입니다."),
-    MOVIE_DIRECTOR_REQUIRED(HttpStatus.BAD_REQUEST,"작가는 필수 항목입니다."),
+    MOVIE_DIRECTOR_REQUIRED(HttpStatus.BAD_REQUEST,"감독은 필수 항목입니다."),
     MOVIE_RUNNING_TIME_REQUIRED(HttpStatus.BAD_REQUEST,"상영 시간은 필수 항목입니다.");
 
 

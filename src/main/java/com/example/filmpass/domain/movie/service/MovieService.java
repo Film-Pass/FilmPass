@@ -43,7 +43,7 @@ public class MovieService {
         if(movieRepository.findByTitle(title).isPresent()){
             throw new CustomException(ErrorCode.MOVIE_ALREADY_EXISTS);
         }
-        Movie movie = new Movie(runningTime,director,description,posterUrl,title);
+        Movie movie = new Movie(title,director,description,runningTime,posterUrl);
         movieRepository.save(movie);
 
         return ApiResponse.success(movie.getTitle(),"영화 등록 성공!");

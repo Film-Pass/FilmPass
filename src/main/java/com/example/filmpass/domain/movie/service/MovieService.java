@@ -7,6 +7,7 @@ import com.example.filmpass.global.common.ApiResponse;
 import com.example.filmpass.domain.movie.repository.MovieRepository;
 import com.example.filmpass.global.exception.CustomException;
 import com.example.filmpass.global.exception.ErrorCode;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,6 +22,7 @@ public class MovieService {
     private final MovieRepository movieRepository;
 
     //영화 등록 CreateMovie
+    @Transactional
     public ApiResponse<String> movieCreate(MovieCreateRequest movieCreateRequest){
         String runningTime = movieCreateRequest.getRunningTime();
         String director = movieCreateRequest.getDirector();
@@ -48,6 +50,7 @@ public class MovieService {
     }
 
     //영화 전체 조회
+    @Transactional
     public ApiResponse<FindMovieResponse<Movie>> findAllMovie(Pageable pageable) {
         Page<Movie> moviePage = movieRepository.findAll(pageable);
 
@@ -61,6 +64,7 @@ public class MovieService {
     }
 
     //영화 검색
+    @Transactional
     public ApiResponse<Movie> findMovie(FindMovieRequest findMovieRequest) {
         Long id = findMovieRequest.getId();
         String title = findMovieRequest.getTitle();
@@ -84,6 +88,7 @@ public class MovieService {
     }
 
     //영화 수정
+    @Transactional
     public ApiResponse<Movie> updateMovie(Long movieId, UpdateMovieRequest updateMovieRequest) {
         String newTitle = updateMovieRequest.getTitle();
         String newUrl = updateMovieRequest.getUrl();
@@ -110,6 +115,7 @@ public class MovieService {
     }
 
     //영화 상세 조회
+    @Transactional
     public ApiResponse<FindMovieDetailResponse> findMovieDtail(Long movieId) {
         Movie alreadyMovie = movieRepository.findById(movieId)
                 .orElseThrow(()-> new CustomException(ErrorCode.MOVIE_NOT_FOUND));
@@ -120,6 +126,7 @@ public class MovieService {
     }
 
     //영화 삭제
+    @Transactional
     public ApiResponse<Object> deleteMovie(Long movieId) {
         Movie alreadyMovie = movieRepository.findById(movieId)
                 .orElseThrow(()-> new CustomException(ErrorCode.MOVIE_NOT_FOUND));

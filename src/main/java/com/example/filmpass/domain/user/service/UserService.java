@@ -16,6 +16,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
@@ -27,6 +28,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     // 회원 탈퇴 로직
+    @Transactional
     public void deleteUser(Long id, PasswordRequestDto requestDto) {
 
         // 유저 조회
@@ -116,6 +118,7 @@ public class UserService {
 
 
     // 유저 정보 수정 로직
+    @Transactional
     public UserInfoResponseDto changeUserInfo(
             UserInfoChangeRequestDto request,
             UserPrincipal principal,

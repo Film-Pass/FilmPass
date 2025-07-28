@@ -33,6 +33,7 @@ public class AuthService {
 
 
     // 회원가입 로직
+    @Transactional
     public AuthData signUp(SignUpRequestDto requestDto) {
 
         // 저장할 값 꺼내기
@@ -132,6 +133,7 @@ public class AuthService {
 
 
     // 유저 권한 변경 로직
+    @Transactional
     public String changeRole(RoleRequestDto request, Long id, UserPrincipal principal) {
 
         User user = userRepository.findById(id)

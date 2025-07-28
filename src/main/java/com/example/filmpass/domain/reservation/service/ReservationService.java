@@ -1,5 +1,6 @@
 package com.example.filmpass.domain.reservation.service;
 
+import com.example.filmpass.domain.reservation.dto.ReservationDetailResponse;
 import com.example.filmpass.domain.reservation.dto.ReservationInfo;
 import com.example.filmpass.domain.reservation.dto.ReservationRequest;
 import com.example.filmpass.domain.reservation.dto.ReservationResponse;
@@ -15,6 +16,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -83,5 +85,45 @@ public class ReservationService {
 
         // 4. 플래그를 true 처리
         reservation.cancel();
+    }
+
+    @Transactional
+    public ReservationDetailResponse getReservationDetail(Long userId, Long reservationId) {
+
+        // 1. 예매 조회
+        Reservation reservation = reservationRepository.findById(reservationId)
+                .orElseThrow(() -> new IllegalArgumentException("예매 정보를 찾을 수 없습니다."));
+
+        // 2. 본인 확인
+        if (!reservation.getUser().getId().equals(userId)) {
+            throw new IllegalArgumentException("예매 정보에 접근할 수 없습니다.");
+        }
+
+        // 3. 필요한 정보 추출
+        String movieTitle = reservation.getSchedule().getMovie().getTitle();
+        String posterUrl = reservation.getSchedule().getMovie().getPosterUrl();
+        String screenName = reservation.getSchedule().getScreen().getName();
+        String seatNumber = reservation.getSeat().getSeat_Number();
+        LocalDateTime startAt = reservation.getSchedule().getStartAt();
+        LocalDateTime reservationAt = reservation.getReservationAt();
+
+        // 3-1. 예약 상태 플래그 변환
+        String status;
+        if (reservation.isSoftDeleted()) {
+            status = "CANCELED";
+        } else {
+            status = "POSSIBLE";
+        }
+
+        return new ReservationDetailResponse(
+                reservation.getId(),
+                movieTitle,
+                posterUrl,
+                screenName,
+                seatNumber,
+                startAt,
+                reservationAt,
+                status
+        );
     }
 }

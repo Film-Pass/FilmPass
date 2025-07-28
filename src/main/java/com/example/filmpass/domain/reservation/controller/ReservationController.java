@@ -1,5 +1,6 @@
 package com.example.filmpass.domain.reservation.controller;
 
+import com.example.filmpass.domain.reservation.dto.ReservationDetailResponse;
 import com.example.filmpass.domain.reservation.dto.ReservationRequest;
 import com.example.filmpass.domain.reservation.dto.ReservationResponse;
 import com.example.filmpass.domain.reservation.service.ReservationService;
@@ -8,7 +9,6 @@ import com.example.filmpass.global.config.UserPrincipal;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -31,9 +31,19 @@ public class ReservationController {
     public ResponseEntity<ApiResponse<Void>> cancelReservation(
             @PathVariable Long reservationId,
             @AuthenticationPrincipal UserPrincipal userPrincipal
-        ) {
+    ) {
         Long userId = userPrincipal.getUserId();
         reservationService.cancelReservation(userId, reservationId);
         return ResponseEntity.ok(ApiResponse.success(null, "취소가 완료되었습니다."));
+    }
+
+    @GetMapping("/{reservationId}")
+    public ResponseEntity<ApiResponse<ReservationDetailResponse>> getReservationDetail(
+            @PathVariable Long reservationId,
+            @AuthenticationPrincipal UserPrincipal userPrincipal
+    ) {
+        Long userId = userPrincipal.getUserId();
+        ReservationDetailResponse reservationDetail = reservationService.getReservationDetail(userId, reservationId);
+        return ResponseEntity.ok(ApiResponse.success(reservationDetail, "조회 성공"));
     }
 }

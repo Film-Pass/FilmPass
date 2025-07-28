@@ -23,9 +23,9 @@ public class Seat {
     @Column(name = "seat_id",nullable = false)
     private String seatNumber; // 좌석 이름 (예: A1, B2)
 
-    public Seat(Screen screen, String seat_Number) {
+    public Seat(Screen screen, String seatNumber) {
         this.screen = screen;
-        this.seatNumber = seat_Number;
+        this.seatNumber = seatNumber;
     }
 
     public void update(Screen screen, String seatNumbe) {

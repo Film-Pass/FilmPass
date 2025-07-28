@@ -38,9 +38,9 @@ public enum ErrorCode {
     MOVIE_LIST_NOT_FOUND(HttpStatus.NOT_FOUND,"영화가 존재하지 않습니다"),
     MOVIE_NOT_FOUND_BY_ID(HttpStatus.NOT_FOUND,"ID값에 해당하는 영화가 존재하지 않습니다."),
     MOVIE_NOT_FOUND_BY_TITLE(HttpStatus.NOT_FOUND,"제목과 일치하는 영화가 존재하지 않습니다."),
-    MOVIE_NOT_FOUND_BY_DIRECTOR(HttpStatus.NOT_FOUND,"해당하는 작가의 영화가 존재하지 않습니다."),
+    MOVIE_NOT_FOUND_BY_DIRECTOR(HttpStatus.NOT_FOUND,"해당하는 감독의 영화가 존재하지 않습니다."),
     MOVIE_TITLE_REQUIRED(HttpStatus.BAD_REQUEST,"제목은 필수 항목입니다."),
-    MOVIE_DIRECTOR_REQUIRED(HttpStatus.BAD_REQUEST,"작가는 필수 항목입니다."),
+    MOVIE_DIRECTOR_REQUIRED(HttpStatus.BAD_REQUEST,"감독은 필수 항목입니다."),
     MOVIE_RUNNING_TIME_REQUIRED(HttpStatus.BAD_REQUEST,"상영 시간은 필수 항목입니다.");
 
 

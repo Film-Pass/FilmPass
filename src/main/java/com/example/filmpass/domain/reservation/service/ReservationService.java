@@ -63,4 +63,25 @@ public class ReservationService {
 
         return new ReservationResponse(schedule.getId(), reservationInfos);
     }
+
+    @Transactional
+    public void cancelReservation(Long userId, Long reservationId) {
+
+        // 1. 예매내역 조회
+        Reservation reservation = reservationRepository.findById(reservationId)
+                .orElseThrow(() -> new IllegalArgumentException("예매내역이 없습니다."));
+
+        // 2. 본인 확인
+        if (!reservation.getUser().getId().equals(userId)) {
+            throw new IllegalArgumentException("취소는 예매자 본인만 할 수 있습니다.");
+        }
+
+        // 3. 취소 여부 확인
+        if (reservation.isSoftDeleted()) {
+            throw new IllegalArgumentException("이미 취소된 예매입니다.");
+        }
+
+        // 4. 플래그를 true 처리
+        reservation.cancel();
+    }
 }

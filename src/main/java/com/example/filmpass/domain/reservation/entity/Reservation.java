@@ -44,4 +44,8 @@ public class Reservation {
         this.reservationAt = LocalDateTime.now();
         this.softDeleted = false;
     }
+
+    public void cancel() {
+        softDeleted = true;
+    }
 }

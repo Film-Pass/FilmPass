@@ -9,10 +9,6 @@ import com.example.filmpass.domain.seat.entity.Seat;
 import com.example.filmpass.domain.seat.repository.SeatRepository;
 import com.example.filmpass.global.exception.CustomException;
 import com.example.filmpass.global.exception.ErrorCode;
-import com.example.filmpass.domain.seat.dto.PagedResponse;
-import com.example.filmpass.domain.seat.dto.SeatResponse;
-import com.example.filmpass.domain.seat.entity.Seat;
-import com.example.filmpass.domain.seat.repository.SeatRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -59,5 +55,12 @@ public class SeatService {
                 seatPage.getTotalPages(), // int totalPages
                 seatPage.isLast()
         );
+    }
+
+    // 좌석 단건 조회
+    public SeatResponse getSeatById(Long seatId) {
+        Seat seat = seatRepository.findById(seatId)
+                .orElseThrow(() -> new CustomException(ErrorCode.SEAT_NOT_FOUND));
+        return new SeatResponse(seat.getId(), seat.getSeat_Number());
     }
 }

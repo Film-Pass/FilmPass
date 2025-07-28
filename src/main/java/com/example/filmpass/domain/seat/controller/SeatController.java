@@ -22,6 +22,7 @@ public class SeatController {
 
     private final SeatService seatService;
 
+
     // 좌석 등록 (상영관 연관관계, 어도민 권한)
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
@@ -45,6 +46,7 @@ public class SeatController {
         return ResponseEntity.ok(ApiResponse.success(seat, "좌석 단건 조회 성공"));
     }
 
+
     // 좌석 수정 (어도민 권한)
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<SeatResponse>> updateSeat(
@@ -54,5 +56,4 @@ public class SeatController {
         SeatResponse updatedSeat = seatService.updateSeat(seatId, request);
         return ResponseEntity.ok(ApiResponse.success(updatedSeat, "좌석 수정 성공"));
     }
-
 }

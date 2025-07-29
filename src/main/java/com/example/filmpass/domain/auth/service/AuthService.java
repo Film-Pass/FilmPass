@@ -2,14 +2,13 @@ package com.example.filmpass.domain.auth.service;
 
 import com.example.filmpass.domain.auth.dto.AuthData;
 import com.example.filmpass.domain.auth.dto.LoginRequestDto;
-import com.example.filmpass.domain.auth.dto.RoleReuqestDto;
+import com.example.filmpass.domain.auth.dto.RoleRequestDto;
 import com.example.filmpass.domain.auth.dto.SignUpRequestDto;
 import com.example.filmpass.domain.auth.entity.RefreshToken;
 import com.example.filmpass.domain.auth.repository.RefreshTokenRepository;
 import com.example.filmpass.domain.user.entity.User;
 import com.example.filmpass.domain.user.enums.UserRole;
 import com.example.filmpass.domain.user.repository.UserRepository;
-import com.example.filmpass.global.common.ApiResponse;
 import com.example.filmpass.global.config.JwtUtil;
 import com.example.filmpass.global.config.UserPrincipal;
 import com.example.filmpass.global.exception.CustomException;
@@ -34,7 +33,8 @@ public class AuthService {
 
 
     // 회원가입 로직
-    public ApiResponse<AuthData> signUp(SignUpRequestDto requestDto) {
+    @Transactional
+    public AuthData signUp(SignUpRequestDto requestDto) {
 
         // 저장할 값 꺼내기
         String name = requestDto.getName();
@@ -60,13 +60,13 @@ public class AuthService {
 
         AuthData data = new AuthData(user.getEmail(), user.getNickname());
 
-        return ApiResponse.success(data, "회원가입 성공!");
+        return data;
 
     }
 
     // 로그인 로직
     @Transactional
-    public ApiResponse<String> login(LoginRequestDto requestDto, HttpServletResponse response) {
+    public String login(LoginRequestDto requestDto, HttpServletResponse response) {
 
         // 값 꺼내기
         String email = requestDto.getEmail();
@@ -111,14 +111,14 @@ public class AuthService {
 
         response.addCookie(cookie);
 
-        return ApiResponse.success(accessToken, "로그인 성공!");
+        return accessToken;
 
     }
 
 
     // 로그아웃 로직
     @Transactional
-    public ApiResponse<AuthData> logout(Long userId, HttpServletResponse response) {
+    public void logout(Long userId, HttpServletResponse response) {
 
         refreshTokenRepository.deleteByUser_Id(userId);
 
@@ -129,13 +129,12 @@ public class AuthService {
         cookie.setMaxAge(0);
 
         response.addCookie(cookie);
-
-        return ApiResponse.success(null, "로그아웃 성공!");
     }
 
 
     // 유저 권한 변경 로직
-    public ApiResponse<String> changeRole(RoleReuqestDto request, Long id, UserPrincipal principal) {
+    @Transactional
+    public String changeRole(RoleRequestDto request, Long id, UserPrincipal principal) {
 
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
@@ -160,7 +159,7 @@ public class AuthService {
 
         userRepository.save(user);
 
-        return ApiResponse.success(user.getRole().name(), "권한 변경 성공!");
+        return user.getRole().name();
 
     }
 

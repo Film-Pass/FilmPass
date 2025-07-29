@@ -3,17 +3,16 @@ package com.example.filmpass.domain.movie.service;
 import com.example.filmpass.domain.movie.dto.*;
 import com.example.filmpass.domain.movie.entity.Movie;
 import com.example.filmpass.domain.movie.repository.MovieRepository;
-import com.example.filmpass.global.common.ApiResponse;
-import com.example.filmpass.domain.movie.repository.MovieRepository;
 import com.example.filmpass.global.exception.CustomException;
 import com.example.filmpass.global.exception.ErrorCode;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -23,7 +22,7 @@ public class MovieService {
 
     //영화 등록 CreateMovie
     @Transactional
-    public ApiResponse<String> movieCreate(MovieCreateRequest movieCreateRequest){
+    public MovieCreateResponse movieCreate(MovieCreateRequest movieCreateRequest){
         String runningTime = movieCreateRequest.getRunningTime();
         String director = movieCreateRequest.getDirector();
         String description = movieCreateRequest.getDescription();
@@ -46,50 +45,52 @@ public class MovieService {
         Movie movie = new Movie(title,director,description,runningTime,posterUrl);
         movieRepository.save(movie);
 
-        return ApiResponse.success(movie.getTitle(),"영화 등록 성공!");
+        return new MovieCreateResponse(movie.getTitle());
     }
 
     //영화 전체 조회
-    @Transactional
-    public ApiResponse<FindMovieResponse<Movie>> findAllMovie(Pageable pageable) {
+    @Transactional(readOnly = true)
+    public FindMovieResponse<Movie> findAllMovie(Pageable pageable) {
         Page<Movie> moviePage = movieRepository.findAll(pageable);
 
         if(moviePage.isEmpty()) {
             throw new CustomException(ErrorCode.MOVIE_LIST_NOT_FOUND);
         }
-
         PageInfo pageInfo = new PageInfo(moviePage.getNumber(), moviePage.getTotalPages(), moviePage.getTotalElements(), moviePage.getSize(), moviePage.isLast());
-        FindMovieResponse<Movie> findMovieResponse = new FindMovieResponse(moviePage.getContent(), pageInfo);
-        return ApiResponse.success(findMovieResponse, "영화 조회 성공!");
+        return new FindMovieResponse<Movie> (moviePage.getContent(), pageInfo);
     }
 
     //영화 검색
     @Transactional
-    public ApiResponse<Movie> findMovie(FindMovieRequest findMovieRequest) {
+    public Page<Movie> findMovie(FindMovieRequest findMovieRequest) {
         Long id = findMovieRequest.getId();
         String title = findMovieRequest.getTitle();
         String director = findMovieRequest.getDirector();
 
+        List<Movie> result = new ArrayList<>();
+
         if (id != null) {
             Movie movie = movieRepository.findById(id)
                     .orElseThrow(() -> new CustomException(ErrorCode.MOVIE_NOT_FOUND_BY_ID));
-            return ApiResponse.success(movie, "영화 검색 성공");
+            result.add(movie);
         } else if (title != null && !title.trim().isEmpty()) {
             Movie movie = movieRepository.findByTitle(title)
                     .orElseThrow(() -> new CustomException(ErrorCode.MOVIE_NOT_FOUND_BY_TITLE));
-            return ApiResponse.success(movie, "영화 검색 성공");
+            result.add(movie);
         } else if (director != null && !director.trim().isEmpty()) {
             Movie movie = movieRepository.findByDirector(director)
                     .orElseThrow(() -> new CustomException(ErrorCode.MOVIE_NOT_FOUND_BY_DIRECTOR));
-            return ApiResponse.success(movie, "영화 검색 성공");
+            result.add(movie);
         }
 
-        return ApiResponse.error("id, 제목, 감독 중 하나 이상의 값을 입력해주세요");
+        // List<Movie>를 Page<Movie>로 감싸기
+        return new PageImpl<>(result);
     }
+
 
     //영화 수정
     @Transactional
-    public ApiResponse<Movie> updateMovie(Long movieId, UpdateMovieRequest updateMovieRequest) {
+    public UpdateMovieResponse updateMovie(Long movieId, UpdateMovieRequest updateMovieRequest) {
         String newTitle = updateMovieRequest.getTitle();
         String newUrl = updateMovieRequest.getUrl();
         String newDescription = updateMovieRequest.getDescription();
@@ -111,28 +112,26 @@ public class MovieService {
 
         alreadyMovie.updateMovie(newTitle, newUrl, newDescription, newDirector, newRunningTime);
         movieRepository.save(alreadyMovie);
-        return ApiResponse.success(alreadyMovie, "수정이 정상적으로 완료되었습니다.");
+        return new UpdateMovieResponse(alreadyMovie);
     }
 
     //영화 상세 조회
-    @Transactional
-    public ApiResponse<FindMovieDetailResponse> findMovieDtail(Long movieId) {
+    @Transactional(readOnly = true)
+    public FindMovieDetailResponse findMovieDtail(Long movieId) {
         Movie alreadyMovie = movieRepository.findById(movieId)
                 .orElseThrow(()-> new CustomException(ErrorCode.MOVIE_NOT_FOUND));
 
-        FindMovieDetailResponse findMovieDetailResponse = new FindMovieDetailResponse(alreadyMovie.getTitle(), alreadyMovie.getDirector(), alreadyMovie.getDescription());
-
-        return ApiResponse.success(findMovieDetailResponse, "영화 상세 조회 성공");
+        return new FindMovieDetailResponse(alreadyMovie.getTitle(), alreadyMovie.getDirector(), alreadyMovie.getDescription());
     }
 
     //영화 삭제
     @Transactional
-    public ApiResponse<Object> deleteMovie(Long movieId) {
+    public DeleteMovieResponse deleteMovie(Long movieId) {
         Movie alreadyMovie = movieRepository.findById(movieId)
                 .orElseThrow(()-> new CustomException(ErrorCode.MOVIE_NOT_FOUND));
 
+        DeleteMovieResponse deleteMovieResponse = new DeleteMovieResponse(alreadyMovie.getTitle());
         movieRepository.deleteById(movieId);
-
-        return ApiResponse.success(alreadyMovie, "영화가 성공적으로 삭제되었습니다.");
+        return deleteMovieResponse;
     }
 }

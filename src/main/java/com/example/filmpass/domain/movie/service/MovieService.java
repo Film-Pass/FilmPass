@@ -50,14 +50,14 @@ public class MovieService {
 
     //영화 전체 조회
     @Transactional(readOnly = true)
-    public FindMovieResponse findAllMovie(Pageable pageable) {
+    public FindMovieResponse<Movie> findAllMovie(Pageable pageable) {
         Page<Movie> moviePage = movieRepository.findAll(pageable);
 
         if(moviePage.isEmpty()) {
             throw new CustomException(ErrorCode.MOVIE_LIST_NOT_FOUND);
         }
         PageInfo pageInfo = new PageInfo(moviePage.getNumber(), moviePage.getTotalPages(), moviePage.getTotalElements(), moviePage.getSize(), moviePage.isLast());
-        return (FindMovieResponse<Movie>) new FindMovieResponse(moviePage.getContent(), pageInfo);
+        return new FindMovieResponse<Movie> (moviePage.getContent(), pageInfo);
     }
 
     //영화 검색

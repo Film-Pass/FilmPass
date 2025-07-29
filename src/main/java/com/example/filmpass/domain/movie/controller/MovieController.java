@@ -33,7 +33,7 @@ public class MovieController {
     //영화 목록 조회
     @GetMapping
     public ApiResponse<Object> findAllMovieApi(Pageable pageable) {
-        FindMovieResponse findMovieResponse = movieService.findAllMovie(pageable);
+        FindMovieResponse<Movie> findMovieResponse = movieService.findAllMovie(pageable);
         return ApiResponse.success(findMovieResponse, "영화 조회가 정상적으로 완료되었습니다.");
     }
 

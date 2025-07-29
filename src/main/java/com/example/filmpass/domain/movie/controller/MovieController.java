@@ -39,8 +39,8 @@ public class MovieController {
 
     //영화 검색
     @PostMapping("/search")
-    public ApiResponse<Object> findMovieApi(@RequestBody FindMovieRequest findMovieRequest) {
-        Page<Movie> moviePage = movieService.findMovie(findMovieRequest);
+    public ApiResponse<Object> findMovieApi(@RequestBody FindMovieRequest findMovieRequest, Pageable pageable) {
+        SearchMovieResponse moviePage = movieService.findMovie(findMovieRequest, pageable);
         return ApiResponse.success(moviePage, "영화 검색이 정상적으로 완료되었습니다.");
     }
 

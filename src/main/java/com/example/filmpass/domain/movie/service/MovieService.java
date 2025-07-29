@@ -7,7 +7,6 @@ import com.example.filmpass.global.exception.CustomException;
 import com.example.filmpass.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -62,29 +61,34 @@ public class MovieService {
 
     //영화 검색
     @Transactional
-    public Page<Movie> findMovie(FindMovieRequest findMovieRequest) {
+    public SearchMovieResponse findMovie(FindMovieRequest findMovieRequest, Pageable pageable) {
         Long id = findMovieRequest.getId();
         String title = findMovieRequest.getTitle();
         String director = findMovieRequest.getDirector();
 
-        List<Movie> result = new ArrayList<>();
-
-        if (id != null) {
-            Movie movie = movieRepository.findById(id)
-                    .orElseThrow(() -> new CustomException(ErrorCode.MOVIE_NOT_FOUND_BY_ID));
-            result.add(movie);
-        } else if (title != null && !title.trim().isEmpty()) {
-            Movie movie = movieRepository.findByTitle(title)
-                    .orElseThrow(() -> new CustomException(ErrorCode.MOVIE_NOT_FOUND_BY_TITLE));
-            result.add(movie);
-        } else if (director != null && !director.trim().isEmpty()) {
-            Movie movie = movieRepository.findByDirector(director)
-                    .orElseThrow(() -> new CustomException(ErrorCode.MOVIE_NOT_FOUND_BY_DIRECTOR));
-            result.add(movie);
+        if (id == null) {
+            if (title == null || title.trim().isEmpty()) {
+                if (director == null || director.trim().isEmpty()) {
+                    throw new CustomException(ErrorCode.MOVIE_SEARCH_REQUIRED);
+                }
+            }
         }
 
-        // List<Movie>를 Page<Movie>로 감싸기
-        return new PageImpl<>(result);
+        if (title.trim().isEmpty()) {
+            title=null;
+        }
+        if (director.trim().isEmpty()) {
+            director = null;
+        }
+        Page<Movie> movies = movieRepository.searchMoviesNative(id, title, director, pageable);
+        PageInfo pageInfo = new PageInfo(
+                movies.getNumber(),
+                movies.getTotalPages(),
+                movies.getTotalElements(),
+                movies.getSize(),
+                movies.isLast()
+        );
+        return new SearchMovieResponse(movies.getContent(),pageInfo);
     }
 
 

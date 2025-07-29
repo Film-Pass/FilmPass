@@ -6,8 +6,6 @@ import com.example.filmpass.domain.review.service.ReviewService;
 import com.example.filmpass.global.common.ApiResponse;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -19,31 +17,21 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/reviews")
 @RequiredArgsConstructor
-public class ReviewController<CustomUserDetails> {
+public class ReviewController {
 
     private final ReviewService reviewService;
 
     // 리뷰 생성
     @PostMapping
-    public ResponseEntity<ApiResponse<ReviewResponseDto>> createReview(
-            @RequestBody ReviewRequestDto request,
-            Authentication authentication) {
-
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        String username = userDetails.getUsername();
-
-        Long userId = reviewService.getUserIdByUsername(username);
-        ReviewResponseDto response = reviewService.createReview(request, userId);
-
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(ApiResponse.success(response, "리뷰가 등록되었습니다."));
+    public ResponseEntity<ApiResponse> createReview(@RequestBody ReviewRequestDto request) {
+        ReviewResponseDto response = reviewService.createReview(request);
+        ApiResponse responseBody = ApiResponse.success(response, "리뷰가 등록되었습니다.");
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseBody);
     }
-
-
 
     // 리뷰 수정
     @PatchMapping("/{reviewId}")
-    public ResponseEntity<ApiResponse<ReviewResponseDto>> updateReview(
+    public ResponseEntity<ApiResponse> updateReview(
             @PathVariable Long reviewId,
             @RequestBody ReviewRequestDto request
     ) {
@@ -52,8 +40,8 @@ public class ReviewController<CustomUserDetails> {
     }
 
     // 영화별 리뷰 목록 조회
-    @GetMapping("/{movieId}/reviewId")
-    public ResponseEntity<ApiResponse<Page<ReviewResponseDto>>> getReviewsByMovie(
+    @GetMapping("/{movieId}")
+    public ResponseEntity<ApiResponse> getReviewsByMovie(
             @PathVariable Long movieId,
             @PageableDefault(page = 0, size = 10, sort = "createdAt", direction = Sort.Direction.DESC)
             Pageable pageable
@@ -64,7 +52,7 @@ public class ReviewController<CustomUserDetails> {
 
     // 리뷰 삭제
     @DeleteMapping("/{reviewId}")
-    public ResponseEntity<ApiResponse<Void>> deleteReview(@PathVariable Long reviewId) {
+    public ResponseEntity<ApiResponse> deleteReview(@PathVariable Long reviewId) {
         reviewService.deleteReview(reviewId);
         return ResponseEntity.ok(ApiResponse.success(null, "리뷰가 삭제되었습니다."));
     }

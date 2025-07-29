@@ -48,7 +48,9 @@ public enum ErrorCode {
     MOVIE_NOT_FOUND_BY_DIRECTOR(HttpStatus.NOT_FOUND,"해당하는 감독의 영화가 존재하지 않습니다."),
     MOVIE_TITLE_REQUIRED(HttpStatus.BAD_REQUEST,"제목은 필수 항목입니다."),
     MOVIE_DIRECTOR_REQUIRED(HttpStatus.BAD_REQUEST,"감독은 필수 항목입니다."),
-    MOVIE_RUNNING_TIME_REQUIRED(HttpStatus.BAD_REQUEST,"상영 시간은 필수 항목입니다.");
+    MOVIE_RUNNING_TIME_REQUIRED(HttpStatus.BAD_REQUEST,"상영 시간은 필수 항목입니다."),
+    MOVIE_SEARCH_REQUIRED(HttpStatus.BAD_REQUEST, "ID, 제목, 감독 중 최소 1가지 이상의 조건이 필요합니다.");
+
 
     private final HttpStatus code;
     private final String message;

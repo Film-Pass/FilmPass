@@ -27,11 +27,11 @@ public class ReviewService {
 
     // 리뷰 생성
     public ReviewResponseDto createReview(ReviewRequestDto request) {
-        Movie movie = movieRepository.findById(request.getMovieId())
-                .orElseThrow(() -> new CustomException(ErrorCode.MOVIE_NOT_FOUND));
-
         User user = userRepository.findById(request.getUserId())
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        Movie movie = movieRepository.findById(request.getMovieId())
+                .orElseThrow(() -> new CustomException(ErrorCode.MOVIE_NOT_FOUND));
 
         Review review = new Review(
                 request.getRating(),
@@ -70,5 +70,10 @@ public class ReviewService {
                 .orElseThrow(() -> new CustomException(ErrorCode.REVIEW_NOT_FOUND));
         review.softDelete();
         reviewRepository.save(review);
+    }
+    public Long getUserIdByUsername(String username) {
+        User user = userRepository.findByNickname(username)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+        return user.getId();
     }
 }

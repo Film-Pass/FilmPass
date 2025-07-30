@@ -11,5 +11,5 @@ public class ReservationSummaryResponse {
     private Long reservationId;
     private String movieTitle;
     private LocalDateTime startAt;
-    private String status;
+    private SoftDeleteStatus status;
 }

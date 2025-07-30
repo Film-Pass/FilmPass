@@ -7,9 +7,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
+
 public interface ReservationRepository extends JpaRepository<Reservation, Long> {
 
     boolean existsByScheduleAndSeat(Schedule schedule, Seat seat);
 
     Page<Reservation> findByUserId(Long userId, Pageable pageable);
+
+    List<Reservation> findAllByScheduleAndSeatIn(Schedule schedule, List<Seat> seats);
 }

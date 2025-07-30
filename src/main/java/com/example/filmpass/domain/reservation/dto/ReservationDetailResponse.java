@@ -15,5 +15,5 @@ public class ReservationDetailResponse {
     private String seatNumber;
     private LocalDateTime startAt;
     private LocalDateTime reservationAt;
-    private String status;
+    private SoftDeleteStatus status;
 }

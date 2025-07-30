@@ -4,7 +4,7 @@ import com.example.filmpass.domain.user.enums.UserRole;
 import lombok.Getter;
 
 @Getter
-public class RoleReuqestDto {
+public class RoleRequestDto {
 
     private UserRole userRole;
 

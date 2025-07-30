@@ -6,7 +6,6 @@ import com.example.filmpass.domain.user.service.UserService;
 import com.example.filmpass.global.common.ApiResponse;
 import com.example.filmpass.global.config.UserPrincipal;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,54 +16,55 @@ public class UserController {
 
     private final UserService userService;
 
+    // 회원 탈퇴
     @DeleteMapping("/api/users/{id}")
-    public ResponseEntity<ApiResponse<?>> deleteUser(
+    public ApiResponse deleteUser(
             @RequestBody PasswordRequestDto requestDto,
             @PathVariable Long id
             ) {
 
-        return ResponseEntity.ok(userService.deleteUser(id, requestDto));
+        return ApiResponse.success(null, "회원 탈퇴가 완료되었습니다.");
 
     }
 
     @GetMapping("/api/users")
-    public ResponseEntity<ApiResponse<?>> getUsers(
+    public ApiResponse getUsers(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size,
             @AuthenticationPrincipal UserPrincipal principal
             ) {
 
-        return ResponseEntity.ok(userService.getUsers(page, size, principal));
+        return ApiResponse.success(userService.getUsers(page, size, principal), "유저목록 조회성공!");
 
     }
 
     @GetMapping("/api/users/{id}")
-    public ResponseEntity<ApiResponse<?>> getUser(
+    public ApiResponse getUser(
         @PathVariable Long id,
         @AuthenticationPrincipal UserPrincipal principal
         ) {
 
-        return ResponseEntity.ok(userService.getUser(id, principal));
+        return ApiResponse.success(userService.getUser(id, principal), "유저정보 조회성공!");
 
     }
 
     @PostMapping("/api/users/me")
-    public ResponseEntity<ApiResponse<?>> getMyProfile(
+    public ApiResponse getMyProfile(
             @RequestBody PasswordRequestDto requestDto,
             @AuthenticationPrincipal UserPrincipal principal
     ) {
 
-        return ResponseEntity.ok(userService.getMyProfile(requestDto ,principal));
+        return ApiResponse.success(userService.getMyProfile(requestDto ,principal), "내 정보 조회 성공!");
 
     }
 
     @PutMapping("/api/users/{id}")
-    public ResponseEntity<ApiResponse<?>> changeUserInfo(
+    public ApiResponse changeUserInfo(
             @RequestBody UserInfoChangeRequestDto request,
             @AuthenticationPrincipal UserPrincipal principal,
             @PathVariable Long id) {
 
-        return ResponseEntity.ok(userService.changeUserInfo(request, principal, id));
+        return ApiResponse.success(userService.changeUserInfo(request, principal, id), "회원 정보가 수정되었습니다.");
 
     }
 

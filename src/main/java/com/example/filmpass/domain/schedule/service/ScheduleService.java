@@ -22,7 +22,7 @@ public class ScheduleService {
     private final MovieRepository movieRepository;
 
     // 스케줄 등록
-    public void createSchedule(ScheduleRequestDto requestDto) {
+    public ScheduleResponseDto createSchedule(ScheduleRequestDto requestDto) {
         Screen screen = screenRepository.findById(requestDto.getScreenId())
                 .orElseThrow(() -> new CustomException(ErrorCode.SCREEN_NOT_FOUND));
 
@@ -38,6 +38,7 @@ public class ScheduleService {
         );
 
         scheduleRepository.save(schedule);
+        return null;
     }
   
     // 스케줄 수정

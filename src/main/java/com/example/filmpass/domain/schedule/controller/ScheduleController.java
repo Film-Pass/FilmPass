@@ -26,8 +26,7 @@ public class ScheduleController {
 
     // 상영 일정 수정
     @PatchMapping("/{scheduleId}")
-    public ResponseEntity<ApiResponse> updateSchedule(
-            @PathVariable Long scheduleId,
+    public ResponseEntity<ApiResponse> updateSchedule(@PathVariable Long scheduleId,
             @RequestBody @Valid ScheduleRequestDto requestDto) {
         ScheduleResponseDto response = scheduleService.updateSchedule(scheduleId, requestDto);
         return ResponseEntity.ok(ApiResponse.success(response, "상영 일정이 수정되었습니다."));

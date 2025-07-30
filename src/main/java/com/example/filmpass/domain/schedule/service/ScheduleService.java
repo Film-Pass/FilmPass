@@ -37,8 +37,8 @@ public class ScheduleService {
                 movie
         );
 
-        scheduleRepository.save(schedule);
-        return null;
+        Schedule saved = scheduleRepository.save(schedule);
+        return ScheduleResponseDto.from(saved);
     }
   
     // 스케줄 수정

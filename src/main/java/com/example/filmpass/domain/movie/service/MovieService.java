@@ -3,6 +3,7 @@ package com.example.filmpass.domain.movie.service;
 import com.example.filmpass.domain.movie.dto.*;
 import com.example.filmpass.domain.movie.entity.Movie;
 import com.example.filmpass.domain.movie.repository.MovieRepository;
+import com.example.filmpass.global.config.UserPrincipal;
 import com.example.filmpass.global.exception.CustomException;
 import com.example.filmpass.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;

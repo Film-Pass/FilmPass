@@ -9,17 +9,15 @@ import com.example.filmpass.domain.seat.entity.Seat;
 import com.example.filmpass.domain.seat.repository.SeatRepository;
 import com.example.filmpass.global.exception.CustomException;
 import com.example.filmpass.global.exception.ErrorCode;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class SeatService {
 
@@ -27,6 +25,7 @@ public class SeatService {
     private final ScreenRepository screenRepository; // 상영관 조회용
 
     // 좌석 등록
+    @Transactional
     public SeatResponse createSeat(SeatRequest request) {
         // 상영관 존재 확인
         Screen screen = screenRepository.findById(request.getScreenId())
@@ -67,6 +66,7 @@ public class SeatService {
     }
 
     // 좌석 수정
+    @Transactional
     public SeatResponse updateSeat(Long seatId, SeatRequest request) {
         Seat seat = seatRepository.findById(seatId)
                 .orElseThrow(() -> new CustomException(ErrorCode.SEAT_NOT_FOUND));

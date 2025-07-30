@@ -6,8 +6,8 @@ import com.example.filmpass.domain.theater.entity.Theater;
 import com.example.filmpass.domain.theater.repository.TheaterRepository;
 import com.example.filmpass.global.exception.CustomException;
 import com.example.filmpass.global.exception.ErrorCode;
-import jakarta.transaction.Transactional;
 import com.example.filmpass.domain.theater.dto.PagedResponse;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,13 +17,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class TheaterService {
 
     private final TheaterRepository theaterRepository;
 
     // 극장 등록
+    @Transactional
     public TheaterResponse createTheater(TheaterRequest request) {
         // 1. 중복 이름 체크
         if (theaterRepository.existsByName(request.getName())) {
@@ -70,6 +70,7 @@ public class TheaterService {
     }
 
     // 극장 수정
+    @Transactional
     public TheaterResponse updateTheater(Long id, TheaterRequest request) {
         Theater theater = theaterRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.THEATER_NOT_FOUND));

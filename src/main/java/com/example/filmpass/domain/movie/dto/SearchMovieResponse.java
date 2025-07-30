@@ -7,11 +7,9 @@ import java.util.List;
 
 @Getter
 public class SearchMovieResponse {
-    private List<Movie> movieList;
-    private PageInfo pageInfo;
+    private Movie movie;
 
-    public SearchMovieResponse(List<Movie> movieList, PageInfo pageInfo) {
-        this.movieList = movieList;
-        this.pageInfo = pageInfo;
+    public SearchMovieResponse(Movie movie) {
+        this.movie = movie;
     }
 }

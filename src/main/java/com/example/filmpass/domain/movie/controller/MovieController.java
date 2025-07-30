@@ -5,6 +5,7 @@ import com.example.filmpass.domain.movie.service.MovieService;
 import com.example.filmpass.global.common.ApiResponse;
 import com.example.filmpass.domain.movie.entity.Movie;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,7 +27,7 @@ public class MovieController {
     @PostMapping
     public ApiResponse movieCreateApi(@RequestBody MovieCreateRequest movieCreateRequest) {
         MovieCreateResponse movieCreateResponse = movieService.movieCreate(movieCreateRequest);
-        return ApiResponse.success(movieCreateResponse,"영솨 생성이 정상적으로 완료되었습니다.");
+        return ApiResponse.success(movieCreateResponse,"영화 생성이 정상적으로 완료되었습니다.");
     }
 
     //영화 목록 조회
@@ -39,7 +40,7 @@ public class MovieController {
     //영화 검색
     @PostMapping("/search")
     public ApiResponse findMovieApi(@RequestBody FindMovieRequest findMovieRequest, Pageable pageable) {
-        SearchMovieResponse moviePage = movieService.findMovie(findMovieRequest, pageable);
+        Page<SearchMovieResponse> moviePage = movieService.findMovie(findMovieRequest, pageable);
         return ApiResponse.success(moviePage, "영화 검색이 정상적으로 완료되었습니다.");
     }
 

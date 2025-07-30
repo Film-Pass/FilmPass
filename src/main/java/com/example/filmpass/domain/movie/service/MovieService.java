@@ -62,7 +62,7 @@ public class MovieService {
 
     //영화 검색
     @Transactional
-    public SearchMovieResponse findMovie(FindMovieRequest findMovieRequest, Pageable pageable) {
+    public Page<SearchMovieResponse> findMovie(FindMovieRequest findMovieRequest, Pageable pageable) {
         Long id = findMovieRequest.getId();
         String title = findMovieRequest.getTitle();
         String director = findMovieRequest.getDirector();
@@ -81,15 +81,9 @@ public class MovieService {
         if (director.trim().isEmpty()) {
             director = null;
         }
-        Page<Movie> movies = movieRepository.searchMoviesNative(id, title, director, pageable);
-        PageInfo pageInfo = new PageInfo(
-                movies.getNumber(),
-                movies.getTotalPages(),
-                movies.getTotalElements(),
-                movies.getSize(),
-                movies.isLast()
-        );
-        return new SearchMovieResponse(movies.getContent(),pageInfo);
+        Page<SearchMovieResponse> movies = movieRepository.searchMoviesNative(id, title, director, pageable);
+
+        return movies;
     }
 
 

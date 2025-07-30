@@ -14,15 +14,22 @@ public class Screen {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; // 상영관 식별자
+    private Long id;
 
     @Column(nullable = false)
-    private String name; // 상영관 이름 (예: 1관, IMAX관)
+    private String name;
 
     @Column(nullable = false)
-    private String address; // 상영관 주소
+    private String address;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "theater_id", nullable = false)
-    private Theater theater; // 극장 식별자 (FK)
+    private Theater theater;
+
+    // 생성자
+    public Screen(String name, String address, Theater theater) {
+        this.name = name;
+        this.address = address;
+        this.theater = theater;
+    }
 }

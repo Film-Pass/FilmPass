@@ -13,7 +13,6 @@ public class ReviewResponseDto {
     private Long movieId;
     private Integer rating;
     private String content;
-    private String author;
     private LocalDateTime createdAt;
 
     public static ReviewResponseDto from(Review review) {
@@ -22,7 +21,6 @@ public class ReviewResponseDto {
                 review.getMovie().getId(),
                 review.getRating(),
                 review.getContent(),
-                review.getUser().getNickname(),
                 review.getCreatedAt()
         );
     }

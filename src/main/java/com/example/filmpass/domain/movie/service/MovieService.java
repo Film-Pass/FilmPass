@@ -75,15 +75,11 @@ public class MovieService {
             }
         }
 
-        if (title.trim().isEmpty()) {
-            title=null;
-        }
-        if (director.trim().isEmpty()) {
-            director = null;
-        }
-        Page<SearchMovieResponse> movies = movieRepository.searchMoviesNative(id, title, director, pageable);
+        if (title != null && title.trim().isEmpty()) title = null;
+        if (director != null && director.trim().isEmpty()) director = null;
 
-        return movies;
+        Page<Movie> movies = movieRepository.searchMoviesNative(id, title, director, pageable);
+        return movies.map(SearchMovieResponse::new);
     }
 
 

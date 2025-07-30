@@ -5,6 +5,7 @@ import com.example.filmpass.domain.review.dto.ReviewResponseDto;
 import com.example.filmpass.domain.review.service.ReviewService;
 import com.example.filmpass.global.common.ApiResponse;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,11 +24,12 @@ public class ReviewController {
 
     // 리뷰 생성
     @PostMapping
-    public ResponseEntity<ApiResponse> createReview(@RequestBody ReviewRequestDto request) {
+    public ResponseEntity<ApiResponse> createReview(@Valid @RequestBody ReviewRequestDto request) {
         ReviewResponseDto response = reviewService.createReview(request);
         ApiResponse responseBody = ApiResponse.success(response, "리뷰가 등록되었습니다.");
         return ResponseEntity.status(HttpStatus.CREATED).body(responseBody);
     }
+
 
     // 리뷰 수정
     @PatchMapping("/{reviewId}")

@@ -14,32 +14,28 @@ public enum ErrorCode {
     // 상영관
     SCREEN_NOT_FOUND(HttpStatus.NOT_FOUND,"상영관을 찾을 수 없습니다" ),
     SCHEDULE_NOT_FOUND(HttpStatus.NOT_FOUND, "날짜를 찾을 수 없습니다."),
+    // 좌석
+    SEAT_NOT_FOUND(HttpStatus.NOT_FOUND, "좌석을 찾을 수 없습니다."),
     // Auth
     EMAIL_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "이미 사용중인 이메일입니다."),
     NICKNAME_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "이미 사용중인 닉네임입니다."),
     PASSWORD_MISMATCH(HttpStatus.BAD_REQUEST, "비밀번호가 틀립니다."),
     CANNOT_CHANGE_SAME_ROLE(HttpStatus.BAD_REQUEST, "같은 권한으로 변경할 수 없습니다."),
-
     // JWT
     TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, "토큰이 존재하지 않습니다."),
     WRONG_TOKEN(HttpStatus.BAD_REQUEST, "잘못된 JWT 입니다."),
-
     // User
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."),
     DELETED_USER(HttpStatus.BAD_REQUEST, "이미 탈퇴한 유저입니다."),
     NOT_ADMIN(HttpStatus.BAD_REQUEST, "관리자 권한이 없습니다."),
     CHANGE_BLOCKED(HttpStatus.BAD_REQUEST, "본인의 정보만 수정할 수 있습니다."),
-
     THEATER_ALREADY_EXISTS(HttpStatus.BAD_REQUEST,"극장이 이미 존재합니다."),
-
     // Reservation
     RESERVATION_NOT_FOUND(HttpStatus.NOT_FOUND, "예매 정보를 찾을 수 없습니다."),
     ALREADY_CANCELED(HttpStatus.BAD_REQUEST, "이미 취소된 예매입니다."),
     NOT_YOUR_RESERVATION(HttpStatus.FORBIDDEN, "예매 정보에 접근할 수 없습니다."),
     SEAT_ALREADY_RESERVED(HttpStatus.BAD_REQUEST, "이미 예약된 좌석이 포함되어 있습니다."),
-    SEAT_NOT_FOUND(HttpStatus.BAD_REQUEST, "존재하지 않는 좌석이 포함되어 있습니다."),
     INVALID_SCHEDULE(HttpStatus.BAD_REQUEST, "상영 회차가 존재하지 않습니다."),
-
     // Movie
     MOVIE_ALREADY_EXISTS(HttpStatus.BAD_REQUEST,"같은 이름의 영화가 이미 존재합니다"),
     MOVIE_LIST_NOT_FOUND(HttpStatus.NOT_FOUND,"영화가 존재하지 않습니다"),

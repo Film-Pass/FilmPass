@@ -34,7 +34,7 @@ public class SecurityConfig {
                 .formLogin(AbstractHttpConfigurer::disable) // 폼 로그인 비활성화
                 .addFilterBefore(jwtFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class) // jwtFilter 추가
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/signup", "/api/auth/login").permitAll() // 인증 필요없는 요청들
+                        .requestMatchers("/api/auth/signup", "/api/auth/login","/").permitAll() // 인증 필요없는 요청들
                         .anyRequest().authenticated()
                 )
                 .build();

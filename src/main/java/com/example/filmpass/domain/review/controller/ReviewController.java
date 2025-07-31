@@ -35,7 +35,7 @@ public class ReviewController {
     @PatchMapping("/{reviewId}")
     public ResponseEntity<ApiResponse> updateReview(
             @PathVariable Long reviewId,
-            @RequestBody ReviewRequestDto request
+            @Valid @RequestBody ReviewRequestDto request
     ) {
         ReviewResponseDto response = reviewService.updateReview(reviewId, request);
         return ResponseEntity.ok(ApiResponse.success(response, "리뷰가 수정되었습니다."));

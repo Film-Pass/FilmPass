@@ -1,3 +1,16 @@
+-- 1) FK 제약 잠시 끄기
+SET FOREIGN_KEY_CHECKS = 0;
+
+-- 2) 하위 → 상위 순 TRUNCATE
+TRUNCATE TABLE schedules;
+TRUNCATE TABLE seats;
+TRUNCATE TABLE screens;
+TRUNCATE TABLE theaters;
+TRUNCATE TABLE movies;
+
+-- 3) FK 제약 다시 켜기
+SET FOREIGN_KEY_CHECKS = 1;
+
 --영화 정보
 INSERT INTO movies (id,title, director, description, running_time, poster_url)
 VALUES
@@ -18,9 +31,9 @@ VALUES
 --상영 스케줄 정보
 INSERT INTO schedules (start_at, end_at, screen_id, movie_id)
 VALUES
---F1
+-- F1
 ('2025-08-01 19:00:00', '2025-08-01 21:35:00', 1, 1),
---About Time
+-- About Time
 ('2025-08-02 18:00:00', '2025-08-02 20:00:00', 2, 2);
 
 -- 좌석 정보 (스크린 1, 2번 / A~J행, 1~7열)

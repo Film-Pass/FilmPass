@@ -12,6 +12,7 @@ import com.example.filmpass.global.exception.CustomException;
 import com.example.filmpass.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -22,6 +23,7 @@ public class ScheduleService {
     private final MovieRepository movieRepository;
 
     // 스케줄 등록
+    @Transactional
     public ScheduleResponseDto createSchedule(ScheduleRequestDto requestDto) {
         Screen screen = screenRepository.findById(requestDto.getScreenId())
                 .orElseThrow(() -> new CustomException(ErrorCode.SCREEN_NOT_FOUND));
@@ -42,6 +44,7 @@ public class ScheduleService {
     }
   
     // 스케줄 수정
+    @Transactional
     public ScheduleResponseDto updateSchedule(Long scheduleId, ScheduleRequestDto request) {
         Schedule schedule = scheduleRepository.findById(scheduleId)
                 .orElseThrow(() -> new CustomException(ErrorCode.SCHEDULE_NOT_FOUND));

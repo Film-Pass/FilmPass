@@ -1,11 +1,13 @@
 package com.example.filmpass.domain.review.dto;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 
 @Getter
+@Valid
 public class ReviewRequestDto {
 
     @NotNull(message = "영화 ID는 필수입니다.")

@@ -144,10 +144,10 @@ public class AuthService {
             throw new CustomException(ErrorCode.CHANGE_BLOCKED);
         }
 
-        // ADMIN 만 권한변경 가능하도록 검증
-        if(principal.getUserRole() != UserRole.ADMIN) {
-            throw new CustomException(ErrorCode.NOT_ADMIN);
-        }
+//        // ADMIN 만 권한변경 가능하도록 검증
+//        if(principal.getUserRole() != UserRole.ADMIN) {
+//            throw new CustomException(ErrorCode.NOT_ADMIN);
+//        }
 
         // 입력한 권한이 현재 권한과 같은 Role 인지 검증
         if(principal.getUserRole() == request.getUserRole()) {

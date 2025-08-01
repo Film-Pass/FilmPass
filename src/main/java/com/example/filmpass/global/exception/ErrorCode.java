@@ -14,6 +14,8 @@ public enum ErrorCode {
     // 상영관
     SCREEN_NOT_FOUND(HttpStatus.NOT_FOUND,"상영관을 찾을 수 없습니다" ),
     SCHEDULE_NOT_FOUND(HttpStatus.NOT_FOUND, "날짜를 찾을 수 없습니다."),
+    SCHEDULE_TIME_CONFLICT(HttpStatus.CONFLICT, "해당 상영관에서 겹치는 시간대의 스케줄이 이미 존재합니다."),
+
     // 좌석
     SEAT_NOT_FOUND(HttpStatus.NOT_FOUND, "좌석을 찾을 수 없습니다."),
     // Auth

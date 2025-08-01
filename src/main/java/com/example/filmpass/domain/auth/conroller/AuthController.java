@@ -31,7 +31,7 @@ public class AuthController {
     // 로그인
     @PostMapping("/api/auth/login")
     public ApiResponse login(
-            @RequestBody LoginRequestDto requestDto,
+            @Valid @RequestBody LoginRequestDto requestDto,
             HttpServletResponse response
             ) {
 
@@ -55,7 +55,7 @@ public class AuthController {
     // 권한 변경
     @PatchMapping("/api/auth/{id}")
     public ApiResponse changeRole(
-            @RequestBody RoleRequestDto request,
+            @Valid @RequestBody RoleRequestDto request,
             @PathVariable Long id,
             @AuthenticationPrincipal UserPrincipal principal
             ) {

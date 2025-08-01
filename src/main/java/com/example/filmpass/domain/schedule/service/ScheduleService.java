@@ -12,6 +12,9 @@ import com.example.filmpass.global.exception.CustomException;
 import com.example.filmpass.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -22,13 +25,21 @@ public class ScheduleService {
     private final MovieRepository movieRepository;
 
     // 스케줄 등록
+    @Transactional
     public ScheduleResponseDto createSchedule(ScheduleRequestDto requestDto) {
+
         Screen screen = screenRepository.findById(requestDto.getScreenId())
                 .orElseThrow(() -> new CustomException(ErrorCode.SCREEN_NOT_FOUND));
 
         Movie movie = movieRepository.findById(requestDto.getMovieId())
                 .orElseThrow(() -> new CustomException(ErrorCode.MOVIE_NOT_FOUND));
 
+        List<Schedule> overlapped = scheduleRepository.findOverlappingSchedules(
+                requestDto.getScreenId(), requestDto.getStartAt(), requestDto.getEndAt());
+
+        if (!overlapped.isEmpty()) {
+            throw new CustomException(ErrorCode.SCHEDULE_TIME_CONFLICT);
+        }
 
         Schedule schedule = new Schedule(
                 requestDto.getStartAt(),
@@ -40,8 +51,10 @@ public class ScheduleService {
         Schedule saved = scheduleRepository.save(schedule);
         return ScheduleResponseDto.from(saved);
     }
-  
+
+
     // 스케줄 수정
+    @Transactional
     public ScheduleResponseDto updateSchedule(Long scheduleId, ScheduleRequestDto request) {
         Schedule schedule = scheduleRepository.findById(scheduleId)
                 .orElseThrow(() -> new CustomException(ErrorCode.SCHEDULE_NOT_FOUND));

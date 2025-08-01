@@ -148,10 +148,21 @@ public class UserService {
         }
 
         // 정보수정하기
-        user.setName(request.getName());
-        user.setEmail(request.getEmail());
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setNickname(request.getNickname());
+        if (!user.getName().equals(request.getName())) {
+            user.setName(request.getName());
+        }
+
+        if (!user.getEmail().equals(request.getEmail())) {
+            user.setEmail(request.getEmail());
+        }
+
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            user.setPassword(passwordEncoder.encode(request.getPassword()));
+        }
+
+        if (!user.getNickname().equals(request.getNickname())) {
+            user.setNickname(request.getNickname());
+        }
 
         userRepository.save(user);
 

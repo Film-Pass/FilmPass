@@ -30,6 +30,7 @@ public class UserController {
 
     }
 
+    // 유저 목록 조회
     @GetMapping("/api/users")
     public ApiResponse getUsers(
             @RequestParam(defaultValue = "1") int page,
@@ -41,6 +42,7 @@ public class UserController {
 
     }
 
+    // 유저 단건 조회
     @GetMapping("/api/users/{id}")
     public ApiResponse getUser(
         @PathVariable Long id,
@@ -51,6 +53,7 @@ public class UserController {
 
     }
 
+    // 내 정보 조회
     @PostMapping("/api/users/me")
     public ApiResponse getMyProfile(
             @RequestBody PasswordRequestDto requestDto,
@@ -61,6 +64,7 @@ public class UserController {
 
     }
 
+    // 내 정보 수정
     @PutMapping("/api/users/{id}")
     public ApiResponse changeUserInfo(
             @Valid @RequestBody UserInfoChangeRequestDto request,

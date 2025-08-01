@@ -29,14 +29,14 @@ public class UserService {
 
     // 회원 탈퇴 로직
     @Transactional
-    public void deleteUser(Long id, PasswordRequestDto requestDto) {
+    public void deleteUser(Long id, String password) {
 
         // 유저 조회
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         // 비밀번호 검증
-        if(!passwordEncoder.matches(requestDto.getPassword(), user.getPassword())) {
+        if(!passwordEncoder.matches(password, user.getPassword())) {
             throw new CustomException(ErrorCode.PASSWORD_MISMATCH);
         }
 

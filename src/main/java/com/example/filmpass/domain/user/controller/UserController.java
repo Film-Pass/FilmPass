@@ -20,11 +20,11 @@ public class UserController {
     // 회원 탈퇴
     @DeleteMapping("/api/users/{id}")
     public ApiResponse deleteUser(
-            @RequestBody PasswordRequestDto requestDto,
+            @RequestHeader("password") String password,
             @PathVariable Long id
             ) {
 
-        userService.deleteUser(id, requestDto);
+        userService.deleteUser(id, password);
 
         return ApiResponse.success(null, "회원 탈퇴가 완료되었습니다.");
 

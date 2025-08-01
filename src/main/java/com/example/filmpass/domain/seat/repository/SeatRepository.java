@@ -4,4 +4,5 @@ import com.example.filmpass.domain.seat.entity.Seat;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface SeatRepository extends JpaRepository<Seat, Long> {
+    boolean existsByScreenIdAndSeatNumber(Long id, String seatNumber);
 }

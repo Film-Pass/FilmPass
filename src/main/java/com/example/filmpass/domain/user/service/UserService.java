@@ -60,9 +60,23 @@ public class UserService {
             throw new CustomException(ErrorCode.NOT_ADMIN);
         }
 
+        // 입력한 페이지가 적절한 값인지 확인
+        if(!(1 <= size && size<= 100)) {
+            throw new CustomException(ErrorCode.INVALID_PAGE_SIZE);
+        }
+
+        if(page < 1) {
+            throw new CustomException(ErrorCode.INVALID_PAGE_NUMBER);
+        }
+
         Pageable pageable = PageRequest.of(page-1, size);
 
         Page<User> users = userRepository.findAllByDeletedAtIsNullOrderByCreatedAtDesc(pageable);
+
+        // 페이지가 비었나 확인
+        if(users.isEmpty() && page > 1) {
+            throw new CustomException(ErrorCode.EMPTY_PAGE);
+        }
 
         Page<UserInfoResponseDto> response = users.map(User::pageToDto);
 

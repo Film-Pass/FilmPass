@@ -5,6 +5,7 @@ import com.example.filmpass.domain.user.dto.UserInfoChangeRequestDto;
 import com.example.filmpass.domain.user.service.UserService;
 import com.example.filmpass.global.common.ApiResponse;
 import com.example.filmpass.global.config.UserPrincipal;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -62,7 +63,7 @@ public class UserController {
 
     @PutMapping("/api/users/{id}")
     public ApiResponse changeUserInfo(
-            @RequestBody UserInfoChangeRequestDto request,
+            @Valid @RequestBody UserInfoChangeRequestDto request,
             @AuthenticationPrincipal UserPrincipal principal,
             @PathVariable Long id) {
 

@@ -62,7 +62,7 @@ public class UserService {
 
         Pageable pageable = PageRequest.of(page-1, size);
 
-        Page<User> users = userRepository.findAllByDeletedAtIsNotNullOrderByCreatedAtDesc(pageable);
+        Page<User> users = userRepository.findAllByDeletedAtIsNullOrderByCreatedAtDesc(pageable);
 
         Page<UserInfoResponseDto> response = users.map(User::pageToDto);
 
@@ -79,7 +79,7 @@ public class UserService {
         }
 
 
-            User user = userRepository.findByIdAndDeletedAtIsNotNull(id)
+            User user = userRepository.findByIdAndDeletedAtIsNull(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         UserDetailsResponseDto response = new UserDetailsResponseDto(

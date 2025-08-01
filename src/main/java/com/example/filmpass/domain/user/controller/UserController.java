@@ -23,6 +23,8 @@ public class UserController {
             @PathVariable Long id
             ) {
 
+        userService.deleteUser(id, requestDto);
+
         return ApiResponse.success(null, "회원 탈퇴가 완료되었습니다.");
 
     }

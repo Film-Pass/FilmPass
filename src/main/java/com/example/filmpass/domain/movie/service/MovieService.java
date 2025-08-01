@@ -79,6 +79,9 @@ public class MovieService {
         if (director != null && director.trim().isEmpty()) director = null;
 
         Page<Movie> movies = movieRepository.searchMoviesNative(id, title, director, pageable);
+        if (movies.isEmpty()) {
+            throw new CustomException(ErrorCode.MOVIE_SEARCH_NOT_FOUND);
+        }
         return movies.map(SearchMovieResponse::new);
     }
 

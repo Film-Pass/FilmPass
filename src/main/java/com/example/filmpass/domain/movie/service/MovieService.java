@@ -125,7 +125,7 @@ public class MovieService {
         return new FindMovieDetailResponse(alreadyMovie.getTitle(), alreadyMovie.getDirector(), alreadyMovie.getDescription());
     }
 
-    //영화 삭제
+    //영화  삭제
     @PreAuthorize("hasRole('ADMIN')")
     @Transactional
     public DeleteMovieResponse deleteMovie(Long movieId) {

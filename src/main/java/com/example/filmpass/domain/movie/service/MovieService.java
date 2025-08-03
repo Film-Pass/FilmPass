@@ -9,6 +9,7 @@ import com.example.filmpass.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +22,7 @@ public class MovieService {
     private final MovieRepository movieRepository;
 
     //영화 등록 CreateMovie
+    @PreAuthorize("hasRole('ADMIN')")
     @Transactional
     public MovieCreateResponse movieCreate(MovieCreateRequest movieCreateRequest){
         String runningTime = movieCreateRequest.getRunningTime();
@@ -87,6 +89,7 @@ public class MovieService {
 
 
     //영화 수정
+    @PreAuthorize("hasRole('ADMIN')")
     @Transactional
     public UpdateMovieResponse updateMovie(Long movieId, UpdateMovieRequest updateMovieRequest) {
         String newTitle = updateMovieRequest.getTitle();
@@ -123,6 +126,7 @@ public class MovieService {
     }
 
     //영화 삭제
+    @PreAuthorize("hasRole('ADMIN')")
     @Transactional
     public DeleteMovieResponse deleteMovie(Long movieId) {
         Movie alreadyMovie = movieRepository.findById(movieId)

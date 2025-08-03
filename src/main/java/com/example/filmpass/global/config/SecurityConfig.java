@@ -2,6 +2,7 @@ package com.example.filmpass.global.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -34,7 +35,11 @@ public class SecurityConfig {
                 .formLogin(AbstractHttpConfigurer::disable) // 폼 로그인 비활성화
                 .addFilterBefore(jwtFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class) // jwtFilter 추가
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/signup", "/api/auth/login","/").permitAll() // 인증 필요없는 요청들
+                        .requestMatchers("/api/auth/signup", "/api/auth/login","/").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/movies/").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/movies/search").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/movies/**").permitAll()
+                        // 인증 필요없는 요청들
                         .anyRequest().authenticated()
                 )
                 .build();

@@ -31,6 +31,7 @@ public class MovieService {
         String description = movieCreateRequest.getDescription();
         String posterUrl = movieCreateRequest.getMovieImage();
         String title = movieCreateRequest.getMovieName();
+        String genre = movieCreateRequest.getGenre();
 
         if (title == null || title.trim().isEmpty()) {
             throw new CustomException(ErrorCode.MOVIE_TITLE_REQUIRED);
@@ -45,7 +46,7 @@ public class MovieService {
         if(movieRepository.findByTitle(title).isPresent()){
             throw new CustomException(ErrorCode.MOVIE_ALREADY_EXISTS);
         }
-        Movie movie = new Movie(title,director,description,runningTime,posterUrl);
+        Movie movie = new Movie(title,director,description,runningTime,posterUrl, genre);
         movieRepository.save(movie);
 
         return new MovieCreateResponse(movie.getTitle());
@@ -69,19 +70,23 @@ public class MovieService {
         Long id = findMovieRequest.getId();
         String title = findMovieRequest.getTitle();
         String director = findMovieRequest.getDirector();
+        String genre = findMovieRequest.getGenre();
 
         if (id == null) {
             if (title == null || title.trim().isEmpty()) {
                 if (director == null || director.trim().isEmpty()) {
-                    throw new CustomException(ErrorCode.MOVIE_SEARCH_REQUIRED);
+                    if(genre == null || genre.trim().isEmpty()) {
+                        throw new CustomException(ErrorCode.MOVIE_SEARCH_REQUIRED);
+                    }
                 }
             }
         }
 
         if (title != null && title.trim().isEmpty()) title = null;
         if (director != null && director.trim().isEmpty()) director = null;
+        if (genre != null && genre.trim().isEmpty()) genre = null;
 
-        Page<Movie> movies = movieRepository.searchMoviesNative(id, title, director, pageable);
+        Page<Movie> movies = movieRepository.searchMoviesNative(id, title, director, genre, pageable);
         if (movies.isEmpty()) {
             throw new CustomException(ErrorCode.MOVIE_SEARCH_NOT_FOUND);
         }
@@ -98,6 +103,7 @@ public class MovieService {
         String newDescription = updateMovieRequest.getDescription();
         String newDirector = updateMovieRequest.getDirector();
         String newRunningTime = updateMovieRequest.getRunningTime();
+        String newGenre = updateMovieRequest.getGenre();
 
         if (newTitle == null || newTitle.trim().isEmpty()) {
             throw new CustomException(ErrorCode.MOVIE_TITLE_REQUIRED);
@@ -112,7 +118,7 @@ public class MovieService {
                 .orElseThrow(()->new CustomException(ErrorCode.MOVIE_NOT_FOUND));
 
 
-        alreadyMovie.updateMovie(newTitle, newUrl, newDescription, newDirector, newRunningTime);
+        alreadyMovie.updateMovie(newTitle, newUrl, newDescription, newDirector, newRunningTime, newGenre);
         movieRepository.save(alreadyMovie);
         return new UpdateMovieResponse(alreadyMovie);
     }
@@ -123,7 +129,7 @@ public class MovieService {
         Movie alreadyMovie = movieRepository.findById(movieId)
                 .orElseThrow(()-> new CustomException(ErrorCode.MOVIE_NOT_FOUND));
 
-        return new FindMovieDetailResponse(alreadyMovie.getTitle(), alreadyMovie.getDirector(), alreadyMovie.getDescription());
+        return new FindMovieDetailResponse(alreadyMovie.getTitle(), alreadyMovie.getDirector(), alreadyMovie.getDescription(), alreadyMovie.getGenre());
     }
 
     //영화  삭제

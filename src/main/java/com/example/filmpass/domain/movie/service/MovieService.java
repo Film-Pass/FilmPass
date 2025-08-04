@@ -3,6 +3,8 @@ package com.example.filmpass.domain.movie.service;
 import com.example.filmpass.domain.movie.dto.*;
 import com.example.filmpass.domain.movie.entity.Movie;
 import com.example.filmpass.domain.movie.repository.MovieRepository;
+import com.example.filmpass.domain.review.entity.Review;
+import com.example.filmpass.domain.review.repository.ReviewRepository;
 import com.example.filmpass.global.config.UserPrincipal;
 import com.example.filmpass.global.exception.CustomException;
 import com.example.filmpass.global.exception.ErrorCode;
@@ -16,11 +18,13 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class MovieService {
     private final MovieRepository movieRepository;
+    private final ReviewRepository reviewRepository;
 
     //영화 등록 CreateMovie
     @PreAuthorize("hasRole('ADMIN')")
@@ -129,7 +133,20 @@ public class MovieService {
         Movie alreadyMovie = movieRepository.findById(movieId)
                 .orElseThrow(()-> new CustomException(ErrorCode.MOVIE_NOT_FOUND));
 
-        return new FindMovieDetailResponse(alreadyMovie.getTitle(), alreadyMovie.getDirector(), alreadyMovie.getDescription(), alreadyMovie.getGenre());
+        List<Review> reviewList = reviewRepository.findAllByMovieRating(movieId);
+        String rating;
+        if(reviewList.isEmpty()) {
+            rating = "리뷰 없음";
+            return new FindMovieDetailResponse(alreadyMovie.getTitle(), alreadyMovie.getDirector(), alreadyMovie.getDescription(), alreadyMovie.getGenre(), rating, alreadyMovie.getRunningTime(), alreadyMovie.getPosterUrl());
+        } else {
+            double average = reviewList.stream()
+                    .mapToDouble(Review::getRating)
+                    .average()
+                    .orElse(0.0);
+            rating = String.format("%.1f", average);
+
+            return new FindMovieDetailResponse(alreadyMovie.getTitle(), alreadyMovie.getDirector(), alreadyMovie.getDescription(), alreadyMovie.getGenre(), rating, alreadyMovie.getRunningTime(), alreadyMovie.getPosterUrl());
+        }
     }
 
     //영화  삭제

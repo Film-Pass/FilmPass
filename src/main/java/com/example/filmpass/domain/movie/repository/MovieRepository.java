@@ -20,12 +20,14 @@ public interface MovieRepository extends JpaRepository<Movie, Long> {
             value = "SELECT * FROM movies " +
                     "WHERE (:id IS NULL OR id = :id) " +
                     "AND (:title IS NULL OR title = :title) " +
-                    "AND (:director IS NULL OR director = :director)",
+                    "AND (:director IS NULL OR director = :director)"+
+                    "AND (:genre IS NULL OR genre = :genre)",
 
             countQuery = "SELECT COUNT(*) FROM movies " +
                     "WHERE (:id IS NULL OR id = :id) " +
                     "AND (:title IS NULL OR title = :title) " +
-                    "AND (:director IS NULL OR director = :director)",
+                    "AND (:director IS NULL OR director = :director)" +
+                    "AND (:genre IS NULL OR genre = :genre)",
 
             nativeQuery = true
     )
@@ -33,6 +35,7 @@ public interface MovieRepository extends JpaRepository<Movie, Long> {
             @Param("id") Long id,
             @Param("title") String title,
             @Param("director") String director,
+            @Param("genre") String genre,
             Pageable pageable
     );
 }

@@ -7,5 +7,5 @@ public class FindMovieRequest {
     private Long id;
     private String title;
     private String director;
-
+    private String genre;
 }

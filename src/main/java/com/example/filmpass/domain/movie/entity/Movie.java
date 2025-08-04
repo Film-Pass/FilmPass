@@ -39,27 +39,32 @@ public class Movie {
     private String posterUrl; // 영화 표지 이미지 URL
 
     @Column
+    private String genre;
+
+    @Column
     private boolean isDelete;
 
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
 
-    public Movie(String title, String director, String description, String runningTime, String posterUrl) {
+    public Movie(String title, String director, String description, String runningTime, String posterUrl, String genre) {
         this.runningTime = runningTime;
         this.director = director;
         this.description = description;
         this.posterUrl = posterUrl;
         this.title = title;
+        this.genre = genre;
     }
 
 
-    public void updateMovie(String title, String posterUrl, String description, String director, String runningTime) {
+    public void updateMovie(String title, String posterUrl, String description, String director, String runningTime, String genre) {
         this.title = title;
         this.posterUrl = posterUrl;
         this.description = description;
         this.director = director;
         this.runningTime = runningTime;
+        this.genre = genre;
     }
 
     public void deleteMovie () {

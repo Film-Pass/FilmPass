@@ -9,8 +9,11 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class ReservationDetailResponse {
     private Long reservationId;
+    private Long movieId;
     private String movieTitle;
     private String posterUrl;
+    private Long theaterId;
+    private String theaterName;
     private String screenName;
     private String seatNumber;
     private LocalDateTime startAt;

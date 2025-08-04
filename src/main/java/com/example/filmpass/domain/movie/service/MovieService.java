@@ -9,9 +9,11 @@ import com.example.filmpass.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,6 +23,7 @@ public class MovieService {
     private final MovieRepository movieRepository;
 
     //영화 등록 CreateMovie
+    @PreAuthorize("hasRole('ADMIN')")
     @Transactional
     public MovieCreateResponse movieCreate(MovieCreateRequest movieCreateRequest){
         String runningTime = movieCreateRequest.getRunningTime();
@@ -28,6 +31,7 @@ public class MovieService {
         String description = movieCreateRequest.getDescription();
         String posterUrl = movieCreateRequest.getMovieImage();
         String title = movieCreateRequest.getMovieName();
+        String genre = movieCreateRequest.getGenre();
 
         if (title == null || title.trim().isEmpty()) {
             throw new CustomException(ErrorCode.MOVIE_TITLE_REQUIRED);
@@ -42,7 +46,7 @@ public class MovieService {
         if(movieRepository.findByTitle(title).isPresent()){
             throw new CustomException(ErrorCode.MOVIE_ALREADY_EXISTS);
         }
-        Movie movie = new Movie(title,director,description,runningTime,posterUrl);
+        Movie movie = new Movie(title,director,description,runningTime,posterUrl, genre);
         movieRepository.save(movie);
 
         return new MovieCreateResponse(movie.getTitle());
@@ -66,24 +70,32 @@ public class MovieService {
         Long id = findMovieRequest.getId();
         String title = findMovieRequest.getTitle();
         String director = findMovieRequest.getDirector();
+        String genre = findMovieRequest.getGenre();
 
         if (id == null) {
             if (title == null || title.trim().isEmpty()) {
                 if (director == null || director.trim().isEmpty()) {
-                    throw new CustomException(ErrorCode.MOVIE_SEARCH_REQUIRED);
+                    if(genre == null || genre.trim().isEmpty()) {
+                        throw new CustomException(ErrorCode.MOVIE_SEARCH_REQUIRED);
+                    }
                 }
             }
         }
 
         if (title != null && title.trim().isEmpty()) title = null;
         if (director != null && director.trim().isEmpty()) director = null;
+        if (genre != null && genre.trim().isEmpty()) genre = null;
 
-        Page<Movie> movies = movieRepository.searchMoviesNative(id, title, director, pageable);
+        Page<Movie> movies = movieRepository.searchMoviesNative(id, title, director, genre, pageable);
+        if (movies.isEmpty()) {
+            throw new CustomException(ErrorCode.MOVIE_SEARCH_NOT_FOUND);
+        }
         return movies.map(SearchMovieResponse::new);
     }
 
 
     //영화 수정
+    @PreAuthorize("hasRole('ADMIN')")
     @Transactional
     public UpdateMovieResponse updateMovie(Long movieId, UpdateMovieRequest updateMovieRequest) {
         String newTitle = updateMovieRequest.getTitle();
@@ -91,6 +103,7 @@ public class MovieService {
         String newDescription = updateMovieRequest.getDescription();
         String newDirector = updateMovieRequest.getDirector();
         String newRunningTime = updateMovieRequest.getRunningTime();
+        String newGenre = updateMovieRequest.getGenre();
 
         if (newTitle == null || newTitle.trim().isEmpty()) {
             throw new CustomException(ErrorCode.MOVIE_TITLE_REQUIRED);
@@ -105,7 +118,7 @@ public class MovieService {
                 .orElseThrow(()->new CustomException(ErrorCode.MOVIE_NOT_FOUND));
 
 
-        alreadyMovie.updateMovie(newTitle, newUrl, newDescription, newDirector, newRunningTime);
+        alreadyMovie.updateMovie(newTitle, newUrl, newDescription, newDirector, newRunningTime, newGenre);
         movieRepository.save(alreadyMovie);
         return new UpdateMovieResponse(alreadyMovie);
     }
@@ -116,17 +129,19 @@ public class MovieService {
         Movie alreadyMovie = movieRepository.findById(movieId)
                 .orElseThrow(()-> new CustomException(ErrorCode.MOVIE_NOT_FOUND));
 
-        return new FindMovieDetailResponse(alreadyMovie.getTitle(), alreadyMovie.getDirector(), alreadyMovie.getDescription());
+        return new FindMovieDetailResponse(alreadyMovie.getTitle(), alreadyMovie.getDirector(), alreadyMovie.getDescription(), alreadyMovie.getGenre());
     }
 
-    //영화 삭제
+    //영화  삭제
+    @PreAuthorize("hasRole('ADMIN')")
     @Transactional
     public DeleteMovieResponse deleteMovie(Long movieId) {
         Movie alreadyMovie = movieRepository.findById(movieId)
                 .orElseThrow(()-> new CustomException(ErrorCode.MOVIE_NOT_FOUND));
 
         DeleteMovieResponse deleteMovieResponse = new DeleteMovieResponse(alreadyMovie.getTitle());
-        movieRepository.deleteById(movieId);
+        alreadyMovie.deleteMovie();
+
         return deleteMovieResponse;
     }
 }

@@ -9,10 +9,12 @@ public class FindMovieDetailResponse {
     private String description;
     private String grade;
     private String review;
+    private String genre;
 
-    public FindMovieDetailResponse(String movieName, String director, String description) {
+    public FindMovieDetailResponse(String movieName, String director, String description, String genre) {
         this.movieName = movieName;
         this.director = director;
         this.description = description;
+        this.genre = genre;
     }
 }

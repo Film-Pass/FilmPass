@@ -102,8 +102,11 @@ public class ReservationService {
         final Schedule schedule = reservation.getSchedule();
         return new ReservationDetailResponse(
                 reservation.getId(),
+                schedule.getMovie().getId(),
                 schedule.getMovie().getTitle(),
                 schedule.getMovie().getPosterUrl(),
+                schedule.getScreen().getTheater().getId(),
+                schedule.getScreen().getTheater().getName(),
                 schedule.getScreen().getName(),
                 reservation.getSeat().getSeatNumber(),
                 schedule.getStartAt(),

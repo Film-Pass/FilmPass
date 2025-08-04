@@ -23,7 +23,7 @@ public class UserPrincipal implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(() -> "ROLE" + userRole.name());
+        return List.of(() -> "ROLE_" + userRole.name());
     }
 
     @Override

@@ -6,6 +6,7 @@ import com.example.filmpass.global.aop.TrackUserActionAnnotation;
 import com.example.filmpass.global.common.ApiResponse;
 import com.example.filmpass.domain.theater.dto.PagedResponse;
 import com.example.filmpass.domain.theater.dto.TheaterRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,6 +30,7 @@ public class TheaterController {
     @PreAuthorize("hasRole('ADMIN')")
     @TrackUserActionAnnotation("극장 등록")
     public ResponseEntity<ApiResponse> createTheater(@RequestBody TheaterRequest request) {
+    public ResponseEntity<ApiResponse> createTheater(@Valid @RequestBody TheaterRequest request) {
         TheaterResponse response = theaterService.createTheater(request);
         return ResponseEntity.ok(ApiResponse.success(response, "좌석 등록 성공"));
     }

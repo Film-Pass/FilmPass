@@ -4,9 +4,17 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "movies")
+@SQLDelete(sql =
+        "UPDATE movies " +
+                "SET is_delete = true, deleted_at = CURRENT_TIMESTAMP " +
+                "WHERE id = ?")
+@Where(clause = "is_delete = false")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Movie {
@@ -27,24 +35,40 @@ public class Movie {
     @Column(nullable = false)
     private String runningTime; // 상영시간 (?시간 ?분)
 
+    @Column
     private String posterUrl; // 영화 표지 이미지 URL
 
+    @Column
+    private String genre;
+
+    @Column
+    private boolean isDelete;
+
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
 
 
-    public Movie(String title, String director, String description, String runningTime, String posterUrl) {
+    public Movie(String title, String director, String description, String runningTime, String posterUrl, String genre) {
         this.runningTime = runningTime;
         this.director = director;
         this.description = description;
         this.posterUrl = posterUrl;
         this.title = title;
+        this.genre = genre;
     }
 
 
-    public void updateMovie(String title, String posterUrl, String description, String director, String runningTime) {
+    public void updateMovie(String title, String posterUrl, String description, String director, String runningTime, String genre) {
         this.title = title;
         this.posterUrl = posterUrl;
         this.description = description;
         this.director = director;
         this.runningTime = runningTime;
+        this.genre = genre;
+    }
+
+    public void deleteMovie () {
+        this.isDelete = true;
+        this.deletedAt = LocalDateTime.now();
     }
 }

@@ -12,10 +12,10 @@ TRUNCATE TABLE movies;
 SET FOREIGN_KEY_CHECKS = 1;
 
 --영화 정보
-INSERT INTO movies (id,title, director, description, running_time, poster_url)
+INSERT INTO movies (id,title, director, description, running_time, poster_url, is_delete, genre)
 VALUES
-    (1,'F1 The Movie', '조셉 코신스키', '포뮬러 1을 소재로 하는 조셉 코신스키 감독, 브래드 피트 주연 영화', '2시간 35분', 'https://upload.wikimedia.org/wikipedia/ko/1/11/F1%EB%8D%94%EB%AC%B4%EB%B9%842025.jpg'),
-    (2,'About Time', '리처드 커티스', '시간 여행이 가능한 남자의 놓쳐버린 그녀를 찾기 위한 시간여행', '2시간', 'https://i.namu.wiki/i/8ybSiGJ9RpH1-TLKJqnvElwllAGj-IJUr9ElFwKELRuBAACV6Pzn5ntjIpGzBUIEgh5iH_G8-BcFyGUeAoRpLNHAFasUXp0NdlilBfkrR8smITw0h8obWhwi68AMNcElva0naeSN4Sy6aLCBaB0peg.webp');
+    (1,'F1 The Movie', '조셉 코신스키', '포뮬러 1을 소재로 하는 조셉 코신스키 감독, 브래드 피트 주연 영화', '2시간 35분', 'https://upload.wikimedia.org/wikipedia/ko/1/11/F1%EB%8D%94%EB%AC%B4%EB%B9%842025.jpg',FALSE, '스포츠'),
+    (2,'About Time', '리처드 커티스', '시간 여행이 가능한 남자의 놓쳐버린 그녀를 찾기 위한 시간여행', '2시간', 'https://i.namu.wiki/i/8ybSiGJ9RpH1-TLKJqnvElwllAGj-IJUr9ElFwKELRuBAACV6Pzn5ntjIpGzBUIEgh5iH_G8-BcFyGUeAoRpLNHAFasUXp0NdlilBfkrR8smITw0h8obWhwi68AMNcElva0naeSN4Sy6aLCBaB0peg.webp',FALSE,'로맨스');
 
 -- 극장 정보
 INSERT INTO theaters (id, name, location)

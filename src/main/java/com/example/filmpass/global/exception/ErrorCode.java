@@ -13,7 +13,10 @@ public enum ErrorCode {
     REVIEW_NOT_FOUND(HttpStatus.NOT_FOUND, "리뷰를 찾을 수 없습니다."),
     // 상영관
     SCREEN_NOT_FOUND(HttpStatus.NOT_FOUND,"상영관을 찾을 수 없습니다" ),
+    SCREEN_ALREADY_EXISTS(HttpStatus.CONFLICT, "해당 이름의 상영관이 이미 존재합니다."),
     SCHEDULE_NOT_FOUND(HttpStatus.NOT_FOUND, "날짜를 찾을 수 없습니다."),
+    SCHEDULE_TIME_CONFLICT(HttpStatus.CONFLICT, "해당 상영관에서 겹치는 시간대의 스케줄이 이미 존재합니다."),
+
     // 좌석
     SEAT_NOT_FOUND(HttpStatus.NOT_FOUND, "좌석을 찾을 수 없습니다."),
     // Auth
@@ -30,6 +33,9 @@ public enum ErrorCode {
     NOT_ADMIN(HttpStatus.BAD_REQUEST, "관리자 권한이 없습니다."),
     CHANGE_BLOCKED(HttpStatus.BAD_REQUEST, "본인의 정보만 수정할 수 있습니다."),
     THEATER_ALREADY_EXISTS(HttpStatus.BAD_REQUEST,"극장이 이미 존재합니다."),
+    INVALID_PAGE_SIZE(HttpStatus.BAD_REQUEST, "유효하지 않은 페이지 크기 입니다."),
+    INVALID_PAGE_NUMBER(HttpStatus.BAD_REQUEST, "유효하지 않는 페이지 번호 입니다."),
+    EMPTY_PAGE(HttpStatus.NOT_FOUND, "비어있는 페이지 입니다."),
     // Reservation
     RESERVATION_NOT_FOUND(HttpStatus.NOT_FOUND, "예매 정보를 찾을 수 없습니다."),
     ALREADY_CANCELED(HttpStatus.BAD_REQUEST, "이미 취소된 예매입니다."),

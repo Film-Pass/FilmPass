@@ -86,6 +86,11 @@ public class AuthService {
             throw new CustomException(ErrorCode.PASSWORD_MISMATCH);
         }
 
+        // 탈퇴한 회원인지 검증
+        if(user.getDeletedAt() != null) {
+            throw new CustomException(ErrorCode.DELETED_USER);
+        }
+
         // RefreshToken 있으면 삭제
         if(refreshTokenRepository.existsByUser_Id(user.getId())) {
             refreshTokenRepository.deleteByUser_Id(user.getId());
@@ -139,15 +144,10 @@ public class AuthService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
-        // 본인 권한만 수정하도록 검증
-        if(!user.getId().equals(principal.getUserId())) {
-            throw new CustomException(ErrorCode.CHANGE_BLOCKED);
+        // ADMIN 만 권한변경 가능하도록 검증
+        if(principal.getUserRole() != UserRole.ADMIN) {
+            throw new CustomException(ErrorCode.NOT_ADMIN);
         }
-
-//        // ADMIN 만 권한변경 가능하도록 검증
-//        if(principal.getUserRole() != UserRole.ADMIN) {
-//            throw new CustomException(ErrorCode.NOT_ADMIN);
-//        }
 
         // 입력한 권한이 현재 권한과 같은 Role 인지 검증
         if(principal.getUserRole() == request.getUserRole()) {

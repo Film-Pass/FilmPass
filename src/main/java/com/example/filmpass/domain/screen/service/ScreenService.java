@@ -20,6 +20,11 @@ public class ScreenService {
 
     @Transactional
     public Screen createScreen(ScreenRequestDto requestDto) {
+        // 중복 검증
+        if (screenRepository.existsByNameAndTheaterId(requestDto.getName(), requestDto.getTheaterId())) {
+            throw new CustomException(ErrorCode.SCREEN_ALREADY_EXISTS);
+        }
+
         Theater theater = theaterRepository.findById(requestDto.getTheaterId())
                 .orElseThrow(() -> new CustomException(ErrorCode.THEATER_NOT_FOUND));
 
@@ -31,4 +36,5 @@ public class ScreenService {
 
         return screenRepository.save(screen);
     }
+
 }

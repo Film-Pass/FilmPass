@@ -5,6 +5,7 @@ import com.example.filmpass.domain.user.dto.UserInfoChangeRequestDto;
 import com.example.filmpass.domain.user.service.UserService;
 import com.example.filmpass.global.common.ApiResponse;
 import com.example.filmpass.global.config.UserPrincipal;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -19,14 +20,17 @@ public class UserController {
     // 회원 탈퇴
     @DeleteMapping("/api/users/{id}")
     public ApiResponse deleteUser(
-            @RequestBody PasswordRequestDto requestDto,
+            @RequestHeader("password") String password,
             @PathVariable Long id
             ) {
+
+        userService.deleteUser(id, password);
 
         return ApiResponse.success(null, "회원 탈퇴가 완료되었습니다.");
 
     }
 
+    // 유저 목록 조회
     @GetMapping("/api/users")
     public ApiResponse getUsers(
             @RequestParam(defaultValue = "1") int page,
@@ -38,6 +42,7 @@ public class UserController {
 
     }
 
+    // 유저 단건 조회
     @GetMapping("/api/users/{id}")
     public ApiResponse getUser(
         @PathVariable Long id,
@@ -48,6 +53,7 @@ public class UserController {
 
     }
 
+    // 내 정보 조회
     @PostMapping("/api/users/me")
     public ApiResponse getMyProfile(
             @RequestBody PasswordRequestDto requestDto,
@@ -58,9 +64,10 @@ public class UserController {
 
     }
 
+    // 내 정보 수정
     @PutMapping("/api/users/{id}")
     public ApiResponse changeUserInfo(
-            @RequestBody UserInfoChangeRequestDto request,
+            @Valid @RequestBody UserInfoChangeRequestDto request,
             @AuthenticationPrincipal UserPrincipal principal,
             @PathVariable Long id) {
 

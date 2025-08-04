@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "seats")
@@ -23,11 +24,21 @@ public class Seat {
     @Column(name = "seat_id",nullable = false)
     private String seatNumber; // 좌석 이름 (예: A1, B2)
 
+    @Column(nullable = false)
+    private boolean broken = false; // 고장난 좌석
+
+    // 좌석 등록
     public Seat(Screen screen, String seatNumber) {
         this.screen = screen;
         this.seatNumber = seatNumber;
     }
 
+    // 고장난 좌석으로 변경
+    public void markAsBroken() {
+        this.broken = true;
+    }
+
+    // 좌석 수정
     public void update(Screen screen, String seatNumber) {
         this.screen = screen;
         this.seatNumber = seatNumber;

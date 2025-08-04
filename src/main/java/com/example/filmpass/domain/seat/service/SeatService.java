@@ -61,6 +61,17 @@ public class SeatService {
         return responses;
     }
 
+    // 고장난 좌석으로 변경
+    @Transactional
+    public void markAsBroken(Long seatId) {
+        Seat seat = seatRepository.findById(seatId)
+                .orElseThrow(() -> new CustomException(ErrorCode.SEAT_NOT_FOUND));
+
+        if (!seat.isBroken()) {
+            seat.markAsBroken();
+            seatRepository.save(seat);
+        }
+    }
 
     // 좌석 목록 조회
     public List<SeatResponse> getAllSeats() {

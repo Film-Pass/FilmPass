@@ -20,6 +20,7 @@ public enum ErrorCode {
     // 좌석
     DUPLICATE_SEAT_NUMBER(HttpStatus.BAD_REQUEST, "이미 등록된 좌석번호입니다."),
     SEAT_NOT_FOUND(HttpStatus.NOT_FOUND, "좌석을 찾을 수 없습니다."),
+    BROKEN_SEAT(HttpStatus.BAD_REQUEST, "고장난 좌석은 예매할 수 없습니다."),
     // Auth
     EMAIL_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "이미 사용중인 이메일입니다."),
     NICKNAME_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "이미 사용중인 닉네임입니다."),

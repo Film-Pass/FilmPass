@@ -4,6 +4,7 @@ import com.example.filmpass.domain.seat.dto.PagedResponse;
 import com.example.filmpass.domain.seat.dto.SeatRequest;
 import com.example.filmpass.domain.seat.dto.SeatResponse;
 import com.example.filmpass.domain.seat.service.SeatService;
+import com.example.filmpass.global.aop.TrackUserActionAnnotation;
 import com.example.filmpass.global.common.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -24,6 +25,7 @@ public class SeatController {
 
     // 좌석 등록 (상영관 연관관계, 어도민 권한)
     @PostMapping
+    @TrackUserActionAnnotation("좌석 등록")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse> createSeat(@RequestBody SeatRequest request) {
         SeatResponse createdSeat = seatService.createSeat(request);
@@ -47,6 +49,7 @@ public class SeatController {
 
     // 좌석 수정 (어도민 권한)
     @PreAuthorize("hasRole('ADMIN')")
+    @TrackUserActionAnnotation("좌석 수정")
     public ResponseEntity<ApiResponse> updateSeat(
             @PathVariable Long seatId,
             @RequestBody SeatRequest request) {

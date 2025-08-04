@@ -4,6 +4,7 @@ import com.example.filmpass.domain.auth.dto.LoginRequestDto;
 import com.example.filmpass.domain.auth.dto.RoleRequestDto;
 import com.example.filmpass.domain.auth.dto.SignUpRequestDto;
 import com.example.filmpass.domain.auth.service.AuthService;
+import com.example.filmpass.global.aop.TrackUserActionAnnotation;
 import com.example.filmpass.global.common.ApiResponse;
 import com.example.filmpass.global.config.UserPrincipal;
 import jakarta.servlet.http.HttpServletResponse;
@@ -54,6 +55,7 @@ public class AuthController {
 
     // 권한 변경
     @PatchMapping("/api/auth/{id}")
+    @TrackUserActionAnnotation("권한 변경")
     public ApiResponse changeRole(
             @Valid @RequestBody RoleRequestDto request,
             @PathVariable Long id,

@@ -15,6 +15,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
 
     // JwtFitler 를 Bean 으로 등록
@@ -35,9 +36,13 @@ public class SecurityConfig {
                 .formLogin(AbstractHttpConfigurer::disable) // 폼 로그인 비활성화
                 .addFilterBefore(jwtFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class) // jwtFilter 추가
                 .authorizeHttpRequests(auth -> auth
+// 인증 필요없는 요청들
+                        .requestMatchers("/api/auth/signup", "/api/auth/login","/").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/movies/").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/movies/search").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/movies/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/theaters/*", "/api/movies/*"
                         ,"/api/theaters", "/api/movies").permitAll()
-                        .requestMatchers("/api/auth/signup", "/api/auth/login","/").permitAll() // 인증 필요없는 요청들
                         .anyRequest().authenticated()
                 )
                 .build();

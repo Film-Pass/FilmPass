@@ -51,13 +51,10 @@ public class SeatController {
     // 좌석 수정 (어도민 권한)
     @PatchMapping("/{seatId}")
     @PreAuthorize("hasRole('ADMIN')")
+    @TrackUserActionAnnotation("좌석 수정")
         public ResponseEntity<ApiResponse> updateSeat(
                 @PathVariable Long seatId,
                 @RequestBody SeatRequest request) {
-    @TrackUserActionAnnotation("좌석 수정")
-    public ResponseEntity<ApiResponse> updateSeat(
-            @PathVariable Long seatId,
-            @RequestBody SeatRequest request) {
 
         SeatResponse updatedSeat = seatService.updateSeat(seatId, request);
         return ResponseEntity.ok(ApiResponse.success(updatedSeat, "좌석 수정 성공"));

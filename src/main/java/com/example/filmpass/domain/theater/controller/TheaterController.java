@@ -29,7 +29,6 @@ public class TheaterController {
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     @TrackUserActionAnnotation("극장 등록")
-    public ResponseEntity<ApiResponse> createTheater(@RequestBody TheaterRequest request) {
     public ResponseEntity<ApiResponse> createTheater(@Valid @RequestBody TheaterRequest request) {
         TheaterResponse response = theaterService.createTheater(request);
         return ResponseEntity.ok(ApiResponse.success(response, "좌석 등록 성공"));

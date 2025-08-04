@@ -29,14 +29,14 @@ public class UserService {
 
     // 회원 탈퇴 로직
     @Transactional
-    public void deleteUser(Long id, PasswordRequestDto requestDto) {
+    public void deleteUser(Long id, String password) {
 
         // 유저 조회
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         // 비밀번호 검증
-        if(!passwordEncoder.matches(requestDto.getPassword(), user.getPassword())) {
+        if(!passwordEncoder.matches(password, user.getPassword())) {
             throw new CustomException(ErrorCode.PASSWORD_MISMATCH);
         }
 
@@ -60,9 +60,23 @@ public class UserService {
             throw new CustomException(ErrorCode.NOT_ADMIN);
         }
 
+        // 입력한 페이지가 적절한 값인지 확인
+        if(!(1 <= size && size<= 100)) {
+            throw new CustomException(ErrorCode.INVALID_PAGE_SIZE);
+        }
+
+        if(page < 1) {
+            throw new CustomException(ErrorCode.INVALID_PAGE_NUMBER);
+        }
+
         Pageable pageable = PageRequest.of(page-1, size);
 
-        Page<User> users = userRepository.findAllByOrderByCreatedAtDesc(pageable);
+        Page<User> users = userRepository.findAllByDeletedAtIsNullOrderByCreatedAtDesc(pageable);
+
+        // 페이지가 비었나 확인
+        if(users.isEmpty() && page > 1) {
+            throw new CustomException(ErrorCode.EMPTY_PAGE);
+        }
 
         Page<UserInfoResponseDto> response = users.map(User::pageToDto);
 
@@ -79,7 +93,7 @@ public class UserService {
         }
 
 
-            User user = userRepository.findById(id)
+            User user = userRepository.findByIdAndDeletedAtIsNull(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         UserDetailsResponseDto response = new UserDetailsResponseDto(
@@ -134,10 +148,21 @@ public class UserService {
         }
 
         // 정보수정하기
-        user.setName(request.getName());
-        user.setEmail(request.getEmail());
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setNickname(request.getNickname());
+        if (!user.getName().equals(request.getName())) {
+            user.setName(request.getName());
+        }
+
+        if (!user.getEmail().equals(request.getEmail())) {
+            user.setEmail(request.getEmail());
+        }
+
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            user.setPassword(passwordEncoder.encode(request.getPassword()));
+        }
+
+        if (!user.getNickname().equals(request.getNickname())) {
+            user.setNickname(request.getNickname());
+        }
 
         userRepository.save(user);
 

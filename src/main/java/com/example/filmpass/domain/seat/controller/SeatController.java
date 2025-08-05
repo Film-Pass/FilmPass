@@ -34,6 +34,14 @@ public class SeatController {
                 .body(ApiResponse.success(responses, "좌석 일괄 등록 완료"));
     }
 
+    // 고장난 좌석으로 변경
+    @PatchMapping("/{seatId}/broken")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse> markSeatAsBroken(@PathVariable Long seatId) {
+        seatService.markAsBroken(seatId);
+        return ResponseEntity.ok(ApiResponse.success(null, "고장난 좌석으로 변경 완료"));
+    }
+
     // 좌석 목록 조회
     @GetMapping
     public ResponseEntity<ApiResponse> getAllSeats() {

@@ -2,6 +2,7 @@ package com.example.filmpass.domain.theater.controller;
 
 import com.example.filmpass.domain.theater.dto.TheaterResponse;
 import com.example.filmpass.domain.theater.service.TheaterService;
+import com.example.filmpass.global.aop.TrackUserActionAnnotation;
 import com.example.filmpass.global.common.ApiResponse;
 import com.example.filmpass.domain.theater.dto.PagedResponse;
 import com.example.filmpass.domain.theater.dto.TheaterRequest;
@@ -27,6 +28,7 @@ public class TheaterController {
     // 극장 등록 (어드민 권한)
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
+    @TrackUserActionAnnotation("극장 등록")
     public ResponseEntity<ApiResponse> createTheater(@Valid @RequestBody TheaterRequest request) {
         TheaterResponse response = theaterService.createTheater(request);
         return ResponseEntity.ok(ApiResponse.success(response, "좌석 등록 성공"));
@@ -50,6 +52,7 @@ public class TheaterController {
     // 극장 수정
     @PatchMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
+    @TrackUserActionAnnotation("극장 수정")
     public ResponseEntity<ApiResponse> updateTheater(
             @PathVariable Long id,
             @RequestBody TheaterRequest request) {

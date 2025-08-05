@@ -3,6 +3,7 @@ package com.example.filmpass.domain.seat.controller;
 import com.example.filmpass.domain.seat.dto.SeatRequest;
 import com.example.filmpass.domain.seat.dto.SeatResponse;
 import com.example.filmpass.domain.seat.service.SeatService;
+import com.example.filmpass.global.aop.TrackUserActionAnnotation;
 import com.example.filmpass.global.common.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,7 @@ public class SeatController {
 
     // 좌석 등록 (상영관 연관관계, 어도민 권한)
     @PostMapping
+    @TrackUserActionAnnotation("좌석 등록")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse> createSeats(@Valid @RequestBody List<SeatRequest> requests) {
         List<SeatResponse> responses = seatService.createSeats(requests);
@@ -49,6 +51,7 @@ public class SeatController {
     // 좌석 수정 (어도민 권한)
     @PatchMapping("/{seatId}")
     @PreAuthorize("hasRole('ADMIN')")
+    @TrackUserActionAnnotation("좌석 수정")
         public ResponseEntity<ApiResponse> updateSeat(
                 @PathVariable Long seatId,
                 @RequestBody SeatRequest request) {

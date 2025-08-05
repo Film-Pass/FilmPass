@@ -47,6 +47,8 @@ public class User extends BaseEntity {
         this.password = password;
         this.nickname = nickname;
         this.name = name;
+        this.role = UserRole.GUEST;
+        this.isCritic = false;
     }
 
     public static UserInfoResponseDto pageToDto(User user) {

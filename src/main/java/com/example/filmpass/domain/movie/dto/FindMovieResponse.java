@@ -7,11 +7,16 @@ import java.util.List;
 
 @Getter
 public class FindMovieResponse<T> {
-    private List<T> data;
+    private Long id;
+    private String title;
+    private String genre;
+    private String rating;
+    private String releaseDate;
     private PageInfo pageInFo;
 
+
     public FindMovieResponse(List<T> data, PageInfo pageInFo) {
-        this.data = data;
+        this.id = data.
         this.pageInFo = pageInFo;
     }
 }

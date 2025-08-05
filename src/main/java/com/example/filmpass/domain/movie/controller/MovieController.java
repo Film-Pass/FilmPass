@@ -31,7 +31,7 @@ public class MovieController {
         return ApiResponse.success(movieCreateResponse,"영화 생성이 정상적으로 완료되었습니다.");
     }
 
-    //영화 목록 조회
+    //영화 전체 조회
     @GetMapping
     public ApiResponse findAllMovieApi(Pageable pageable) {
         FindMovieResponse<Movie> findMovieResponse = movieService.findAllMovie(pageable);

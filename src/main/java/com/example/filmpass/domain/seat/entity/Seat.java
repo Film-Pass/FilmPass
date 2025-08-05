@@ -1,6 +1,7 @@
 package com.example.filmpass.domain.seat.entity;
 
 import com.example.filmpass.domain.screen.entity.Screen;
+import com.example.filmpass.domain.seat.dto.SeatStatus;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -26,6 +27,10 @@ public class Seat {
 
     @Column(nullable = false)
     private boolean broken = false; // 고장난 좌석
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private SeatStatus status = SeatStatus.AVAILABLE;
 
     // 좌석 등록
     public Seat(Screen screen, String seatNumber) {

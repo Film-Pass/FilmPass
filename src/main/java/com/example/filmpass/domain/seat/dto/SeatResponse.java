@@ -12,4 +12,5 @@ public class SeatResponse {
     private String screenName;
     private Long theaterId;
     private String theaterName;
+    private SeatStatus status;
 }

@@ -34,14 +34,6 @@ public class SeatController {
                 .body(ApiResponse.success(responses, "좌석 일괄 등록 완료"));
     }
 
-    // 고장난 좌석으로 변경
-    @PatchMapping("/{seatId}/broken")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ApiResponse> markSeatAsBroken(@PathVariable Long seatId) {
-        seatService.markAsBroken(seatId);
-        return ResponseEntity.ok(ApiResponse.success(null, "고장난 좌석으로 변경 완료"));
-    }
-
     // 좌석 목록 조회
     @GetMapping
     public ResponseEntity<ApiResponse> getAllSeats() {
@@ -66,5 +58,21 @@ public class SeatController {
 
         SeatResponse updatedSeat = seatService.updateSeat(seatId, request);
         return ResponseEntity.ok(ApiResponse.success(updatedSeat, "좌석 수정 성공"));
+    }
+
+    // 고장난 좌석으로 변경
+    @PatchMapping("/{seatId}/broken")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse> markSeatAsBroken(@PathVariable Long seatId) {
+        seatService.markAsBroken(seatId);
+        return ResponseEntity.ok(ApiResponse.success(null, "고장난 좌석으로 변경 완료"));
+    }
+
+    // 고장 복구 (사용 가능 상태로 변경)
+    @PatchMapping("/{seatId}/available")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse> markSeatAsAvailable(@PathVariable Long seatId) {
+        seatService.markAsAvailable(seatId);
+        return ResponseEntity.ok(ApiResponse.success(null, "좌석 상태를 사용 가능으로 변경 완료"));
     }
 }

@@ -37,29 +37,28 @@ VALUES
 ('2025-08-02 18:00:00', '2025-08-02 20:00:00', 2, 2);
 
 -- 8) 좌석 정보 (스크린 1, 2번 / A~J행, 1~7열)
-INSERT INTO seats (screen_id, seat_id, broken, status)
+INSERT INTO seats (screen_id, seat_id, status)
 VALUES
 -- 스크린 1
-(1, 'A1', false, 'AVAILABLE'), (1, 'A2', false, 'AVAILABLE'), (1, 'A3', false, 'AVAILABLE'), (1, 'A4', false, 'AVAILABLE'), (1, 'A5', false, 'AVAILABLE'), (1, 'A6', false, 'AVAILABLE'), (1, 'A7', false, 'AVAILABLE'),
-(1, 'B1', false, 'AVAILABLE'), (1, 'B2', false, 'AVAILABLE'), (1, 'B3', false, 'AVAILABLE'), (1, 'B4', false, 'AVAILABLE'), (1, 'B5', false, 'AVAILABLE'), (1, 'B6', false, 'AVAILABLE'), (1, 'B7', false, 'AVAILABLE'),
-(1, 'C1', false, 'AVAILABLE'), (1, 'C2', false, 'AVAILABLE'), (1, 'C3', false, 'AVAILABLE'), (1, 'C4', false, 'AVAILABLE'), (1, 'C5', false, 'AVAILABLE'), (1, 'C6', false, 'AVAILABLE'), (1, 'C7', false, 'AVAILABLE'),
-(1, 'D1', false, 'AVAILABLE'), (1, 'D2', false, 'AVAILABLE'), (1, 'D3', false, 'AVAILABLE'), (1, 'D4', false, 'AVAILABLE'), (1, 'D5', false, 'AVAILABLE'), (1, 'D6', false, 'AVAILABLE'), (1, 'D7', false, 'AVAILABLE'),
-(1, 'E1', false, 'AVAILABLE'), (1, 'E2', false, 'AVAILABLE'), (1, 'E3', false, 'AVAILABLE'), (1, 'E4', false, 'AVAILABLE'), (1, 'E5', false, 'AVAILABLE'), (1, 'E6', false, 'AVAILABLE'), (1, 'E7', false, 'AVAILABLE'),
-(1, 'F1', false, 'AVAILABLE'), (1, 'F2', false, 'AVAILABLE'), (1, 'F3', false, 'AVAILABLE'), (1, 'F4', false, 'AVAILABLE'), (1, 'F5', false, 'AVAILABLE'), (1, 'F6', false, 'AVAILABLE'), (1, 'F7', false, 'AVAILABLE'),
-(1, 'G1', false, 'AVAILABLE'), (1, 'G2', false, 'AVAILABLE'), (1, 'G3', false, 'AVAILABLE'), (1, 'G4', false, 'AVAILABLE'), (1, 'G5', false, 'AVAILABLE'), (1, 'G6', false, 'AVAILABLE'), (1, 'G7', false, 'AVAILABLE'),
-(1, 'H1', false, 'AVAILABLE'), (1, 'H2', false, 'AVAILABLE'), (1, 'H3', false, 'AVAILABLE'), (1, 'H4', false, 'AVAILABLE'), (1, 'H5', false, 'AVAILABLE'), (1, 'H6', false, 'AVAILABLE'), (1, 'H7', false, 'AVAILABLE'),
-(1, 'I1', false, 'AVAILABLE'), (1, 'I2', false, 'AVAILABLE'), (1, 'I3', false, 'AVAILABLE'), (1, 'I4', false, 'AVAILABLE'), (1, 'I5', false, 'AVAILABLE'), (1, 'I6', false, 'AVAILABLE'), (1, 'I7', false, 'AVAILABLE'),
-(1, 'J1', false, 'AVAILABLE'), (1, 'J2', false, 'AVAILABLE'), (1, 'J3', false, 'AVAILABLE'), (1, 'J4', false, 'AVAILABLE'), (1, 'J5', false, 'AVAILABLE'), (1, 'J6', false, 'AVAILABLE'), (1, 'J7', false, 'AVAILABLE'),
+(1, 'A1', 'AVAILABLE'), (1, 'A2', 'AVAILABLE'), (1, 'A3', 'AVAILABLE'), (1, 'A4', 'AVAILABLE'), (1, 'A5', 'AVAILABLE'), (1, 'A6', 'AVAILABLE'), (1, 'A7', 'AVAILABLE'),
+(1, 'B1', 'AVAILABLE'), (1, 'B2', 'AVAILABLE'), (1, 'B3', 'AVAILABLE'), (1, 'B4', 'AVAILABLE'), (1, 'B5', 'AVAILABLE'), (1, 'B6', 'AVAILABLE'), (1, 'B7', 'AVAILABLE'),
+(1, 'C1', 'AVAILABLE'), (1, 'C2', 'AVAILABLE'), (1, 'C3', 'AVAILABLE'), (1, 'C4', 'AVAILABLE'), (1, 'C5', 'AVAILABLE'), (1, 'C6', 'AVAILABLE'), (1, 'C7', 'AVAILABLE'),
+(1, 'D1', 'AVAILABLE'), (1, 'D2', 'AVAILABLE'), (1, 'D3', 'AVAILABLE'), (1, 'D4', 'AVAILABLE'), (1, 'D5', 'AVAILABLE'), (1, 'D6', 'AVAILABLE'), (1, 'D7', 'AVAILABLE'),
+(1, 'E1', 'AVAILABLE'), (1, 'E2', 'AVAILABLE'), (1, 'E3', 'AVAILABLE'), (1, 'E4', 'AVAILABLE'), (1, 'E5', 'AVAILABLE'), (1, 'E6', 'AVAILABLE'), (1, 'E7', 'AVAILABLE'),
+(1, 'F1', 'AVAILABLE'), (1, 'F2', 'AVAILABLE'), (1, 'F3', 'AVAILABLE'), (1, 'F4', 'AVAILABLE'), (1, 'F5', 'AVAILABLE'), (1, 'F6', 'AVAILABLE'), (1, 'F7', 'AVAILABLE'),
+(1, 'G1', 'AVAILABLE'), (1, 'G2', 'AVAILABLE'), (1, 'G3', 'AVAILABLE'), (1, 'G4', 'AVAILABLE'), (1, 'G5', 'AVAILABLE'), (1, 'G6', 'AVAILABLE'), (1, 'G7', 'AVAILABLE'),
+(1, 'H1', 'AVAILABLE'), (1, 'H2', 'AVAILABLE'), (1, 'H3', 'AVAILABLE'), (1, 'H4', 'AVAILABLE'), (1, 'H5', 'AVAILABLE'), (1, 'H6', 'AVAILABLE'), (1, 'H7', 'AVAILABLE'),
+(1, 'I1', 'AVAILABLE'), (1, 'I2', 'AVAILABLE'), (1, 'I3', 'AVAILABLE'), (1, 'I4', 'AVAILABLE'), (1, 'I5', 'AVAILABLE'), (1, 'I6', 'AVAILABLE'), (1, 'I7', 'AVAILABLE'),
+(1, 'J1', 'AVAILABLE'), (1, 'J2', 'AVAILABLE'), (1, 'J3', 'AVAILABLE'), (1, 'J4', 'AVAILABLE'), (1, 'J5', 'AVAILABLE'), (1, 'J6', 'AVAILABLE'), (1, 'J7', 'AVAILABLE'),
 
 -- 스크린 2
-(2, 'A1', false, 'AVAILABLE'), (2, 'A2', false, 'AVAILABLE'), (2, 'A3', false, 'AVAILABLE'), (2, 'A4', false, 'AVAILABLE'), (2, 'A5', false, 'AVAILABLE'), (2, 'A6', false, 'AVAILABLE'), (2, 'A7', false, 'AVAILABLE'),
-(2, 'B1', false, 'AVAILABLE'), (2, 'B2', false, 'AVAILABLE'), (2, 'B3', false, 'AVAILABLE'), (2, 'B4', false, 'AVAILABLE'), (2, 'B5', false, 'AVAILABLE'), (2, 'B6', false, 'AVAILABLE'), (2, 'B7', false, 'AVAILABLE'),
-(2, 'C1', false, 'AVAILABLE'), (2, 'C2', false, 'AVAILABLE'), (2, 'C3', false, 'AVAILABLE'), (2, 'C4', false, 'AVAILABLE'), (2, 'C5', false, 'AVAILABLE'), (2, 'C6', false, 'AVAILABLE'), (2, 'C7', false, 'AVAILABLE'),
-(2, 'D1', false, 'AVAILABLE'), (2, 'D2', false, 'AVAILABLE'), (2, 'D3', false, 'AVAILABLE'), (2, 'D4', false, 'AVAILABLE'), (2, 'D5', false, 'AVAILABLE'), (2, 'D6', false, 'AVAILABLE'), (2, 'D7', false, 'AVAILABLE'),
-(2, 'E1', false, 'AVAILABLE'), (2, 'E2', false, 'AVAILABLE'), (2, 'E3', false, 'AVAILABLE'), (2, 'E4', false, 'AVAILABLE'), (2, 'E5', false, 'AVAILABLE'), (2, 'E6', false, 'AVAILABLE'), (2, 'E7', false, 'AVAILABLE'),
-(2, 'F1', false, 'AVAILABLE'), (2, 'F2', false, 'AVAILABLE'), (2, 'F3', false, 'AVAILABLE'), (2, 'F4', false, 'AVAILABLE'), (2, 'F5', false, 'AVAILABLE'), (2, 'F6', false, 'AVAILABLE'), (2, 'F7', false, 'AVAILABLE'),
-(2, 'G1', false, 'AVAILABLE'), (2, 'G2', false, 'AVAILABLE'), (2, 'G3', false, 'AVAILABLE'), (2, 'G4', false, 'AVAILABLE'), (2, 'G5', false, 'AVAILABLE'), (2, 'G6', false, 'AVAILABLE'), (2, 'G7', false, 'AVAILABLE'),
-(2, 'H1', false, 'AVAILABLE'), (2, 'H2', false, 'AVAILABLE'), (2, 'H3', false, 'AVAILABLE'), (2, 'H4', false, 'AVAILABLE'), (2, 'H5', false, 'AVAILABLE'), (2, 'H6', false, 'AVAILABLE'), (2, 'H7', false, 'AVAILABLE'),
-(2, 'I1', false, 'AVAILABLE'), (2, 'I2', false, 'AVAILABLE'), (2, 'I3', false, 'AVAILABLE'), (2, 'I4', false, 'AVAILABLE'), (2, 'I5', false, 'AVAILABLE'), (2, 'I6', false, 'AVAILABLE'), (2, 'I7', false, 'AVAILABLE'),
-(2, 'J1', false, 'AVAILABLE'), (2, 'J2', false, 'AVAILABLE'), (2, 'J3', false, 'AVAILABLE'), (2, 'J4', false, 'AVAILABLE'), (2, 'J5', false, 'AVAILABLE'), (2, 'J6', false, 'AVAILABLE'), (2, 'J7', false, 'AVAILABLE');
-
+(2, 'A1', 'AVAILABLE'), (2, 'A2', 'AVAILABLE'), (2, 'A3', 'AVAILABLE'), (2, 'A4', 'AVAILABLE'), (2, 'A5', 'AVAILABLE'), (2, 'A6', 'AVAILABLE'), (2, 'A7', 'AVAILABLE'),
+(2, 'B1', 'AVAILABLE'), (2, 'B2', 'AVAILABLE'), (2, 'B3', 'AVAILABLE'), (2, 'B4', 'AVAILABLE'), (2, 'B5', 'AVAILABLE'), (2, 'B6', 'AVAILABLE'), (2, 'B7', 'AVAILABLE'),
+(2, 'C1', 'AVAILABLE'), (2, 'C2', 'AVAILABLE'), (2, 'C3', 'AVAILABLE'), (2, 'C4', 'AVAILABLE'), (2, 'C5', 'AVAILABLE'), (2, 'C6', 'AVAILABLE'), (2, 'C7', 'AVAILABLE'),
+(2, 'D1', 'AVAILABLE'), (2, 'D2', 'AVAILABLE'), (2, 'D3', 'AVAILABLE'), (2, 'D4', 'AVAILABLE'), (2, 'D5', 'AVAILABLE'), (2, 'D6', 'AVAILABLE'), (2, 'D7', 'AVAILABLE'),
+(2, 'E1', 'AVAILABLE'), (2, 'E2', 'AVAILABLE'), (2, 'E3', 'AVAILABLE'), (2, 'E4', 'AVAILABLE'), (2, 'E5', 'AVAILABLE'), (2, 'E6', 'AVAILABLE'), (2, 'E7', 'AVAILABLE'),
+(2, 'F1', 'AVAILABLE'), (2, 'F2', 'AVAILABLE'), (2, 'F3', 'AVAILABLE'), (2, 'F4', 'AVAILABLE'), (2, 'F5', 'AVAILABLE'), (2, 'F6', 'AVAILABLE'), (2, 'F7', 'AVAILABLE'),
+(2, 'G1', 'AVAILABLE'), (2, 'G2', 'AVAILABLE'), (2, 'G3', 'AVAILABLE'), (2, 'G4', 'AVAILABLE'), (2, 'G5', 'AVAILABLE'), (2, 'G6', 'AVAILABLE'), (2, 'G7', 'AVAILABLE'),
+(2, 'H1', 'AVAILABLE'), (2, 'H2', 'AVAILABLE'), (2, 'H3', 'AVAILABLE'), (2, 'H4', 'AVAILABLE'), (2, 'H5', 'AVAILABLE'), (2, 'H6', 'AVAILABLE'), (2, 'H7', 'AVAILABLE'),
+(2, 'I1', 'AVAILABLE'), (2, 'I2', 'AVAILABLE'), (2, 'I3', 'AVAILABLE'), (2, 'I4', 'AVAILABLE'), (2, 'I5', 'AVAILABLE'), (2, 'I6', 'AVAILABLE'), (2, 'I7', 'AVAILABLE'),
+(2, 'J1', 'AVAILABLE'), (2, 'J2', 'AVAILABLE'), (2, 'J3', 'AVAILABLE'), (2, 'J4', 'AVAILABLE'), (2, 'J5', 'AVAILABLE'), (2, 'J6', 'AVAILABLE'), (2, 'J7', 'AVAILABLE');

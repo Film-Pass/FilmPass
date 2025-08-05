@@ -133,8 +133,8 @@ public class MovieService {
         Movie alreadyMovie = movieRepository.findById(movieId)
                 .orElseThrow(()-> new CustomException(ErrorCode.MOVIE_NOT_FOUND));
 
-        List<Review> reviewList = reviewRepository.findAllByMovieRating(movieId);
-        String rating;
+        List<Review> reviewList = reviewRepository.findAllByMovieId(movieId);
+        String rating = null;
         if(reviewList.isEmpty()) {
             rating = "리뷰 없음";
             return new FindMovieDetailResponse(alreadyMovie.getTitle(), alreadyMovie.getDirector(), alreadyMovie.getDescription(), alreadyMovie.getGenre(), rating, alreadyMovie.getRunningTime(), alreadyMovie.getPosterUrl());

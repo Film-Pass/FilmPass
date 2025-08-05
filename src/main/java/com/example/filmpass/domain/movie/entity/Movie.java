@@ -71,4 +71,7 @@ public class Movie {
         this.isDelete = true;
         this.deletedAt = LocalDateTime.now();
     }
+    public void setIdForTest(Long id) {
+        this.id = id;
+    }
 }

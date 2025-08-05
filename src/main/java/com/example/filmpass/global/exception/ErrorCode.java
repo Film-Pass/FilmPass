@@ -11,6 +11,8 @@ public enum ErrorCode {
     INVALID_INPUT(HttpStatus.BAD_REQUEST, "입력 값이 유효하지 않습니다."),
     MOVIE_NOT_FOUND(HttpStatus.NOT_FOUND, "영화를 찾을 수 없습니다."),
     REVIEW_NOT_FOUND(HttpStatus.NOT_FOUND, "리뷰를 찾을 수 없습니다."),
+    CRITIC_ONLY(HttpStatus.FORBIDDEN, "평론가만 작성할 수 있는 리뷰입니다."),
+
     // 상영관
     SCREEN_NOT_FOUND(HttpStatus.NOT_FOUND,"상영관을 찾을 수 없습니다" ),
     SCREEN_ALREADY_EXISTS(HttpStatus.CONFLICT, "해당 이름의 상영관이 이미 존재합니다."),

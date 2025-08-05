@@ -32,9 +32,6 @@ public class Review {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
-    @Column(name = "is_deleted", nullable = false)
-    private boolean isDeleted;
-
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
@@ -54,11 +51,9 @@ public class Review {
         this.user = user;
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
-        this.isDeleted = false;
     }
 
     public void softDelete() {
-        this.isDeleted = true;
         this.deletedAt = LocalDateTime.now();
     }
 

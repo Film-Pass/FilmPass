@@ -39,6 +39,8 @@ public class User extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private UserRole role = UserRole.GUEST;
 
+    @Column(name = "is_critic", nullable = false)
+    private boolean isCritic;
 
     public User(String email, String password, String nickname, String name) {
         this.email = email;

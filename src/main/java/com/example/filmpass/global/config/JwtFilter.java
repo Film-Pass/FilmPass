@@ -35,6 +35,7 @@ public class JwtFilter extends OncePerRequestFilter {
         if(bearerJwt == null || !bearerJwt.startsWith("Bearer")) {
             log.error("JWT 필터에서 예외 발생 - 토큰이 없음.");
             filterChain.doFilter(request, response);
+            return;
         }
 
         // bear 제거

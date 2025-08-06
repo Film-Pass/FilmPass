@@ -8,7 +8,6 @@ import com.example.filmpass.domain.seat.dto.SeatStatus;
 import com.example.filmpass.domain.seat.entity.Seat;
 import com.example.filmpass.domain.seat.repository.SeatRepository;
 import com.example.filmpass.domain.theater.entity.Theater;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -115,7 +114,6 @@ class SeatServiceTest {
         verify(seatRepository).findById(seatId);
     }
 
-    @DisplayName("좌석 수정 - 성공")
     @Test
     void 좌석_수정_성공() {
         // given
@@ -154,7 +152,6 @@ class SeatServiceTest {
         verify(seatRepository).existsByScreenIdAndSeatNumber(2L, "B5");
     }
 
-    @DisplayName("좌석 고장 상태로 변경 - 성공")
     @Test
     void 좌석_고장_변경_성공() {
         // given
@@ -180,7 +177,6 @@ class SeatServiceTest {
         verify(seatRepository).findById(10L);              // 조회는 호출됨
     }
 
-    @DisplayName("좌석 사용 가능 상태로 복구 - 성공")
     @Test
     void 좌석_사용_가능_상태로_복구_성공() {
         // given

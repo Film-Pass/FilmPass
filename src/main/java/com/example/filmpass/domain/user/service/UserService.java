@@ -178,4 +178,13 @@ public class UserService {
 
     }
 
+    // 유저 포인트 적립 로직 (예매에서 사용)
+    public void addPoint(Long id, int point) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        user.setPoint(user.getPoint() + point);
+        userRepository.save(user);
+    }
+
 }

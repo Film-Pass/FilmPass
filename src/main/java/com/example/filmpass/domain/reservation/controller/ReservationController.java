@@ -64,7 +64,7 @@ public class ReservationController {
     // 결제 요금 계산하는 API (프론트에 전달하는 용도)
     @PostMapping("/calculation")
     public ResponseEntity<ApiResponse> calculateAmounts(
-            @RequestBody CalculateAmountsRequestDto requestDto,
+            @RequestBody CalculateAmountRequestDto requestDto,
             @AuthenticationPrincipal UserPrincipal principal
             ) {
 

@@ -147,7 +147,7 @@ public class ReservationService {
     }
 
     // 결제 요금 계산 로직
-    public CalculateAmountResponseDto calculateAmounts(CalculateAmountsRequestDto requestDto, UserPrincipal principal) {
+    public CalculateAmountResponseDto calculateAmounts(CalculateAmountRequestDto requestDto, UserPrincipal principal) {
 
         // 없는 좌석인지 검증
         List<Seat> seats = seatRepository.findAllById(requestDto.getSeatIds());

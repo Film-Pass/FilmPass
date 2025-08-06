@@ -1,5 +1,6 @@
 package com.example.filmpass.domain.movie.entity;
 
+import com.example.filmpass.domain.movie.repository.MovieRepository;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -83,6 +84,7 @@ public class Movie {
         this.isDelete = true;
         this.deletedAt = LocalDateTime.now();
     }
+
     public void setIdForTest(Long id) {
         this.id = id;
     }

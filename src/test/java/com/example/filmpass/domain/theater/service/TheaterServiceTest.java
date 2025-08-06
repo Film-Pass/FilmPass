@@ -1,18 +1,10 @@
 package com.example.filmpass.domain.theater.service;
 
-import com.example.filmpass.domain.screen.entity.Screen;
-import com.example.filmpass.domain.screen.repository.ScreenRepository;
-import com.example.filmpass.domain.seat.dto.SeatRequest;
-import com.example.filmpass.domain.seat.dto.SeatResponse;
-import com.example.filmpass.domain.seat.dto.SeatStatus;
-import com.example.filmpass.domain.seat.entity.Seat;
-import com.example.filmpass.domain.seat.repository.SeatRepository;
 import com.example.filmpass.domain.theater.dto.PagedResponse;
 import com.example.filmpass.domain.theater.dto.TheaterRequest;
 import com.example.filmpass.domain.theater.dto.TheaterResponse;
 import com.example.filmpass.domain.theater.entity.Theater;
 import com.example.filmpass.domain.theater.repository.TheaterRepository;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -61,7 +53,6 @@ class TheaterServiceTest {
         verify(theaterRepository).save(any(Theater.class));
     }
 
-    @DisplayName("극장 전체 조회 - 성공")
     @Test
     void 극장_전체_조회_성공() {
         // given

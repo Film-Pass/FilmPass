@@ -16,6 +16,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -41,6 +43,16 @@ public class ReviewService {
         );
 
         Review saved = reviewRepository.save(review);
+        //평균 평점 재계산
+       List<Review> reviewList = reviewRepository.findAllByMovieId(request.getMovieId());
+        int reivewCount = reviewList.size();
+        double reivesRating = reviewList.stream()
+                .mapToDouble(Review::getRating)
+                .average()
+                .orElse(0.0);
+        double avrRating = Math.round(reivesRating * 10.0) / 10.0;
+        movie.updateRating(request.getMovieId(), avrRating, reivewCount);
+
         return ReviewResponseDto.from(saved);
     }
 

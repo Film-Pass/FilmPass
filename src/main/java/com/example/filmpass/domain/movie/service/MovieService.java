@@ -3,7 +3,8 @@ package com.example.filmpass.domain.movie.service;
 import com.example.filmpass.domain.movie.dto.*;
 import com.example.filmpass.domain.movie.entity.Movie;
 import com.example.filmpass.domain.movie.repository.MovieRepository;
-import com.example.filmpass.global.config.UserPrincipal;
+import com.example.filmpass.domain.review.entity.Review;
+import com.example.filmpass.domain.review.repository.ReviewRepository;
 import com.example.filmpass.global.exception.CustomException;
 import com.example.filmpass.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -13,25 +14,25 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class MovieService {
     private final MovieRepository movieRepository;
+    private final ReviewRepository reviewRepository;
 
     //영화 등록 CreateMovie
     @PreAuthorize("hasRole('ADMIN')")
     @Transactional
     public MovieCreateResponse movieCreate(MovieCreateRequest movieCreateRequest){
-        String runningTime = movieCreateRequest.getRunningTime();
+        String title = movieCreateRequest.getTitle();
         String director = movieCreateRequest.getDirector();
-        String description = movieCreateRequest.getDescription();
-        String posterUrl = movieCreateRequest.getMovieImage();
-        String title = movieCreateRequest.getMovieName();
         String genre = movieCreateRequest.getGenre();
+        String runningTime = movieCreateRequest.getRunningTime();
+        String releaseDate = movieCreateRequest.getReleaseDate();
+        String description = movieCreateRequest.getDescription();
+        String posterUrl = movieCreateRequest.getPosterUrl();
 
         if (title == null || title.trim().isEmpty()) {
             throw new CustomException(ErrorCode.MOVIE_TITLE_REQUIRED);
@@ -42,26 +43,35 @@ public class MovieService {
         if (runningTime == null || runningTime.trim().isEmpty()) {
             throw new CustomException(ErrorCode.MOVIE_RUNNING_TIME_REQUIRED);
         }
-
+        if (genre == null || genre.trim().isEmpty()) {
+            throw new CustomException(ErrorCode.MOVIE_GENRE_REQUIRED);
+        }
         if(movieRepository.findByTitle(title).isPresent()){
             throw new CustomException(ErrorCode.MOVIE_ALREADY_EXISTS);
         }
-        Movie movie = new Movie(title,director,description,runningTime,posterUrl, genre);
+
+        Movie movie = new Movie(title, director, genre, runningTime, releaseDate, description, posterUrl);
         movieRepository.save(movie);
 
-        return new MovieCreateResponse(movie.getTitle());
+        return new MovieCreateResponse(movie.getTitle(), movie.getDirector(), movie.getGenre(), movie.getRunningTime());
     }
 
     //영화 전체 조회
     @Transactional(readOnly = true)
-    public FindMovieResponse<Movie> findAllMovie(Pageable pageable) {
+    public FindMovieResponse<SimpleFindMovieResponse> findAllMovie(Pageable pageable) {
         Page<Movie> moviePage = movieRepository.findAll(pageable);
-
-        if(moviePage.isEmpty()) {
+        if (moviePage.isEmpty()) {
             throw new CustomException(ErrorCode.MOVIE_LIST_NOT_FOUND);
         }
-        PageInfo pageInfo = new PageInfo(moviePage.getNumber(), moviePage.getTotalPages(), moviePage.getTotalElements(), moviePage.getSize(), moviePage.isLast());
-        return new FindMovieResponse<Movie> (moviePage.getContent(), pageInfo);
+
+        List<SimpleFindMovieResponse> simpleFindMovieResponseList = moviePage.stream()
+                .map(movie -> new SimpleFindMovieResponse(
+                        movie.getId(), movie.getTitle(), movie.getGenre(), movie.getAvrRating(), movie.getReleaseDate()
+                ))
+                .toList();
+
+        PageInfo pageInfo = new PageInfo(moviePage.getNumber(), moviePage.getTotalPages(), moviePage.getTotalElements(), moviePage.getSize());
+        return new  FindMovieResponse<SimpleFindMovieResponse> (simpleFindMovieResponseList, pageInfo);
     }
 
     //영화 검색
@@ -129,7 +139,20 @@ public class MovieService {
         Movie alreadyMovie = movieRepository.findById(movieId)
                 .orElseThrow(()-> new CustomException(ErrorCode.MOVIE_NOT_FOUND));
 
-        return new FindMovieDetailResponse(alreadyMovie.getTitle(), alreadyMovie.getDirector(), alreadyMovie.getDescription(), alreadyMovie.getGenre());
+        List<Review> reviewList = reviewRepository.findAllByMovieId(movieId);
+        String rating = null;
+        if(reviewList.isEmpty()) {
+            rating = "리뷰 없음";
+            return new FindMovieDetailResponse(alreadyMovie.getTitle(), alreadyMovie.getDirector(), alreadyMovie.getDescription(), alreadyMovie.getGenre(), rating, alreadyMovie.getRunningTime(), alreadyMovie.getPosterUrl());
+        } else {
+            double average = reviewList.stream()
+                    .mapToDouble(Review::getRating)
+                    .average()
+                    .orElse(0.0);
+            rating = String.format("%.1f", average);
+
+            return new FindMovieDetailResponse(alreadyMovie.getTitle(), alreadyMovie.getDirector(), alreadyMovie.getDescription(), alreadyMovie.getGenre(), rating, alreadyMovie.getRunningTime(), alreadyMovie.getPosterUrl());
+        }
     }
 
     //영화  삭제

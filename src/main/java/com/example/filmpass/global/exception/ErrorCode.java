@@ -37,6 +37,11 @@ public enum ErrorCode {
     INVALID_PAGE_SIZE(HttpStatus.BAD_REQUEST, "유효하지 않은 페이지 크기 입니다."),
     INVALID_PAGE_NUMBER(HttpStatus.BAD_REQUEST, "유효하지 않는 페이지 번호 입니다."),
     EMPTY_PAGE(HttpStatus.NOT_FOUND, "비어있는 페이지 입니다."),
+    // Payment
+    ORDER_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 order_id 입니다."),
+    PAYMENTKEY_MISMATCH(HttpStatus.BAD_REQUEST, "결제된 키와 검증요청한 키가 서로 다릅니다."),
+    AMOUNT_MISMATCH(HttpStatus.BAD_REQUEST, "결제된 금액과 검증요청한 금액이 서로 다릅니다."),
+    PAYMENT_FAILED(HttpStatus.UNAUTHORIZED, "결제 실패!"),
     // Reservation
     RESERVATION_NOT_FOUND(HttpStatus.NOT_FOUND, "예매 정보를 찾을 수 없습니다."),
     ALREADY_CANCELED(HttpStatus.BAD_REQUEST, "이미 취소된 예매입니다."),

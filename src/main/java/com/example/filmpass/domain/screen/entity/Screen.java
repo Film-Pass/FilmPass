@@ -26,6 +26,8 @@ public class Screen {
     @JoinColumn(name = "theater_id", nullable = false)
     private Theater theater;
 
+    private Integer amount = 10000;
+
     // 생성자
     public Screen(String name, String address, Theater theater) {
         this.name = name;

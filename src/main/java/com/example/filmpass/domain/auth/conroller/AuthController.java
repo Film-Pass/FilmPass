@@ -1,5 +1,6 @@
 package com.example.filmpass.domain.auth.conroller;
 
+import com.example.filmpass.domain.auth.dto.DiscountTypeRequestDto;
 import com.example.filmpass.domain.auth.dto.LoginRequestDto;
 import com.example.filmpass.domain.auth.dto.RoleRequestDto;
 import com.example.filmpass.domain.auth.dto.SignUpRequestDto;
@@ -63,6 +64,18 @@ public class AuthController {
             ) {
 
         return ApiResponse.success(authService.changeRole(request, id, principal), "권한 변경 성공!");
+
+    }
+
+    // 할인 타입 변경
+    @PatchMapping("/api/auth/discount/{id}")
+    public ApiResponse changeDiscountType(
+            @Valid @RequestBody DiscountTypeRequestDto request,
+            @PathVariable Long id,
+            @AuthenticationPrincipal UserPrincipal principal
+            ) {
+
+        return ApiResponse.success(authService.changeDiscountType(request, id, principal), "할인 타입 변경 성공!");
 
     }
 

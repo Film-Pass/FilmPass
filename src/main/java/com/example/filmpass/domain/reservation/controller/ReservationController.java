@@ -1,9 +1,6 @@
 package com.example.filmpass.domain.reservation.controller;
 
-import com.example.filmpass.domain.reservation.dto.ReservationDetailResponse;
-import com.example.filmpass.domain.reservation.dto.ReservationRequest;
-import com.example.filmpass.domain.reservation.dto.ReservationResponse;
-import com.example.filmpass.domain.reservation.dto.ReservationSummaryResponse;
+import com.example.filmpass.domain.reservation.dto.*;
 import com.example.filmpass.domain.reservation.service.ReservationService;
 import com.example.filmpass.global.common.ApiResponse;
 import com.example.filmpass.global.config.UserPrincipal;
@@ -63,4 +60,33 @@ public class ReservationController {
         Page<ReservationSummaryResponse> responses = reservationService.getReservationList(userId, pageable);
         return ResponseEntity.ok(ApiResponse.success(responses, "예매목록 조회 성공"));
     }
+
+    // 결제 요금 계산하는 API (프론트에 전달하는 용도)
+    @PostMapping("/calculation")
+    public ResponseEntity<ApiResponse> calculateAmounts(
+            @RequestBody CalculateAmountRequestDto requestDto,
+            @AuthenticationPrincipal UserPrincipal principal
+            ) {
+
+        return ResponseEntity.ok(
+                ApiResponse.success(reservationService.calculateAmounts(requestDto, principal),
+                        "결제 요금 계산 성공!"
+                )
+        );
+
+    }
+
+    // 결제 결과를 받고, 포인트 적립 API
+    @PostMapping("/confirm")
+    public ResponseEntity<ApiResponse> confirmPaymentAtBackend(
+            @RequestBody PaymentConfirmRequestDtoFront requestDto,
+            @AuthenticationPrincipal UserPrincipal principal
+    ) {
+
+        return ResponseEntity.ok(ApiResponse.success(
+                null,
+                reservationService.confirmPaymentAtBackend(requestDto, principal)));
+
+    }
+
 }

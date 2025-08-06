@@ -46,7 +46,7 @@ public class ReviewService {
 
     // 리뷰 수정
     public ReviewResponseDto updateReview(Long reviewId, ReviewRequestDto request) {
-        Review review = reviewRepository.findByReviewIdAndIsDeletedFalse(reviewId)
+        Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new CustomException(ErrorCode.REVIEW_NOT_FOUND));
 
         Movie movie = movieRepository.findById(request.getMovieId())
@@ -60,20 +60,44 @@ public class ReviewService {
     public Page<ReviewResponseDto> getReviewsByMovie(Long movieId, Pageable pageable) {
         Movie movie = movieRepository.findById(movieId)
                 .orElseThrow(() -> new CustomException(ErrorCode.MOVIE_NOT_FOUND));
-        return reviewRepository.findAllByMovieAndIsDeletedFalse(movie, pageable)
+
+        return reviewRepository.findAllByMovie(movie, pageable)
                 .map(ReviewResponseDto::from);
     }
 
-    // 리뷰 삭제
+    // 리뷰 삭제 (물리 삭제)
     public void deleteReview(Long reviewId) {
-        Review review = reviewRepository.findByReviewIdAndIsDeletedFalse(reviewId)
+        Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new CustomException(ErrorCode.REVIEW_NOT_FOUND));
-        review.softDelete();
-        reviewRepository.save(review);
+        reviewRepository.delete(review);
     }
+
     public Long getUserIdByUsername(String username) {
         User user = userRepository.findByNickname(username)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
         return user.getId();
+    }
+
+    // 평론가 리뷰 작성
+    public ReviewResponseDto createCriticReview(ReviewRequestDto request) {
+        User user = userRepository.findById(request.getUserId())
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        if (!user.isCritic()) {
+            throw new CustomException(ErrorCode.CRITIC_ONLY);
+        }
+
+        Movie movie = movieRepository.findById(request.getMovieId())
+                .orElseThrow(() -> new CustomException(ErrorCode.MOVIE_NOT_FOUND));
+
+        Review review = new Review(
+                request.getRating(),
+                request.getContent(),
+                movie,
+                user
+        );
+
+        Review saved = reviewRepository.save(review);
+        return ReviewResponseDto.from(saved);
     }
 }

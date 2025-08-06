@@ -58,4 +58,13 @@ public class ReviewController {
         reviewService.deleteReview(reviewId);
         return ResponseEntity.ok(ApiResponse.success(null, "리뷰가 삭제되었습니다."));
     }
+
+    //평론가가 쓴 평론
+    @PostMapping("/critics")
+    public ResponseEntity<ApiResponse> createCriticReview(@Valid @RequestBody ReviewRequestDto request) {
+        ReviewResponseDto response = reviewService.createCriticReview(request);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ApiResponse.success(response, "평론가 리뷰가 등록되었습니다."));
+    }
+
 }

@@ -32,4 +32,8 @@ public class Theater {
         this.name = name;
         this.location = location;
     }
+
+    public void setIdForTest(Long id) {
+        this.id = id;
+    }
 }

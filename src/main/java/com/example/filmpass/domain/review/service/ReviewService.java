@@ -43,6 +43,7 @@ public class ReviewService {
         );
 
         Review saved = reviewRepository.save(review);
+
         //평균 평점 재계산
        List<Review> reviewList = reviewRepository.findAllByMovieId(request.getMovieId());
         int reivewCount = reviewList.size();
@@ -65,8 +66,21 @@ public class ReviewService {
                 .orElseThrow(() -> new CustomException(ErrorCode.MOVIE_NOT_FOUND));
 
         review.update(request.getRating(), request.getContent(), movie);
+
+        // 평균 평점 재계산 추가
+        List<Review> reviewList = reviewRepository.findAllByMovieId(request.getMovieId());
+        int reviewCount = reviewList.size();
+        double avgRating = reviewList.stream()
+                .mapToDouble(Review::getRating)
+                .average()
+                .orElse(0.0);
+        avgRating = Math.round(avgRating * 10.0) / 10.0;
+
+        movie.updateRating(request.getMovieId(), avgRating, reviewCount);
+
         return ReviewResponseDto.from(review);
     }
+
 
     // 리뷰 목록 조회
     public Page<ReviewResponseDto> getReviewsByMovie(Long movieId, Pageable pageable) {
@@ -81,13 +95,20 @@ public class ReviewService {
     public void deleteReview(Long reviewId) {
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new CustomException(ErrorCode.REVIEW_NOT_FOUND));
-        reviewRepository.delete(review);
-    }
 
-    public Long getUserIdByUsername(String username) {
-        User user = userRepository.findByNickname(username)
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-        return user.getId();
+        reviewRepository.delete(review);
+
+        // 평균 평점 재계산
+        Long movieId = review.getMovie().getId();
+        List<Review> reviewList = reviewRepository.findAllByMovieId(movieId);
+        int reviewCount = reviewList.size();
+        double avgRating = reviewList.stream()
+                .mapToDouble(Review::getRating)
+                .average()
+                .orElse(0.0);
+        avgRating = Math.round(avgRating * 10.0) / 10.0;
+
+        review.getMovie().updateRating(movieId, avgRating, reviewCount);
     }
 
     // 평론가 리뷰 작성

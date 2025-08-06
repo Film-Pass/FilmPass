@@ -70,7 +70,7 @@ class ScreenControllerTest {
         // when & then
         mockMvc.perform(patch("/api/screens/{screenId}", screenId)
                 .with(csrf())
-                .with(user("testuser").roles("USER"))
+                .with(user("tester").roles("USER"))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestDto)))
                 .andExpect(status().isOk())

@@ -139,20 +139,7 @@ public class MovieService {
         Movie alreadyMovie = movieRepository.findById(movieId)
                 .orElseThrow(()-> new CustomException(ErrorCode.MOVIE_NOT_FOUND));
 
-        List<Review> reviewList = reviewRepository.findAllByMovieId(movieId);
-        String rating = null;
-        if(reviewList.isEmpty()) {
-            rating = "리뷰 없음";
-            return new FindMovieDetailResponse(alreadyMovie.getTitle(), alreadyMovie.getDirector(), alreadyMovie.getDescription(), alreadyMovie.getGenre(), rating, alreadyMovie.getRunningTime(), alreadyMovie.getPosterUrl());
-        } else {
-            double average = reviewList.stream()
-                    .mapToDouble(Review::getRating)
-                    .average()
-                    .orElse(0.0);
-            rating = String.format("%.1f", average);
-
-            return new FindMovieDetailResponse(alreadyMovie.getTitle(), alreadyMovie.getDirector(), alreadyMovie.getDescription(), alreadyMovie.getGenre(), rating, alreadyMovie.getRunningTime(), alreadyMovie.getPosterUrl());
-        }
+        return new FindMovieDetailResponse(alreadyMovie.getId(), alreadyMovie.getTitle(), alreadyMovie.getDirector(), alreadyMovie.getGenre(), alreadyMovie.getAvrRating(), alreadyMovie.getReviewCount(), alreadyMovie.getRunningTime(), alreadyMovie.getReleaseDate(), alreadyMovie.getDescription(), alreadyMovie.getPosterUrl());
     }
 
     //영화  삭제

@@ -90,3 +90,6 @@ VALUES
 (2, 'H1', 'AVAILABLE'), (2, 'H2', 'AVAILABLE'), (2, 'H3', 'AVAILABLE'), (2, 'H4', 'AVAILABLE'), (2, 'H5', 'AVAILABLE'), (2, 'H6', 'AVAILABLE'), (2, 'H7', 'AVAILABLE'),
 (2, 'I1', 'AVAILABLE'), (2, 'I2', 'AVAILABLE'), (2, 'I3', 'AVAILABLE'), (2, 'I4', 'AVAILABLE'), (2, 'I5', 'AVAILABLE'), (2, 'I6', 'AVAILABLE'), (2, 'I7', 'AVAILABLE'),
 (2, 'J1', 'AVAILABLE'), (2, 'J2', 'AVAILABLE'), (2, 'J3', 'AVAILABLE'), (2, 'J4', 'AVAILABLE'), (2, 'J5', 'AVAILABLE'), (2, 'J6', 'AVAILABLE'), (2, 'J7', 'AVAILABLE');
+-- 9) 관리자 권한을 가진 유저
+INSERT INTO users (id, email, password, role, is_critic, name, nickname)
+VALUES (1, 'ex@ex.com', 'Qwer1234!', 'ADMIN', true, '관리자', 'admin');

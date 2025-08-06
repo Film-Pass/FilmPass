@@ -23,4 +23,11 @@ public class ReviewRequestDto {
 
     private String content;
 
+    public ReviewRequestDto(Long userId, Long movieId, Integer rating, String content) {
+        this.userId = userId;
+        this.movieId = movieId;
+        this.rating = rating;
+        this.content = content;
+    }
 }
+

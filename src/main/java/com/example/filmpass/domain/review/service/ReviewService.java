@@ -16,6 +16,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -41,39 +43,94 @@ public class ReviewService {
         );
 
         Review saved = reviewRepository.save(review);
+
+        //평균 평점 재계산
+       List<Review> reviewList = reviewRepository.findAllByMovieId(request.getMovieId());
+        int reivewCount = reviewList.size();
+        double reivesRating = reviewList.stream()
+                .mapToDouble(Review::getRating)
+                .average()
+                .orElse(0.0);
+        double avrRating = Math.round(reivesRating * 10.0) / 10.0;
+        movie.updateRating(request.getMovieId(), avrRating, reivewCount);
+
         return ReviewResponseDto.from(saved);
     }
 
     // 리뷰 수정
     public ReviewResponseDto updateReview(Long reviewId, ReviewRequestDto request) {
-        Review review = reviewRepository.findByReviewIdAndIsDeletedFalse(reviewId)
+        Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new CustomException(ErrorCode.REVIEW_NOT_FOUND));
 
         Movie movie = movieRepository.findById(request.getMovieId())
                 .orElseThrow(() -> new CustomException(ErrorCode.MOVIE_NOT_FOUND));
 
         review.update(request.getRating(), request.getContent(), movie);
+
+        // 평균 평점 재계산 추가
+        List<Review> reviewList = reviewRepository.findAllByMovieId(request.getMovieId());
+        int reviewCount = reviewList.size();
+        double avgRating = reviewList.stream()
+                .mapToDouble(Review::getRating)
+                .average()
+                .orElse(0.0);
+        avgRating = Math.round(avgRating * 10.0) / 10.0;
+
+        movie.updateRating(request.getMovieId(), avgRating, reviewCount);
+
         return ReviewResponseDto.from(review);
     }
+
 
     // 리뷰 목록 조회
     public Page<ReviewResponseDto> getReviewsByMovie(Long movieId, Pageable pageable) {
         Movie movie = movieRepository.findById(movieId)
                 .orElseThrow(() -> new CustomException(ErrorCode.MOVIE_NOT_FOUND));
-        return reviewRepository.findAllByMovieAndIsDeletedFalse(movie, pageable)
+
+        return reviewRepository.findAllByMovie(movie, pageable)
                 .map(ReviewResponseDto::from);
     }
 
     // 리뷰 삭제
     public void deleteReview(Long reviewId) {
-        Review review = reviewRepository.findByReviewIdAndIsDeletedFalse(reviewId)
+        Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new CustomException(ErrorCode.REVIEW_NOT_FOUND));
-        review.softDelete();
-        reviewRepository.save(review);
+
+        reviewRepository.delete(review);
+
+        // 평균 평점 재계산
+        Long movieId = review.getMovie().getId();
+        List<Review> reviewList = reviewRepository.findAllByMovieId(movieId);
+        int reviewCount = reviewList.size();
+        double avgRating = reviewList.stream()
+                .mapToDouble(Review::getRating)
+                .average()
+                .orElse(0.0);
+        avgRating = Math.round(avgRating * 10.0) / 10.0;
+
+        review.getMovie().updateRating(movieId, avgRating, reviewCount);
     }
-    public Long getUserIdByUsername(String username) {
-        User user = userRepository.findByNickname(username)
+
+    // 평론가 리뷰 작성
+    public ReviewResponseDto createCriticReview(ReviewRequestDto request) {
+        User user = userRepository.findById(request.getUserId())
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-        return user.getId();
+
+        if (!user.isCritic()) {
+            throw new CustomException(ErrorCode.CRITIC_ONLY);
+        }
+
+        Movie movie = movieRepository.findById(request.getMovieId())
+                .orElseThrow(() -> new CustomException(ErrorCode.MOVIE_NOT_FOUND));
+
+        Review review = new Review(
+                request.getRating(),
+                request.getContent(),
+                movie,
+                user
+        );
+
+        Review saved = reviewRepository.save(review);
+        return ReviewResponseDto.from(saved);
     }
 }

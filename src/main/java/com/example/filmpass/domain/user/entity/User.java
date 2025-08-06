@@ -45,12 +45,16 @@ public class User extends BaseEntity {
 
     private Integer point = 0;
 
+    @Column(name = "is_critic", nullable = false)
+    private boolean isCritic;
 
     public User(String email, String password, String nickname, String name) {
         this.email = email;
         this.password = password;
         this.nickname = nickname;
         this.name = name;
+        this.role = UserRole.GUEST;
+        this.isCritic = false;
     }
 
     public static UserInfoResponseDto pageToDto(User user) {
@@ -61,6 +65,9 @@ public class User extends BaseEntity {
                 user.getEmail(),
                 user.getNickname());
 
+    }
+    public void setIdForTest(Long id) {
+        this.id = id;
     }
 
 }

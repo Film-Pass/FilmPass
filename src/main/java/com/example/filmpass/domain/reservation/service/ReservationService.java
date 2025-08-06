@@ -9,6 +9,7 @@ import com.example.filmpass.domain.reservation.repository.ReservationRepository;
 import com.example.filmpass.domain.schedule.entity.Schedule;
 import com.example.filmpass.domain.schedule.repository.ScheduleRepository;
 import com.example.filmpass.domain.screen.entity.Screen;
+import com.example.filmpass.domain.seat.dto.SeatStatus;
 import com.example.filmpass.domain.seat.entity.Seat;
 import com.example.filmpass.domain.seat.repository.SeatRepository;
 import com.example.filmpass.domain.user.entity.User;
@@ -57,14 +58,20 @@ public class ReservationService {
             throw new CustomException(ErrorCode.SEAT_NOT_FOUND);
         }
 
-        // 4. 중복 예매 좌석 확인
-        final List<Reservation> reservations = reservationRepository.findAllByScheduleAndSeatIn(schedule, seats);
+        // 4. 고장난 좌석 조회
+        boolean hasBrokenSeat = seats.stream()
+                .anyMatch(seat -> seat.getStatus() == SeatStatus.BROKEN);
+        if (hasBrokenSeat) {
+            throw new CustomException(ErrorCode.BROKEN_SEAT);
+        }
 
+        // 5. 중복 예매 좌석 확인
+        final List<Reservation> reservations = reservationRepository.findAllByScheduleAndSeatIn(schedule, seats);
         if (!reservations.isEmpty()) {
             throw new CustomException(ErrorCode.SEAT_ALREADY_RESERVED);
         }
 
-        // 5. 예매 정보 저장 후 반환
+        // 6. 예매 정보 저장 후 반환
         final List<ReservationInfo> reservationInfos = new ArrayList<>(seats.size());
         for (Seat seat : seats) {
             Reservation reservation = new Reservation(schedule, seat, user);

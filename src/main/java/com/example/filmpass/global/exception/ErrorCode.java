@@ -11,6 +11,8 @@ public enum ErrorCode {
     INVALID_INPUT(HttpStatus.BAD_REQUEST, "입력 값이 유효하지 않습니다."),
     MOVIE_NOT_FOUND(HttpStatus.NOT_FOUND, "영화를 찾을 수 없습니다."),
     REVIEW_NOT_FOUND(HttpStatus.NOT_FOUND, "리뷰를 찾을 수 없습니다."),
+    CRITIC_ONLY(HttpStatus.FORBIDDEN, "평론가만 작성할 수 있는 리뷰입니다."),
+
     // 상영관
     SCREEN_NOT_FOUND(HttpStatus.NOT_FOUND,"상영관을 찾을 수 없습니다" ),
     SCREEN_ALREADY_EXISTS(HttpStatus.CONFLICT, "해당 이름의 상영관이 이미 존재합니다."),
@@ -20,6 +22,7 @@ public enum ErrorCode {
     // 좌석
     DUPLICATE_SEAT_NUMBER(HttpStatus.BAD_REQUEST, "이미 등록된 좌석번호입니다."),
     SEAT_NOT_FOUND(HttpStatus.NOT_FOUND, "좌석을 찾을 수 없습니다."),
+    BROKEN_SEAT(HttpStatus.BAD_REQUEST, "고장난 좌석은 예매할 수 없습니다."),
     // Auth
     EMAIL_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "이미 사용중인 이메일입니다."),
     NICKNAME_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "이미 사용중인 닉네임입니다."),
@@ -56,6 +59,7 @@ public enum ErrorCode {
     MOVIE_NOT_FOUND_BY_DIRECTOR(HttpStatus.NOT_FOUND,"해당하는 감독의 영화가 존재하지 않습니다."),
     MOVIE_TITLE_REQUIRED(HttpStatus.BAD_REQUEST,"제목은 필수 항목입니다."),
     MOVIE_DIRECTOR_REQUIRED(HttpStatus.BAD_REQUEST,"감독은 필수 항목입니다."),
+    MOVIE_GENRE_REQUIRED(HttpStatus.BAD_REQUEST, "장르는 필수 항목입니다."),
     MOVIE_RUNNING_TIME_REQUIRED(HttpStatus.BAD_REQUEST,"상영 시간은 필수 항목입니다."),
     MOVIE_SEARCH_REQUIRED(HttpStatus.BAD_REQUEST, "ID, 제목, 감독, 장르 중 최소 1가지 이상의 조건이 필요합니다."),
     MOVIE_SEARCH_NOT_FOUND(HttpStatus.NOT_FOUND,"조건에 일치하는 영화가 존재하지 않습니다.");

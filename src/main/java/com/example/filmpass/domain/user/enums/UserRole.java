@@ -6,7 +6,7 @@ import java.util.Arrays;
 
 public enum UserRole {
 
-    GUEST, ADMIN;
+    GUEST, ADMIN, CRITIC;
 
     public static UserRole of(String role) {
         return Arrays.stream(UserRole.values())

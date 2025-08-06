@@ -38,4 +38,6 @@ public interface MovieRepository extends JpaRepository<Movie, Long> {
             @Param("genre") String genre,
             Pageable pageable
     );
+
+
 }

@@ -43,7 +43,7 @@ public class User extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private DiscountType discountType = DiscountType.NORMAL;
 
-    private Integer point;
+    private Integer point = 0;
 
 
     public User(String email, String password, String nickname, String name) {

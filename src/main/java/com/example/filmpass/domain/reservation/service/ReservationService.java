@@ -11,12 +11,7 @@ import com.example.filmpass.domain.user.entity.User;
 import com.example.filmpass.domain.user.repository.UserRepository;
 import com.example.filmpass.global.exception.CustomException;
 import com.example.filmpass.global.exception.ErrorCode;
-<<<<<<< dev
-=======
 import com.example.filmpass.global.utility.RedissonService;
-import org.redisson.api.RLock;
-import org.redisson.api.RedissonClient;
->>>>>>> local
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

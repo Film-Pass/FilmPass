@@ -31,7 +31,7 @@ public class TheaterController {
     @TrackUserActionAnnotation("극장 등록")
     public ResponseEntity<ApiResponse> createTheater(@Valid @RequestBody TheaterRequest request) {
         TheaterResponse response = theaterService.createTheater(request);
-        return ResponseEntity.ok(ApiResponse.success(response, "좌석 등록 성공"));
+        return ResponseEntity.ok(ApiResponse.success(response, "극장 등록 성공"));
     }
 
     // 극장 단건 조회

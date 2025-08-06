@@ -30,23 +30,22 @@ public class SeatService {
         List<SeatResponse> responses = new ArrayList<>();
 
         for (SeatRequest request : requests) {
+            Long screenId = request.getScreenId();
+            String seatNumber = request.getSeatNumber();
+
             // 1. 상영관(Screen) 존재 여부 확인
-            Screen screen = screenRepository.findById(request.getScreenId())
+            Screen screen = screenRepository.findById(screenId)
                     .orElseThrow(() -> new CustomException(ErrorCode.SCREEN_NOT_FOUND));
 
-            // 2. 해당 상영관 내에 같은 좌석번호가 이미 존재하는지 중복 체크
-            boolean exists = seatRepository.existsByScreenIdAndSeatNumber(screen.getId(), request.getSeatNumber());
-            if (exists) {
+            // 2. 중복 좌석 체크
+            if (seatRepository.existsByScreenIdAndSeatNumber(screenId, seatNumber)) {
                 throw new CustomException(ErrorCode.DUPLICATE_SEAT_NUMBER);
             }
 
-            // 3. 좌석 엔티티 생성 (상영관과 좌석번호를 가지고)
-            Seat seat = new Seat(screen, request.getSeatNumber());
+            // 3. 좌석 저장
+            Seat saved = seatRepository.save(new Seat(screen, seatNumber));
 
-            // 4. 좌석 엔티티를 데이터베이스에 저장
-            Seat saved = seatRepository.save(seat);
-
-            // 5. 저장된 좌석 정보를 응답용 DTO(SeatResponse)로 변환하여 리스트에 추가
+            // 4. 응답 DTO 생성 및 추가
             responses.add(new SeatResponse(
                     saved.getId(),
                     saved.getSeatNumber(),

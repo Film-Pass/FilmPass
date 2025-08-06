@@ -1,5 +1,6 @@
 package com.example.filmpass.domain.movie.entity;
 
+import com.example.filmpass.domain.movie.repository.MovieRepository;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -32,6 +33,12 @@ public class Movie {
     @Column(length = 10)
     private String genre;
 
+    @Column(name = "avr_rating")
+    private double avrRating;
+
+    @Column(name = "reivew_count")
+    private int reviewCount;
+
     @Column(nullable = false, name = "running_time")
     private String runningTime;
 
@@ -55,10 +62,13 @@ public class Movie {
         this.title = title;
         this.director = director;
         this.genre = genre;
+        this.avrRating = 0.0;
+        this.reviewCount=0;
         this.runningTime = runningTime;
         this.releaseDate = releaseDate;
         this.description = description;
         this.posterUrl = posterUrl;
+        this.isDelete = false;
     }
 
     public void updateMovie(String title, String posterUrl, String description, String director, String runningTime, String genre) {
@@ -73,5 +83,10 @@ public class Movie {
     public void deleteMovie () {
         this.isDelete = true;
         this.deletedAt = LocalDateTime.now();
+    }
+
+    public void updateRating(Long id, double avrRating, int reviewCount) {
+        this.avrRating = avrRating;
+        this.reviewCount = reviewCount;
     }
 }

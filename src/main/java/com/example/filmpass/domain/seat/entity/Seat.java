@@ -21,7 +21,7 @@ public class Seat {
     private Screen screen; // 상영관 (Screen) 식별자 - 연관관계
 
     @Column(name = "seat_id",nullable = false)
-    private String seatNumber; // 좌석 이름 (예: A1, B2)
+private String seatNumber; // 좌석 이름 (예: A1, B2)E
 
     public Seat(Screen screen, String seatNumber) {
         this.screen = screen;

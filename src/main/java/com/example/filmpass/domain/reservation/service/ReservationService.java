@@ -11,6 +11,12 @@ import com.example.filmpass.domain.user.entity.User;
 import com.example.filmpass.domain.user.repository.UserRepository;
 import com.example.filmpass.global.exception.CustomException;
 import com.example.filmpass.global.exception.ErrorCode;
+<<<<<<< dev
+=======
+import com.example.filmpass.global.utility.RedissonService;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
+>>>>>>> local
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -29,8 +35,9 @@ public class ReservationService {
     private final UserRepository userRepository;
     private final ScheduleRepository scheduleRepository;
     private final SeatRepository seatRepository;
+    private final RedissonService redissonService;
 
-    @Transactional
+    @Transactional  // 성능 문제 발생 / 대용량 트래픽이 넘어갈때 문제를 발생시킨다. / 깊게 공부해보자
     public ReservationResponse reserve(Long userId, ReservationRequest request) {
 
         // 1. 유저 조회
@@ -47,23 +54,25 @@ public class ReservationService {
             throw new CustomException(ErrorCode.SEAT_NOT_FOUND);
         }
 
-        // 4. 중복 예매 좌석 확인
-        final List<Reservation> reservations = reservationRepository.findAllByScheduleAndSeatIn(schedule, seats);
+        List<String> lockKeys = seats.stream()
+                .map(seat -> "lock:schedule:" + schedule.getId() + ":" + ":seat:" + seat.getId())
+                .toList();
 
-        if (!reservations.isEmpty()) {
-            throw new CustomException(ErrorCode.SEAT_ALREADY_RESERVED);
-        }
+        return redissonService.runWithMultiLock(lockKeys, 3, 5, () -> {
+            final List<Reservation> reservedReservation = reservationRepository.findAllByScheduleAndSeatIn(schedule, seats);
+            if (!reservedReservation.isEmpty()) {
+                throw new CustomException(ErrorCode.SEAT_ALREADY_RESERVED);
+            }
 
-        // 5. 예매 정보 저장 후 반환
-        final List<ReservationInfo> reservationInfos = new ArrayList<>(seats.size());
-        for (Seat seat : seats) {
-            Reservation reservation = new Reservation(schedule, seat, user);
-            reservationRepository.save(reservation);
+            final List<ReservationInfo> reservationInfos = new ArrayList<>();
+            for (Seat seat : seats) {
+                Reservation reservation = new Reservation(schedule, seat, user);
+                reservationRepository.save(reservation);
+                reservationInfos.add(new ReservationInfo(reservation.getId(), reservation.getSeat().getSeatNumber()));
+            }
 
-            reservationInfos.add(new ReservationInfo(reservation.getId(), seat.getSeatNumber()));
-        }
-
-        return new ReservationResponse(schedule.getId(), reservationInfos);
+            return new ReservationResponse(schedule.getId(), reservationInfos);
+        });
     }
 
     @Transactional

@@ -1,6 +1,7 @@
 package com.example.filmpass.domain.user.entity;
 
 import com.example.filmpass.domain.user.dto.UserInfoResponseDto;
+import com.example.filmpass.domain.user.enums.DiscountType;
 import com.example.filmpass.domain.user.enums.UserRole;
 import com.example.filmpass.global.common.BaseEntity;
 import jakarta.persistence.*;
@@ -38,6 +39,11 @@ public class User extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private UserRole role = UserRole.GUEST;
+
+    @Enumerated(EnumType.STRING)
+    private DiscountType discountType = DiscountType.NORMAL;
+
+    private Integer point;
 
 
     public User(String email, String password, String nickname, String name) {

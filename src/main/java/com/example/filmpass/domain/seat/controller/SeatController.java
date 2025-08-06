@@ -7,9 +7,9 @@ import com.example.filmpass.global.aop.TrackUserActionAnnotation;
 import com.example.filmpass.global.common.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,6 +20,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/seats")
+@Validated
 public class SeatController {
 
     private final SeatService seatService;
@@ -28,10 +29,9 @@ public class SeatController {
     @PostMapping
     @TrackUserActionAnnotation("좌석 등록")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ApiResponse> createSeats(@Valid @RequestBody List<SeatRequest> requests) {
+    public ResponseEntity<ApiResponse> createSeats(@RequestBody @Valid List<SeatRequest> requests) {
         List<SeatResponse> responses = seatService.createSeats(requests);
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(ApiResponse.success(responses, "좌석 일괄 등록 완료"));
+        return ResponseEntity.ok(ApiResponse.success(responses, "좌석 일괄 등록 완료"));
     }
 
     // 좌석 목록 조회

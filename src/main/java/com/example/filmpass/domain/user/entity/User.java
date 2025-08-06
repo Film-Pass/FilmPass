@@ -60,5 +60,8 @@ public class User extends BaseEntity {
                 user.getNickname());
 
     }
+    public void setIdForTest(Long id) {
+        this.id = id;
+    }
 
 }

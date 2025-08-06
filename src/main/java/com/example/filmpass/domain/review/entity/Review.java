@@ -64,4 +64,7 @@ public class Review {
         this.updatedAt = LocalDateTime.now();
     }
 
+    public void setIdForTest(Long id) {
+        this.reviewId = id;
+    }
 }

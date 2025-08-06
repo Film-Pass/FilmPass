@@ -85,6 +85,10 @@ public class Movie {
         this.deletedAt = LocalDateTime.now();
     }
 
+    public void setIdForTest(Long id) {
+        this.id = id;
+    }
+
     public void updateRating(Long id, double avrRating, int reviewCount) {
         this.avrRating = avrRating;
         this.reviewCount = reviewCount;

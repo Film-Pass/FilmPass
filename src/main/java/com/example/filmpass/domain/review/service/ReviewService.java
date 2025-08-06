@@ -77,7 +77,7 @@ public class ReviewService {
                 .map(ReviewResponseDto::from);
     }
 
-    // 리뷰 삭제 (물리 삭제)
+    // 리뷰 삭제
     public void deleteReview(Long reviewId) {
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new CustomException(ErrorCode.REVIEW_NOT_FOUND));

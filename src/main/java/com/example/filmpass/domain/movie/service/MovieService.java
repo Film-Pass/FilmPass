@@ -76,7 +76,7 @@ public class MovieService {
 
     //영화 검색
     @Transactional
-    public Page<SearchMovieResponse> findMovie(FindMovieRequest findMovieRequest, Pageable pageable) {
+    public FindMovieResponse<SimpleFindMovieResponse> findMovie(FindMovieRequest findMovieRequest, Pageable pageable) {
         Long id = findMovieRequest.getId();
         String title = findMovieRequest.getTitle();
         String director = findMovieRequest.getDirector();
@@ -100,7 +100,15 @@ public class MovieService {
         if (movies.isEmpty()) {
             throw new CustomException(ErrorCode.MOVIE_SEARCH_NOT_FOUND);
         }
-        return movies.map(SearchMovieResponse::new);
+
+        List<SimpleFindMovieResponse> simpleFindMovieResponseList = movies.stream()
+                .map(movie -> new SimpleFindMovieResponse(
+                        movie.getId(), movie.getTitle(), movie.getGenre(), movie.getAvrRating(), movie.getReleaseDate()
+                ))
+                .toList();
+
+        PageInfo pageInfo = new PageInfo(movies.getNumber(), movies.getTotalPages(), movies.getTotalElements(), movies.getSize());
+        return new  FindMovieResponse<SimpleFindMovieResponse> (simpleFindMovieResponseList, pageInfo);
     }
 
 

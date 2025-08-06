@@ -7,6 +7,7 @@ TRUNCATE TABLE seats;
 TRUNCATE TABLE screens;
 TRUNCATE TABLE theaters;
 TRUNCATE TABLE movies;
+TRUNCATE TABLE users;
 
 -- 3) FK 제약 다시 켜기
 SET FOREIGN_KEY_CHECKS = 1;

@@ -4,20 +4,21 @@ import lombok.Getter;
 
 @Getter
 public class MovieCreateRequest {
-    private String runningTime;
+    private String title;
     private String director;
-    private String movieName;
-    private String description;
-    private String movieImage;
     private String genre;
+    private String runningTime;
+    private String releaseDate;
+    private String description;
+    private String posterUrl;
 
-
-    public MovieCreateRequest(String movieName, String director, String description, String runningTime, String movieImage, String genre) {
-        this.runningTime = runningTime;
+    public MovieCreateRequest(String title, String director, String genre, String runningTime, String releaseDate, String description, String posterUrl) {
+        this.title = title;
         this.director = director;
-        this.description = description;
-        this.movieImage = movieImage;
-        this.movieName = movieName;
         this.genre = genre;
+        this.runningTime = runningTime;
+        this.releaseDate = releaseDate;
+        this.description = description;
+        this.posterUrl = posterUrl;
     }
 }

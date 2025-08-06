@@ -92,5 +92,5 @@ VALUES
 (2, 'I1', 'AVAILABLE'), (2, 'I2', 'AVAILABLE'), (2, 'I3', 'AVAILABLE'), (2, 'I4', 'AVAILABLE'), (2, 'I5', 'AVAILABLE'), (2, 'I6', 'AVAILABLE'), (2, 'I7', 'AVAILABLE'),
 (2, 'J1', 'AVAILABLE'), (2, 'J2', 'AVAILABLE'), (2, 'J3', 'AVAILABLE'), (2, 'J4', 'AVAILABLE'), (2, 'J5', 'AVAILABLE'), (2, 'J6', 'AVAILABLE'), (2, 'J7', 'AVAILABLE');
 -- 9) 관리자 권한을 가진 유저
-INSERT INTO users (id, email, password, role, is_critic, name, nickname)
-VALUES (1, 'ex@ex.com', 'Qwer1234!', 'ADMIN', true, '관리자', 'admin');
+INSERT INTO users (is_critic, created_at, deleted_at, id, updated_at, email, name, nickname, password, role)
+VALUES (0x00, NULL, NULL, 1,  NULL, 'admin@gmail.com', '관리자', '관리자계정', '$2a$10$mwJiUpY5bunSTZ.TuJXaTuuraRmBWF2oyDhoP9yb9PT0XmzzXb.Tu','ADMIN');

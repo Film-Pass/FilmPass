@@ -2,7 +2,6 @@ package com.example.filmpass.global.utility;
 
 import com.example.filmpass.global.exception.CustomException;
 import com.example.filmpass.global.exception.ErrorCode;
-import org.hibernate.metamodel.model.domain.TreatableDomainType;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Component;
@@ -20,7 +19,7 @@ import java.util.concurrent.TimeUnit;
 public class RedissonService {
 
     // Redisson 클라이언트: Redis 서버와 연결된 객체
-    private RedissonClient redissonClient;
+    private final RedissonClient redissonClient;
 
     // 생성자 주입을 통한 Redisson 객체 주입
     public RedissonService(RedissonClient redissonClient) {
@@ -35,7 +34,7 @@ public class RedissonService {
      * @param useTime  락을 소유 후 자동 해제까지 걸리는 시간
      * @param executor 락을 얻으면 실행할 사용자 로직
      * @param <T>      로직 실행 결과 반환 타입은 다양할 수 있음으로 제네릭 타입으로 받음
-     * @throws InterruptedException 쓰레드가 락을 획득하기 위해 대기 중 중단 명령을 받았을 때 던지는 예외
+     * @throws CustomException 쓰레드가 락을 획득하기 위해 대기 중 중단 명령을 받았을 때 던지는 예외
      *
      */
     public <T> T runWithLock(String key, long waitTime, long useTime, LockExecutor<T> executor) {
@@ -74,22 +73,26 @@ public class RedissonService {
                 .map(redissonClient::getLock)
                 .toList();
 
+        List<RLock> acquiredLocks = new ArrayList<>();
+
         try {
             for (RLock lock : locks) {
                 boolean isLock = lock.tryLock(waitTime, useTime, TimeUnit.SECONDS);
                 if (!isLock) {
                     throw new CustomException(ErrorCode.SEAT_RESERVATION_LOCKED);
                 }
+                acquiredLocks.add(lock);
             }
 
-            return executor.execute(); // todo Transaction 전파 확인하기 분리함으로써 잘한것인가 / 구조를 복잡하게 한게 아닐까?
+            System.out.println("락 획득 성공");
+            return executor.execute(); // Transaction 전파 확인하기 분리함으로써 잘한것인가 / 구조를 복잡하게 한게 아닐까?
 
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             throw new CustomException(ErrorCode.THREAD_INTERRUPTED);
 
         } finally {
-            for (RLock lock : locks) {
+            for (RLock lock : acquiredLocks) {
                 if (lock.isHeldByCurrentThread()) {
                     lock.unlock();
                 }

@@ -32,7 +32,7 @@ public class ReservationService {
     private final SeatRepository seatRepository;
     private final RedissonService redissonService;
 
-    @Transactional  // 성능 문제 발생 / 대용량 트래픽이 넘어갈때 문제를 발생시킨다. / 깊게 공부해보자
+      // 성능 문제 발생 / 대용량 트래픽이 넘어갈때 문제를 발생시킨다. / 깊게 공부해보자
     public ReservationResponse reserve(Long userId, ReservationRequest request) {
 
         // 1. 유저 조회
@@ -49,25 +49,28 @@ public class ReservationService {
             throw new CustomException(ErrorCode.SEAT_NOT_FOUND);
         }
 
-        List<String> lockKeys = seats.stream()
-                .map(seat -> "lock:schedule:" + schedule.getId() + ":" + ":seat:" + seat.getId())
+        List<String> lockKeys = seats.stream().sorted()
+                .map(seat -> "lock:schedule:" + schedule.getId() + ":seat:" + seat.getId())
                 .toList();
+        return redissonService.runWithMultiLock(lockKeys, 3, 10, () ->
+            createReservation(user, schedule, seats)
+        );
+    }
 
-        return redissonService.runWithMultiLock(lockKeys, 3, 5, () -> {
-            final List<Reservation> reservedReservation = reservationRepository.findAllByScheduleAndSeatIn(schedule, seats);
-            if (!reservedReservation.isEmpty()) {
-                throw new CustomException(ErrorCode.SEAT_ALREADY_RESERVED);
-            }
+    @Transactional
+    protected ReservationResponse createReservation(User user, Schedule schedule, List<Seat> seats) {
+        final List<Reservation> reservedReservation = reservationRepository.findAllByScheduleAndSeatIn(schedule, seats);
+        if (!reservedReservation.isEmpty()) {
+            throw new CustomException(ErrorCode.SEAT_ALREADY_RESERVED);
+        }
+        final List<ReservationInfo> reservationInfos = new ArrayList<>();
+        for (Seat seat : seats) {
+            Reservation reservation = new Reservation(schedule, seat, user);
+            reservationRepository.save(reservation);
+            reservationInfos.add(new ReservationInfo(reservation.getId(), reservation.getSeat().getSeatNumber()));
+        }
 
-            final List<ReservationInfo> reservationInfos = new ArrayList<>();
-            for (Seat seat : seats) {
-                Reservation reservation = new Reservation(schedule, seat, user);
-                reservationRepository.save(reservation);
-                reservationInfos.add(new ReservationInfo(reservation.getId(), reservation.getSeat().getSeatNumber()));
-            }
-
-            return new ReservationResponse(schedule.getId(), reservationInfos);
-        });
+        return new ReservationResponse(schedule.getId(), reservationInfos);
     }
 
     @Transactional

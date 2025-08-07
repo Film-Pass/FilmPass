@@ -1,7 +1,6 @@
 package com.example.filmpass.domain.auth.dto;
 
 import com.example.filmpass.domain.user.enums.UserRole;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

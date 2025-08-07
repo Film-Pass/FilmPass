@@ -7,6 +7,7 @@ TRUNCATE TABLE seats;
 TRUNCATE TABLE screens;
 TRUNCATE TABLE theaters;
 TRUNCATE TABLE movies;
+TRUNCATE TABLE users;
 
 -- 3) FK 제약 다시 켜기
 SET FOREIGN_KEY_CHECKS = 1;
@@ -91,3 +92,6 @@ VALUES
 (2, 'H1', 'AVAILABLE'), (2, 'H2', 'AVAILABLE'), (2, 'H3', 'AVAILABLE'), (2, 'H4', 'AVAILABLE'), (2, 'H5', 'AVAILABLE'), (2, 'H6', 'AVAILABLE'), (2, 'H7', 'AVAILABLE'),
 (2, 'I1', 'AVAILABLE'), (2, 'I2', 'AVAILABLE'), (2, 'I3', 'AVAILABLE'), (2, 'I4', 'AVAILABLE'), (2, 'I5', 'AVAILABLE'), (2, 'I6', 'AVAILABLE'), (2, 'I7', 'AVAILABLE'),
 (2, 'J1', 'AVAILABLE'), (2, 'J2', 'AVAILABLE'), (2, 'J3', 'AVAILABLE'), (2, 'J4', 'AVAILABLE'), (2, 'J5', 'AVAILABLE'), (2, 'J6', 'AVAILABLE'), (2, 'J7', 'AVAILABLE');
+-- 9) 관리자 권한을 가진 유저 비밀번호 : Qwer1234! 입력해주시면 됩니다.
+INSERT INTO users (is_critic, created_at, deleted_at, id, updated_at, email, name, nickname, password, role)
+VALUES (0x00, NULL, NULL, 1,  NULL, 'admin@gmail.com', '관리자', '관리자계정', '$2a$10$mwJiUpY5bunSTZ.TuJXaTuuraRmBWF2oyDhoP9yb9PT0XmzzXb.Tu','ADMIN');

@@ -34,4 +34,8 @@ public class Screen {
         this.address = address;
         this.theater = theater;
     }
+
+    public void setIdForTest(Long id) {
+        this.id = id;
+    }
 }

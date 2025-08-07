@@ -1,6 +1,7 @@
 package com.example.filmpass.domain.seat.service;
 
 import com.example.filmpass.domain.screen.entity.Screen;
+import com.example.filmpass.domain.screen.enums.ScreenType;
 import com.example.filmpass.domain.screen.repository.ScreenRepository;
 import com.example.filmpass.domain.seat.dto.SeatRequest;
 import com.example.filmpass.domain.seat.dto.SeatResponse;
@@ -40,7 +41,7 @@ class SeatServiceTest {
         List<SeatRequest> requests = List.of(new SeatRequest("A1", 1L));
 
         Theater theater = new Theater("CGV", "서울 강남구");
-        Screen mockScreen = new Screen("1관", "3층", theater);
+        Screen mockScreen = new Screen("1관", "3층", ScreenType.IMAX, theater);
 
         given(screenRepository.findById(1L)).willReturn(Optional.of(mockScreen));
         given(seatRepository.save(any(Seat.class))).willAnswer(invocation -> invocation.getArgument(0));
@@ -65,7 +66,7 @@ class SeatServiceTest {
         Theater theater = new Theater("CGV", "서울 강남구");
         ReflectionTestUtils.setField(theater, "id", 1L);
 
-        Screen screen = new Screen("1관", "3층", theater);
+        Screen screen = new Screen("1관", "3층", ScreenType.IMAX, theater);
         ReflectionTestUtils.setField(screen, "id", 1L);
 
         Seat seat1 = new Seat(screen, "A1");
@@ -98,7 +99,7 @@ class SeatServiceTest {
         // given
         Long seatId = 10L;
         Theater theater = new Theater("CGV", "서울 강남구");
-        Screen mockScreen = new Screen("1관", "3층", theater);
+        Screen mockScreen = new Screen("1관", "3층", ScreenType.IMAX, theater);
 
         Seat seat = new Seat(mockScreen, "A1");
 
@@ -120,10 +121,10 @@ class SeatServiceTest {
         Theater theater = new Theater("CGV", "서울 강남구");
         ReflectionTestUtils.setField(theater, "id", 1L);
 
-        Screen oldScreen = new Screen("1관", "3층", theater);
+        Screen oldScreen = new Screen("1관", "3층", ScreenType.IMAX, theater);
         ReflectionTestUtils.setField(oldScreen, "id", 1L);
 
-        Screen newScreen = new Screen("2관", "4층", theater);
+        Screen newScreen = new Screen("2관", "4층", ScreenType.IMAX, theater);
         ReflectionTestUtils.setField(newScreen, "id", 2L);
 
         Seat seat = new Seat(oldScreen, "A1");
@@ -158,7 +159,7 @@ class SeatServiceTest {
         Theater theater = new Theater("CGV", "서울 강남구");
         ReflectionTestUtils.setField(theater, "id", 1L);
 
-        Screen screen = new Screen("1관", "3층", theater);
+        Screen screen = new Screen("1관", "3층", ScreenType.IMAX, theater);
         ReflectionTestUtils.setField(screen, "id", 1L);
 
         Seat seat = new Seat(screen, "A1");
@@ -183,7 +184,7 @@ class SeatServiceTest {
         Theater theater = new Theater("CGV", "서울 강남구");
         ReflectionTestUtils.setField(theater, "id", 1L);
 
-        Screen screen = new Screen("1관", "3층", theater);
+        Screen screen = new Screen("1관", "3층", ScreenType.IMAX, theater);
         ReflectionTestUtils.setField(screen, "id", 1L);
 
         Seat seat = new Seat(screen, "A1");

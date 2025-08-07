@@ -113,6 +113,7 @@ public class ReviewService {
 
     // 평론가 리뷰 작성
     public ReviewResponseDto createCriticReview(ReviewRequestDto request) {
+
         User user = userRepository.findById(request.getUserId())
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 

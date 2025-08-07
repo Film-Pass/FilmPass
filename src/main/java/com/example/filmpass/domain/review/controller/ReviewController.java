@@ -13,6 +13,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -60,6 +61,7 @@ public class ReviewController {
     }
 
     //평론가가 쓴 평론
+    @PreAuthorize("hasRole('CRITIC')")
     @PostMapping("/critics")
     public ResponseEntity<ApiResponse> createCriticReview(@Valid @RequestBody ReviewRequestDto request) {
         ReviewResponseDto response = reviewService.createCriticReview(request);

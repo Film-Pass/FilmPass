@@ -33,6 +33,7 @@ public class JwtFilter extends OncePerRequestFilter {
         String bearerJwt = request.getHeader("Authorization");
 
         if(bearerJwt == null || !bearerJwt.startsWith("Bearer")) {
+            log.error("JWT 필터에서 예외 발생 - 토큰이 없음.");
             filterChain.doFilter(request, response);
             return;
         }
@@ -62,7 +63,12 @@ public class JwtFilter extends OncePerRequestFilter {
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
 
         } catch (JwtException | IllegalArgumentException e) {
-            throw new CustomException(ErrorCode.WRONG_TOKEN);
+            log.error("JWT 필터에서 예외 발생 - 잘못된 토큰값 입력");
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("application/json; charset=UTF-8");
+            response.getWriter().write("{\"message\": \"잘못된 JWT 토큰입니다.\"}");
+            return;
         }
 
         filterChain.doFilter(request, response);

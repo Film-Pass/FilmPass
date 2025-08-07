@@ -1,5 +1,6 @@
 package com.example.filmpass.domain.movie.entity;
 
+import com.example.filmpass.domain.movie.repository.MovieRepository;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -21,49 +22,75 @@ public class Movie {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; // 영화 식별자
+    private Long id;
 
-    @Column(nullable = false)
-    private String title; // 영화 이름
+    @Column(nullable = false, length = 50)
+    private String title;
 
-    @Column(nullable = false)
-    private String director; // 감독
+    @Column(nullable = false, length = 30)
+    private String director;
+
+    @Column(length = 10)
+    private String genre;
+
+    @Column(name = "avr_rating")
+    private double avrRating;
+
+    @Column(name = "reivew_count")
+    private int reviewCount;
+
+    @Column(nullable = false, name = "running_time")
+    private String runningTime;
+
+    @Column(name = "release_date")
+    private String releaseDate;
 
     @Column(length = 4000)
-    private String description; // 상세설명
-
-    @Column(nullable = false)
-    private String runningTime; // 상영시간 (?시간 ?분)
+    private String description;
 
     @Column
-    private String posterUrl; // 영화 표지 이미지 URL
+    private String posterUrl;
 
-    @Column
+    @Column(name = "is_delete")
     private boolean isDelete;
 
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
 
-    public Movie(String title, String director, String description, String runningTime, String posterUrl) {
-        this.runningTime = runningTime;
+    public Movie(String title, String director, String genre, String runningTime, String releaseDate, String description, String posterUrl) {
+        this.title = title;
         this.director = director;
+        this.genre = genre;
+        this.avrRating = 0.0;
+        this.reviewCount=0;
+        this.runningTime = runningTime;
+        this.releaseDate = releaseDate;
         this.description = description;
         this.posterUrl = posterUrl;
-        this.title = title;
+        this.isDelete = false;
     }
 
-
-    public void updateMovie(String title, String posterUrl, String description, String director, String runningTime) {
+    public void updateMovie(String title, String posterUrl, String description, String director, String runningTime, String genre) {
         this.title = title;
         this.posterUrl = posterUrl;
         this.description = description;
         this.director = director;
         this.runningTime = runningTime;
+        this.genre = genre;
     }
 
     public void deleteMovie () {
         this.isDelete = true;
         this.deletedAt = LocalDateTime.now();
+    }
+
+    public void setIdForTest(Long id) {
+        this.id = id;
+    }
+
+    public void updateRating(Long id, double avrRating, int reviewCount) {
+        this.avrRating = avrRating;
+        this.reviewCount = reviewCount;
     }
 }

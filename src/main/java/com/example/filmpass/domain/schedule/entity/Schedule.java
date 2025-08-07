@@ -45,4 +45,8 @@ public class Schedule {
         this.screen = screen;
         this.movie = movie;
     }
+
+    public void setIdForTest(Long id) {
+        this.id = id;
+    }
 }

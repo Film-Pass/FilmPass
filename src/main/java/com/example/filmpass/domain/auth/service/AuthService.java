@@ -1,9 +1,6 @@
 package com.example.filmpass.domain.auth.service;
 
-import com.example.filmpass.domain.auth.dto.AuthData;
-import com.example.filmpass.domain.auth.dto.LoginRequestDto;
-import com.example.filmpass.domain.auth.dto.RoleRequestDto;
-import com.example.filmpass.domain.auth.dto.SignUpRequestDto;
+import com.example.filmpass.domain.auth.dto.*;
 import com.example.filmpass.domain.auth.entity.RefreshToken;
 import com.example.filmpass.domain.auth.repository.RefreshTokenRepository;
 import com.example.filmpass.domain.user.entity.User;
@@ -150,7 +147,7 @@ public class AuthService {
         }
 
         // 입력한 권한이 현재 권한과 같은 Role 인지 검증
-        if(principal.getUserRole() == request.getUserRole()) {
+        if(user.getRole() == request.getUserRole()) {
             throw new CustomException(ErrorCode.CANNOT_CHANGE_SAME_ROLE);
         }
 
@@ -160,6 +157,32 @@ public class AuthService {
         userRepository.save(user);
 
         return user.getRole().name();
+
+    }
+
+
+    // 할인 타입 변경 로직
+    @Transactional
+    public String changeDiscountType(DiscountTypeRequestDto request, Long id, UserPrincipal principal) {
+
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        // ADMIN 만 할인 타입을 변경 가능하도록 검증
+        if(principal.getUserRole() != UserRole.ADMIN) {
+            throw new CustomException(ErrorCode.NOT_ADMIN);
+        }
+
+        // 입력한 타입이 현재 타입과 같은 Type 인지 검증
+        if(user.getDiscountType() == request.getDiscountType()) {
+            throw new CustomException(ErrorCode.CANNOT_CHANGE_SAME_ROLE);
+        }
+
+        user.setDiscountType(request.getDiscountType());
+
+        userRepository.save(user);
+
+        return user.getDiscountType().name();
 
     }
 

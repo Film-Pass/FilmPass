@@ -3,6 +3,7 @@ package com.example.filmpass.domain.user.controller;
 import com.example.filmpass.domain.user.dto.PasswordRequestDto;
 import com.example.filmpass.domain.user.dto.UserInfoChangeRequestDto;
 import com.example.filmpass.domain.user.service.UserService;
+import com.example.filmpass.global.aop.TrackUserActionAnnotation;
 import com.example.filmpass.global.common.ApiResponse;
 import com.example.filmpass.global.config.UserPrincipal;
 import jakarta.validation.Valid;
@@ -32,6 +33,7 @@ public class UserController {
 
     // 유저 목록 조회
     @GetMapping("/api/users")
+    @TrackUserActionAnnotation("유저 목록 조회")
     public ApiResponse getUsers(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size,
@@ -44,6 +46,7 @@ public class UserController {
 
     // 유저 단건 조회
     @GetMapping("/api/users/{id}")
+    @TrackUserActionAnnotation("유저 단건 조회")
     public ApiResponse getUser(
         @PathVariable Long id,
         @AuthenticationPrincipal UserPrincipal principal

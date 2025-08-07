@@ -3,6 +3,7 @@ package com.example.filmpass.global.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -40,6 +41,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/signup", "/api/auth/login","/").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/movies/").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/movies/search").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/seat/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/movies/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/theaters/*", "/api/movies/*"
                         ,"/api/theaters", "/api/movies").permitAll()

@@ -11,17 +11,25 @@ public enum ErrorCode {
     THEATER_NOT_FOUND(HttpStatus.NOT_FOUND, "극장을 찾을 수 없습니다."),
     INVALID_INPUT(HttpStatus.BAD_REQUEST, "입력 값이 유효하지 않습니다."),
     MOVIE_NOT_FOUND(HttpStatus.NOT_FOUND, "영화를 찾을 수 없습니다."),
+
+    // 리뷰
     REVIEW_NOT_FOUND(HttpStatus.NOT_FOUND, "리뷰를 찾을 수 없습니다."),
+    CRITIC_ONLY(HttpStatus.FORBIDDEN, "평론가만 작성할 수 있는 리뷰입니다."),
+    SCHEDULE_OVERLAP(HttpStatus.CONFLICT,"이미 존재하는 일정과 시간이 겹칩니다."),
+
     // 상영관
     SCREEN_NOT_FOUND(HttpStatus.NOT_FOUND,"상영관을 찾을 수 없습니다" ),
     SCREEN_ALREADY_EXISTS(HttpStatus.CONFLICT, "해당 이름의 상영관이 이미 존재합니다."),
+
+    // 스케쥴
     SCHEDULE_NOT_FOUND(HttpStatus.NOT_FOUND, "날짜를 찾을 수 없습니다."),
-    SCHEDULE_TIME_CONFLICT(HttpStatus.CONFLICT, "해당 상영관에서 겹치는 시간대의 스케줄이 이미 존재합니다."),
+    SCHEDULE_TIME_CONFLICT(HttpStatus.CONFLICT, "이미 존재하는 일정과 시간이 겹칩니다."),
 
     // 좌석
     DUPLICATE_SEAT_NUMBER(HttpStatus.BAD_REQUEST, "이미 등록된 좌석번호입니다."),
     SEAT_NOT_FOUND(HttpStatus.NOT_FOUND, "좌석을 찾을 수 없습니다."),
     SEAT_RESERVATION_LOCKED(HttpStatus.CONFLICT, "누군가 예매 중인 좌석 입니다."),
+    BROKEN_SEAT(HttpStatus.BAD_REQUEST, "고장난 좌석은 예매할 수 없습니다."),
     // Auth
     EMAIL_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "이미 사용중인 이메일입니다."),
     NICKNAME_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "이미 사용중인 닉네임입니다."),
@@ -39,6 +47,11 @@ public enum ErrorCode {
     INVALID_PAGE_SIZE(HttpStatus.BAD_REQUEST, "유효하지 않은 페이지 크기 입니다."),
     INVALID_PAGE_NUMBER(HttpStatus.BAD_REQUEST, "유효하지 않는 페이지 번호 입니다."),
     EMPTY_PAGE(HttpStatus.NOT_FOUND, "비어있는 페이지 입니다."),
+    // Payment
+    ORDER_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 order_id 입니다."),
+    PAYMENTKEY_MISMATCH(HttpStatus.BAD_REQUEST, "결제된 키와 검증요청한 키가 서로 다릅니다."),
+    AMOUNT_MISMATCH(HttpStatus.BAD_REQUEST, "결제된 금액과 검증요청한 금액이 서로 다릅니다."),
+    PAYMENT_FAILED(HttpStatus.UNAUTHORIZED, "결제 실패!"),
     // Reservation
     RESERVATION_NOT_FOUND(HttpStatus.NOT_FOUND, "예매 정보를 찾을 수 없습니다."),
     ALREADY_CANCELED(HttpStatus.BAD_REQUEST, "이미 취소된 예매입니다."),
@@ -53,8 +66,9 @@ public enum ErrorCode {
     MOVIE_NOT_FOUND_BY_DIRECTOR(HttpStatus.NOT_FOUND,"해당하는 감독의 영화가 존재하지 않습니다."),
     MOVIE_TITLE_REQUIRED(HttpStatus.BAD_REQUEST,"제목은 필수 항목입니다."),
     MOVIE_DIRECTOR_REQUIRED(HttpStatus.BAD_REQUEST,"감독은 필수 항목입니다."),
+    MOVIE_GENRE_REQUIRED(HttpStatus.BAD_REQUEST, "장르는 필수 항목입니다."),
     MOVIE_RUNNING_TIME_REQUIRED(HttpStatus.BAD_REQUEST,"상영 시간은 필수 항목입니다."),
-    MOVIE_SEARCH_REQUIRED(HttpStatus.BAD_REQUEST, "ID, 제목, 감독 중 최소 1가지 이상의 조건이 필요합니다."),
+    MOVIE_SEARCH_REQUIRED(HttpStatus.BAD_REQUEST, "ID, 제목, 감독, 장르 중 최소 1가지 이상의 조건이 필요합니다."),
     MOVIE_SEARCH_NOT_FOUND(HttpStatus.NOT_FOUND,"조건에 일치하는 영화가 존재하지 않습니다.");
 
 

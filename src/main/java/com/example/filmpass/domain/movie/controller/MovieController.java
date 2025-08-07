@@ -28,21 +28,21 @@ public class MovieController {
     @PostMapping
     public ApiResponse movieCreateApi(@RequestBody MovieCreateRequest movieCreateRequest) {
         MovieCreateResponse movieCreateResponse = movieService.movieCreate(movieCreateRequest);
-        return ApiResponse.success(movieCreateResponse,"영화 생성이 정상적으로 완료되었습니다.");
+        return ApiResponse.success(movieCreateResponse,"영화 등록이 정상적으로 완료되었습니다.");
     }
 
-    //영화 목록 조회
+    //영화 전체 조회
     @GetMapping
     public ApiResponse findAllMovieApi(Pageable pageable) {
-        FindMovieResponse<Movie> findMovieResponse = movieService.findAllMovie(pageable);
+        FindMovieResponse<SimpleFindMovieResponse> findMovieResponse = movieService.findAllMovie(pageable);
         return ApiResponse.success(findMovieResponse, "영화 조회가 정상적으로 완료되었습니다.");
     }
 
     //영화 검색
     @PostMapping("/search")
     public ApiResponse findMovieApi(@RequestBody FindMovieRequest findMovieRequest, Pageable pageable) {
-        Page<SearchMovieResponse> moviePage = movieService.findMovie(findMovieRequest, pageable);
-        return ApiResponse.success(moviePage, "영화 검색이 정상적으로 완료되었습니다.");
+        FindMovieResponse<SimpleFindMovieResponse> findMovieResponse = movieService.findMovie(findMovieRequest, pageable);
+        return ApiResponse.success(findMovieResponse, "영화 검색이 정상적으로 완료되었습니다.");
     }
 
     //영화 수정

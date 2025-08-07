@@ -1,14 +1,22 @@
 package com.example.filmpass.domain.reservation.service;
 
+import com.example.filmpass.domain.payment.PaymentService;
+import com.example.filmpass.domain.payment.dto.PaymentConfirmRequestDto;
+import com.example.filmpass.domain.payment.dto.PaymentConfirmResponseDto;
 import com.example.filmpass.domain.reservation.dto.*;
 import com.example.filmpass.domain.reservation.entity.Reservation;
 import com.example.filmpass.domain.reservation.repository.ReservationRepository;
 import com.example.filmpass.domain.schedule.entity.Schedule;
 import com.example.filmpass.domain.schedule.repository.ScheduleRepository;
+import com.example.filmpass.domain.screen.entity.Screen;
+import com.example.filmpass.domain.seat.dto.SeatStatus;
 import com.example.filmpass.domain.seat.entity.Seat;
 import com.example.filmpass.domain.seat.repository.SeatRepository;
 import com.example.filmpass.domain.user.entity.User;
+import com.example.filmpass.domain.user.enums.DiscountType;
 import com.example.filmpass.domain.user.repository.UserRepository;
+import com.example.filmpass.domain.user.service.UserService;
+import com.example.filmpass.global.config.UserPrincipal;
 import com.example.filmpass.global.exception.CustomException;
 import com.example.filmpass.global.exception.ErrorCode;
 import com.example.filmpass.global.utility.RedissonService;
@@ -21,6 +29,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -31,8 +40,9 @@ public class ReservationService {
     private final ScheduleRepository scheduleRepository;
     private final SeatRepository seatRepository;
     private final RedissonService redissonService;
-
-      // 성능 문제 발생 / 대용량 트래픽이 넘어갈때 문제를 발생시킨다. / 깊게 공부해보자
+    private final PaymentService paymentService;
+    private final UserService userService;
+  
     public ReservationResponse reserve(Long userId, ReservationRequest request) {
 
         // 1. 유저 조회
@@ -47,6 +57,13 @@ public class ReservationService {
         List<Seat> seats = seatRepository.findAllById(request.getSeatIds());
         if (seats.size() != request.getSeatIds().size()) {
             throw new CustomException(ErrorCode.SEAT_NOT_FOUND);
+        }
+      
+         // 4. 고장난 좌석 조회
+        boolean hasBrokenSeat = seats.stream()
+                .anyMatch(seat -> seat.getStatus() == SeatStatus.BROKEN);
+        if (hasBrokenSeat) {
+            throw new CustomException(ErrorCode.BROKEN_SEAT);
         }
 
         List<String> lockKeys = seats.stream().sorted()
@@ -64,6 +81,7 @@ public class ReservationService {
             throw new CustomException(ErrorCode.SEAT_ALREADY_RESERVED);
         }
         final List<ReservationInfo> reservationInfos = new ArrayList<>();
+
         for (Seat seat : seats) {
             Reservation reservation = new Reservation(schedule, seat, user);
             reservationRepository.save(reservation);
@@ -135,4 +153,67 @@ public class ReservationService {
             return new ReservationSummaryResponse(reservation.getId(), movieTitle, startAt, status);
         });
     }
+
+    // 결제 요금 계산 로직
+    public CalculateAmountResponseDto calculateAmounts(CalculateAmountRequestDto requestDto, UserPrincipal principal) {
+
+        // 없는 좌석인지 검증
+        List<Seat> seats = seatRepository.findAllById(requestDto.getSeatIds());
+        if (seats.size() != requestDto.getSeatIds().size()) {
+            throw new CustomException(ErrorCode.SEAT_NOT_FOUND);
+        }
+
+        // 유저 조회 (할인 적용을 위함)
+        User user = userRepository.findById(principal.getUserId())
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        // screen 조회
+        Screen screen = seats.get(0).getScreen();
+
+        // 기본 가격 계산
+        int originalAmount = screen.getAmount()*seats.size();
+        int finalAmount = originalAmount;
+        int discountAmount = originalAmount - finalAmount;
+        String discountReason = "할인 없음";
+
+        // 할인 적용 - 국가 유공자 20%, 장애인 10%
+        if(user.getDiscountType().equals(DiscountType.PATRIOT)) {
+            finalAmount = (int) (screen.getAmount()*seats.size()*0.8);
+            discountAmount = originalAmount - finalAmount;
+            discountReason = "국가 유공자 20% 할인";
+        } else if (user.getDiscountType().equals(DiscountType.DISABLED)) {
+            finalAmount = (int) (screen.getAmount()*seats.size()*0.9);
+            discountAmount = originalAmount - finalAmount;
+            discountReason = "장애인 10% 할인";
+        }
+
+        // orderId 생성
+        String orderId = "ORDER" + UUID.randomUUID();
+
+        return new CalculateAmountResponseDto(originalAmount, discountAmount, finalAmount, discountReason, orderId);
+
+    }
+
+    // 결제 확인 로직
+    public String confirmPaymentAtBackend(PaymentConfirmRequestDtoFront requestDto, UserPrincipal principal) {
+
+        // PG 사에 보낼 RequestBody
+        PaymentConfirmRequestDto requestBody = new PaymentConfirmRequestDto(
+                requestDto.getOrderId(),
+                requestDto.getPaymentKey(),
+                requestDto.getAmount()
+        );
+
+        // PG 사에 검증 요청을 보냈다고 가정
+        // PG 사에서 검증 수행
+        PaymentConfirmResponseDto paymentResponse = paymentService.confirmPaymentAtPG(requestBody);
+
+        // 1% 만큼 포인트 적립
+        int point = (int) (requestDto.getAmount()*0.01);
+        userService.addPoint(principal.getUserId(), point);
+
+        return "결제 검증 및 포인트 적립 성공!";
+
+    }
+
 }

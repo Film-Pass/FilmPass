@@ -1,6 +1,7 @@
 package com.example.filmpass.domain.screen.dto;
 
 import com.example.filmpass.domain.screen.entity.Screen;
+import com.example.filmpass.domain.screen.enums.ScreenType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,6 +13,7 @@ public class ScreenResponseDto {
     private Long id;
     private String name;
     private String address;
+    private ScreenType screenType;
     private Long theaterId;
 
     public static ScreenResponseDto from(Screen screen) {
@@ -19,6 +21,7 @@ public class ScreenResponseDto {
                 screen.getId(),
                 screen.getName(),
                 screen.getAddress(),
+                screen.getScreenType(),
                 screen.getTheater().getId()
         );
     }

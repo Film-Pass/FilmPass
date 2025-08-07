@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Getter
-@Valid
 @NoArgsConstructor
 public class ScheduleRequestDto {
     private LocalDateTime startAt;

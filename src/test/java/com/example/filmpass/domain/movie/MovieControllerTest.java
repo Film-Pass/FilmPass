@@ -1,5 +1,6 @@
-package com.example.filmpass.domain.movie.controller;
+package com.example.filmpass.domain.movie;
 
+import com.example.filmpass.domain.movie.controller.MovieController;
 import com.example.filmpass.domain.movie.dto.*;
 import com.example.filmpass.domain.movie.entity.Movie;
 import com.example.filmpass.domain.movie.service.MovieService;
@@ -11,7 +12,6 @@ import org.mockito.Mockito;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -21,6 +21,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import java.util.List;
 
@@ -36,8 +37,8 @@ class MovieControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
-    private MovieService movieService;
+    @MockitoBean
+    private MovieService movieService;  // ← 대체 어노테이션
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -59,7 +60,7 @@ class MovieControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(req)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.data.title").value("라라래드"))
+                .andExpect(jsonPath("$.data.title").value("라라랜드"))
                 .andExpect(jsonPath("$.message").value("영화 등록이 정상적으로 완료되었습니다."));
     }
 
@@ -190,7 +191,7 @@ class MovieControllerTest {
     @DisplayName("영화 상세 조회 성공")
     void findMovieDetail_success() throws Exception {
         FindMovieDetailResponse res = new FindMovieDetailResponse(3L, "상세조회 이름", "상세조회 감독", "상세조회 장르"
-        , 5.0, 5, "상세조회 상영시간", "상세조회 개봉일", "상세조회 설명", "상세조회 url");
+                , 5.0, 5, "상세조회 상영시간", "상세조회 개봉일", "상세조회 설명", "상세조회 url");
 
         Mockito.when(movieService.findMovieDtail(3L))
                 .thenReturn(res);

@@ -7,6 +7,7 @@ import com.example.filmpass.domain.movie.entity.Movie;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,6 +27,7 @@ public class MovieController {
 
     //영화 등록 CreateMovie
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public ApiResponse movieCreateApi(@RequestBody MovieCreateRequest movieCreateRequest) {
         MovieCreateResponse movieCreateResponse = movieService.movieCreate(movieCreateRequest);
         return ApiResponse.success(movieCreateResponse,"영화 등록이 정상적으로 완료되었습니다.");

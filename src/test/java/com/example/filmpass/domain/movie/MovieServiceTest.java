@@ -1,8 +1,9 @@
-package com.example.filmpass.domain.movie.service;
+package com.example.filmpass.domain.movie;
 
 import com.example.filmpass.domain.movie.dto.*;
 import com.example.filmpass.domain.movie.entity.Movie;
 import com.example.filmpass.domain.movie.repository.MovieRepository;
+import com.example.filmpass.domain.movie.service.MovieService;
 import com.example.filmpass.domain.review.repository.ReviewRepository;
 import com.example.filmpass.global.exception.CustomException;
 import com.example.filmpass.global.exception.ErrorCode;
@@ -62,9 +63,17 @@ class MovieServiceTest {
     void movieCreate_fail_duplicateTitle() {
         // given
         MovieCreateRequest req = new MovieCreateRequest(
-                "타이틀", "감독", "장르", "2시간", "2025-08-06", "줄거리", "https://poster.url"
+                "타이틀", "감독", "장르", "2시간",
+                "2025-08-06", "줄거리", "https://poster.url"
         );
-        when(movieRepository.findByTitle("타이틀")).thenReturn(Optional.of(new Movie()));
+        // public 생성자를 이용해 더미 Movie 객체 생성
+        Movie duplicate = new Movie(
+                "타이틀", "감독", "장르",
+                "2시간", "2025-08-06",
+                "줄거리", "https://poster.url"
+        );
+        when(movieRepository.findByTitle("타이틀"))
+                .thenReturn(Optional.of(duplicate));
 
         // when & then
         CustomException ex = assertThrows(CustomException.class, () ->
@@ -72,6 +81,7 @@ class MovieServiceTest {
         );
         assertEquals(ErrorCode.MOVIE_ALREADY_EXISTS, ex.getErrorCode());
     }
+
 
     @Test
     @DisplayName("영화 전체 조회 성공")
@@ -99,8 +109,8 @@ class MovieServiceTest {
         FindMovieResponse<SimpleFindMovieResponse> res = movieService.findAllMovie(pageable);
 
         // then
-        assertEquals(2, res.getContent().size());
-        SimpleFindMovieResponse first = res.getContent().get(0);
+        assertEquals(2, res.getData().size());
+        SimpleFindMovieResponse first = res.getData().get(0);
         assertEquals(1L, first.getId());
         assertEquals("무비1", first.getTitle());
         assertEquals(3.0, first.getRating());
@@ -128,8 +138,8 @@ class MovieServiceTest {
         FindMovieResponse<SimpleFindMovieResponse> res = movieService.findMovie(req, pageable);
 
         // then
-        assertEquals(1, res.getContent().size());
-        SimpleFindMovieResponse dto = res.getContent().get(0);
+        assertEquals(1, res.getData().size());
+        SimpleFindMovieResponse dto = res.getData().get(0);
         assertEquals(5L, dto.getId());
         assertEquals("기생충", dto.getTitle());
     }
@@ -140,7 +150,7 @@ class MovieServiceTest {
         // given
         Long movieId = 1L;
         UpdateMovieRequest req = new UpdateMovieRequest(
-                "새제목", "새URL", "새설명", "새감독", "2시간15분", "액션"
+                "수정 제목", "수정 감독", "수정 설명", "수정 상영시간", "수정 url", "수정 장르"
         );
         Movie movie = new Movie("old", "oldDir", "oldGen", "oldTime", "oldDate", "oldDesc", "oldUrl");
         movie.setIdForTest(movieId);
@@ -154,8 +164,8 @@ class MovieServiceTest {
         // then
         Movie updated = res.getMovie();
         assertEquals(movieId, updated.getId());
-        assertEquals("새제목", updated.getTitle());
-        assertEquals("새URL", updated.getPosterUrl());
+        assertEquals("수정 제목", updated.getTitle());
+        assertEquals("수정 url", updated.getPosterUrl());
     }
 
     @Test
@@ -172,7 +182,7 @@ class MovieServiceTest {
 
         // then
         assertEquals(movieId, res.getId());
-        assertEquals("타이틀", res.getTitle());
+        assertEquals("타이틀", res.getMovieName());
         assertEquals("감독", res.getDirector());
     }
 
@@ -189,6 +199,6 @@ class MovieServiceTest {
         DeleteMovieResponse res = movieService.deleteMovie(movieId);
 
         // then
-        assertEquals("삭제무비", res.getTitle());
+        assertEquals("삭제무비", res.getMovieTitle());
     }
 }

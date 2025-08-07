@@ -1,4 +1,4 @@
-package com.example.filmpass.domain.movie;
+package com.example.filmpass.movie;
 
 import com.example.filmpass.domain.movie.dto.*;
 import com.example.filmpass.domain.review.repository.ReviewRepository;
@@ -178,7 +178,7 @@ class MovieServiceTest {
         when(movieRepository.findById(movieId)).thenReturn(Optional.of(movie));
 
         // when
-        FindMovieDetailResponse res = movieService.findMovieDtail(movieId);
+        FindMovieDetailResponse res = movieService.findMovieDetail(movieId);
 
         // then
         assertEquals(movieId, res.getId());

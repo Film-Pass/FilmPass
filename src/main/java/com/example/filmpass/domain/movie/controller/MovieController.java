@@ -57,7 +57,7 @@ public class MovieController {
     //영화 상세 조회
     @GetMapping("/{movieId}")
     public ApiResponse findMovieDetail(@PathVariable Long movieId) {
-        FindMovieDetailResponse findMovieDetailResponse = movieService.findMovieDtail(movieId);
+        FindMovieDetailResponse findMovieDetailResponse = movieService.findMovieDetail(movieId);
         return ApiResponse.success(findMovieDetailResponse, "영화 상세 조회 성공");
     }
 

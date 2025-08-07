@@ -14,6 +14,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -65,6 +66,7 @@ public class ReviewController {
     }
 
     //평론가가 쓴 평론
+    @PreAuthorize("hasRole('CRITIC')")
     @PostMapping("/critics")
     @Operation(summary = "(평론가 전용) 리뷰 생성", description = "평론가 전용 리뷰를 생성합니다.")
     public ResponseEntity<CommonResponse> createCriticReview(@Valid @RequestBody ReviewRequestDto request) {

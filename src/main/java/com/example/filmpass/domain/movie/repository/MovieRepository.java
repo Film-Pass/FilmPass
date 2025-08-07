@@ -1,6 +1,5 @@
 package com.example.filmpass.domain.movie.repository;
 
-import com.example.filmpass.domain.movie.dto.SearchMovieResponse;
 import com.example.filmpass.domain.movie.entity.Movie;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

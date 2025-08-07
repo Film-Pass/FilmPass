@@ -1,10 +1,10 @@
 package com.example.filmpass.domain.movie;
 
 import com.example.filmpass.domain.movie.dto.*;
+import com.example.filmpass.domain.review.repository.ReviewRepository;
 import com.example.filmpass.domain.movie.entity.Movie;
 import com.example.filmpass.domain.movie.repository.MovieRepository;
 import com.example.filmpass.domain.movie.service.MovieService;
-import com.example.filmpass.domain.review.repository.ReviewRepository;
 import com.example.filmpass.global.exception.CustomException;
 import com.example.filmpass.global.exception.ErrorCode;
 import org.junit.jupiter.api.DisplayName;

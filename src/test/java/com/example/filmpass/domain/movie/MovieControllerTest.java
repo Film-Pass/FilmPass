@@ -1,9 +1,5 @@
 package com.example.filmpass.domain.movie;
 
-import com.example.filmpass.domain.movie.controller.MovieController;
-import com.example.filmpass.domain.movie.dto.*;
-import com.example.filmpass.domain.movie.entity.Movie;
-import com.example.filmpass.domain.movie.service.MovieService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.junit.jupiter.api.DisplayName;
@@ -13,6 +9,7 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -38,6 +35,7 @@ class MovieControllerTest {
     private MockMvc mockMvc;
 
     @MockitoBean
+    @MockBean
     private MovieService movieService;  // ← 대체 어노테이션
 
     @Autowired

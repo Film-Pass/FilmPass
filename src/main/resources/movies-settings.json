@@ -1,0 +1,19 @@
+{
+  "analysis": {
+    "analyzer": {
+      "nori_analyzer": {
+        "type": "custom",
+        "tokenizer": "nori_tokenizer"
+      },
+      "english_analyzer": {
+        "type": "custom",
+        "tokenizer": "standard",
+        "filter": [
+          "lowercase",
+          "english_possessive_stemmer",
+          "porter_stem"
+        ]
+      }
+    }
+  }
+}

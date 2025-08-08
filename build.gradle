@@ -14,9 +14,7 @@ java {
 }
 
 configurations {
-    compileOnly {
-        extendsFrom annotationProcessor
-    }
+    compileOnly { extendsFrom annotationProcessor }
 }
 
 repositories {
@@ -24,6 +22,7 @@ repositories {
 }
 
 dependencies {
+    // Spring Boot
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-web'
@@ -34,20 +33,16 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-    runtimeOnly 'com.h2database:h2'
 
-    // Validation 의존성
+    // Validation
     implementation 'org.springframework.boot:spring-boot-starter-validation'
 
-    // jwt
+    // JWT
     compileOnly group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.5'
     runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.5'
     runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.5'
 
-    // elastcisearch
-    implementation 'co.elastic.clients:elasticsearch-java:8.11.1'
-    implementation 'org.apache.httpcomponents:httpclient:4.5.13'
-
+    implementation 'org.springframework.boot:spring-boot-starter-data-elasticsearch'
 }
 
 tasks.named('test') {

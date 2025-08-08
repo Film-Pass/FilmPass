@@ -33,9 +33,7 @@ public class MovieElasticsearchService {
         if (text == null || text.isBlank()) return List.of();
 
         Query query = QueryBuilders.bool(b -> b
-                // 정확 필터 (Keyword)
                 .should(s -> s.term(t -> t.field("genre").value(text)))
-                // 한국어 검색 (genre.ko - nori_analyzer)
                 .should(s -> s.match(m -> m.field("genre.ko").query(text)))
                 .minimumShouldMatch("1")
         );

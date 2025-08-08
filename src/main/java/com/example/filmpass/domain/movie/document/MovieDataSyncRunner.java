@@ -14,9 +14,6 @@ public class MovieDataSyncRunner implements CommandLineRunner {
     private final MovieElasticsearchService movieElasticsearchService;
 
     @Override
-    public void run(String... args) {
-        movieRepository.findAll()
-                .forEach(movieElasticsearchService::save);
-
+    public void run(String... args) {movieRepository.findAll().forEach(movieElasticsearchService::save);
     }
 }

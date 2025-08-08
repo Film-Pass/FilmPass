@@ -17,7 +17,7 @@ spring:
   jpa:
     defer-datasource-initialization: true
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     properties:
       dialect: org.hibernate.dialect.MySQL8Dialect
       show_sql: true
@@ -38,6 +38,9 @@ spring:
 
   cache:
     type: redis
+
+  elasticsearch:
+    uris: http://localhost:9200
 
 server:
   error:

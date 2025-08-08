@@ -62,6 +62,7 @@ public class SeatService {
     }
 
     // 좌석 목록 조회
+    @Transactional(readOnly = true)
     public List<SeatResponse> getAllSeats() {
         List<Seat> seats = seatRepository.findAll();
         List<SeatResponse> responses = new ArrayList<>();
@@ -83,6 +84,7 @@ public class SeatService {
     }
 
     // 좌석 단건 조회
+    @Transactional(readOnly = true)
     public SeatResponse getSeatById(Long seatId) {
         Seat seat = seatRepository.findById(seatId)
                 .orElseThrow(() -> new CustomException(ErrorCode.SEAT_NOT_FOUND));

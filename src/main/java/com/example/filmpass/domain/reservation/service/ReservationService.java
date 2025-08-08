@@ -19,6 +19,7 @@ import com.example.filmpass.domain.user.service.UserService;
 import com.example.filmpass.global.config.UserPrincipal;
 import com.example.filmpass.global.exception.CustomException;
 import com.example.filmpass.global.exception.ErrorCode;
+import com.example.filmpass.global.utility.RedissonService;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -38,10 +39,10 @@ public class ReservationService {
     private final UserRepository userRepository;
     private final ScheduleRepository scheduleRepository;
     private final SeatRepository seatRepository;
+    private final RedissonService redissonService;
     private final PaymentService paymentService;
     private final UserService userService;
-
-    @Transactional
+  
     public ReservationResponse reserve(Long userId, ReservationRequest request) {
 
         // 1. 유저 조회
@@ -57,27 +58,34 @@ public class ReservationService {
         if (seats.size() != request.getSeatIds().size()) {
             throw new CustomException(ErrorCode.SEAT_NOT_FOUND);
         }
-
-        // 4. 고장난 좌석 조회
+      
+         // 4. 고장난 좌석 조회
         boolean hasBrokenSeat = seats.stream()
                 .anyMatch(seat -> seat.getStatus() == SeatStatus.BROKEN);
         if (hasBrokenSeat) {
             throw new CustomException(ErrorCode.BROKEN_SEAT);
         }
 
-        // 5. 중복 예매 좌석 확인
-        final List<Reservation> reservations = reservationRepository.findAllByScheduleAndSeatIn(schedule, seats);
-        if (!reservations.isEmpty()) {
+        List<String> lockKeys = seats.stream().sorted()
+                .map(seat -> "lock:schedule:" + schedule.getId() + ":seat:" + seat.getId())
+                .toList();
+        return redissonService.runWithMultiLock(lockKeys, 3, 10, () ->
+            createReservation(user, schedule, seats)
+        );
+    }
+
+    @Transactional
+    protected ReservationResponse createReservation(User user, Schedule schedule, List<Seat> seats) {
+        final List<Reservation> reservedReservation = reservationRepository.findAllByScheduleAndSeatIn(schedule, seats);
+        if (!reservedReservation.isEmpty()) {
             throw new CustomException(ErrorCode.SEAT_ALREADY_RESERVED);
         }
+        final List<ReservationInfo> reservationInfos = new ArrayList<>();
 
-        // 6. 예매 정보 저장 후 반환
-        final List<ReservationInfo> reservationInfos = new ArrayList<>(seats.size());
         for (Seat seat : seats) {
             Reservation reservation = new Reservation(schedule, seat, user);
             reservationRepository.save(reservation);
-
-            reservationInfos.add(new ReservationInfo(reservation.getId(), seat.getSeatNumber()));
+            reservationInfos.add(new ReservationInfo(reservation.getId(), reservation.getSeat().getSeatNumber()));
         }
 
         return new ReservationResponse(schedule.getId(), reservationInfos);

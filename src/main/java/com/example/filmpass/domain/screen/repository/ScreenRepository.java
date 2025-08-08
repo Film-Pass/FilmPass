@@ -7,4 +7,6 @@ public interface ScreenRepository extends JpaRepository<Screen, Long> {
 
     boolean existsByNameAndTheaterId(String name, Long theaterId);
 
+    boolean existsByNameAndTheaterIdAndIdNot(String name, Long theaterId, Long id);
+
 }

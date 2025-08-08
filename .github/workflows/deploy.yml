@@ -2,7 +2,7 @@ name: CI/CD Deploy
 
 on:
   push:
-    branches: [ 139-fix-seat-theater-v15 ]
+    branches: [ dev ]
 
 jobs:
   build:

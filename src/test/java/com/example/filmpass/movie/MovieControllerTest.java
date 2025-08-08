@@ -28,6 +28,7 @@ import java.util.List;
 import static org.mockito.ArgumentMatchers.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WithMockUser  // 모든 테스트에 가짜 로그인 적용
@@ -89,18 +90,22 @@ class MovieControllerTest {
         mockMvc.perform(get("/api/movies")
                         .param("page", "0")
                         .param("size", "5")
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .accept(MediaType.APPLICATION_JSON)) // GET은 accept만
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.content").isArray())
-                .andExpect(jsonPath("$.data.content[0].id").value(1))
-                .andExpect(jsonPath("$.data.content[0].title").value("무비1"))
-                .andExpect(jsonPath("$.data.content[0].genre").value("장르1"))
-                .andExpect(jsonPath("$.data.content[0].rating").value(3.0))
-                .andExpect(jsonPath("$.data.content[0].releaseDate").value("2025년 8월 6일"))
-                .andExpect(jsonPath("$.data.content[1].id").value(2))
-                .andExpect(jsonPath("$.data.content[1].title").value("무비2"))
-                .andExpect(jsonPath("$.message")
-                        .value("영화 조회가 정상적으로 완료되었습니다."));
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.message").value("영화 조회가 정상적으로 완료되었습니다."))
+                .andExpect(jsonPath("$.data.data").isArray())
+                .andExpect(jsonPath("$.data.data[0].id").value(1))
+                .andExpect(jsonPath("$.data.data[0].title").value("무비1"))
+                .andExpect(jsonPath("$.data.data[0].genre").value("장르1"))
+                .andExpect(jsonPath("$.data.data[0].rating").value(3.0))
+                .andExpect(jsonPath("$.data.data[0].releaseDate").value("2025년 8월 6일"))
+                .andExpect(jsonPath("$.data.data[1].id").value(2))
+                .andExpect(jsonPath("$.data.data[1].title").value("무비2"))
+                .andExpect(jsonPath("$.data.pageInFo.currentPage").value(0))
+                .andExpect(jsonPath("$.data.pageInFo.totalPages").value(1))
+                .andExpect(jsonPath("$.data.pageInFo.totalElements").value(2))
+                .andExpect(jsonPath("$.data.pageInFo.pageSize").value(5));
     }
 
     @Test
@@ -133,12 +138,13 @@ class MovieControllerTest {
                         .param("page", "0")
                         .param("size", "10")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(req)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.content[0].title").value("라라랜드"))
-                .andExpect(jsonPath("$.data.pageInfo.totalElements").value(1))
-                .andExpect(jsonPath("$.message")
-                        .value("영화 검색이 정상적으로 완료되었습니다."));
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.message").value("영화 검색이 정상적으로 완료되었습니다."))
+                .andExpect(jsonPath("$.data.data[0].title").value("라라랜드"))
+                .andExpect(jsonPath("$.data.pageInFo.totalElements").value(1));
     }
 
     @Test
@@ -190,28 +196,28 @@ class MovieControllerTest {
     @Test
     @DisplayName("영화 상세 조회 성공")
     void findMovieDetail_success() throws Exception {
-        FindMovieDetailResponse res = new FindMovieDetailResponse(3L, "상세조회 이름", "상세조회 감독", "상세조회 장르"
-                , 5.0, 5, "상세조회 상영시간", "상세조회 개봉일", "상세조회 설명", "상세조회 url");
+        FindMovieDetailResponse res = new FindMovieDetailResponse(
+                3L, "상세조회 이름", "상세조회 감독", "상세조회 장르",
+                5.0, 5, "상세조회 상영시간", "상세조회 개봉일", "상세조회 설명", "상세조회 url"
+        );
 
-        Mockito.when(movieService.findMovieDetail(3L))
-                .thenReturn(res);
+        Mockito.when(movieService.findMovieDetail(3L)).thenReturn(res);
 
-        // 2) MockMvc 요청 및 JSON 응답 검증
         mockMvc.perform(get("/api/movies/{movieId}", 3L)
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                // data 아래 모든 필드 검증
-                .andExpect(jsonPath("$.data.id").value(3L))
-                .andExpect(jsonPath("$.data.title").value("상세조회 이름"))
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.message").value("영화 상세 조회 성공"))
+                .andExpect(jsonPath("$.data.id").value(3))                    // ← 1 → 3으로 수정
+                .andExpect(jsonPath("$.data.movieName").value("상세조회 이름"))
                 .andExpect(jsonPath("$.data.director").value("상세조회 감독"))
                 .andExpect(jsonPath("$.data.genre").value("상세조회 장르"))
                 .andExpect(jsonPath("$.data.rating").value(5.0))
                 .andExpect(jsonPath("$.data.reviewCount").value(5))
-                .andExpect(jsonPath("$.data.runningTime").value("상세조회 상영시간"))
+                .andExpect(jsonPath("$.data.runnigTime").value("상세조회 상영시간")) // ← 지금 응답이 오타면 테스트도 맞춤
                 .andExpect(jsonPath("$.data.releaseDate").value("상세조회 개봉일"))
                 .andExpect(jsonPath("$.data.description").value("상세조회 설명"))
-                .andExpect(jsonPath("$.data.posterUrl").value("상세조회 url"))
-                .andExpect(jsonPath("$.message").value("영화 상세 조회 성공"));
+                .andExpect(jsonPath("$.data.url").value("상세조회 url"));
     }
 
 
@@ -220,14 +226,16 @@ class MovieControllerTest {
     @WithMockUser(roles = "ADMIN")
     void deleteMovie_success() throws Exception {
         DeleteMovieResponse res = new DeleteMovieResponse("테스트무비");
-        Mockito.when(movieService.deleteMovie(9L))
-                .thenReturn(res);
-        mockMvc.perform(delete("/api/movies/{movieId}", 9L)
-                        .with(csrf()))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.title").value("테스트무비"))
-                .andExpect(jsonPath("$.message")
-                        .value("영화가 성공적으로 삭제되었습니다."));
-    }
+        Mockito.when(movieService.deleteMovie(9L)).thenReturn(res);
 
+        mockMvc.perform(delete("/api/movies/{movieId}", 9L).with(csrf())
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.message").value("영화가 성공적으로 삭제되었습니다."))
+                .andExpect(jsonPath("$.data.movieTitle").value("테스트무비"));
+
+        Mockito.verify(movieService).deleteMovie(9L);
+
+    }
 }

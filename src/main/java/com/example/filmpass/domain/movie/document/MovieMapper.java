@@ -30,12 +30,7 @@ public class MovieMapper {
 
     private List<String> normalizeGenres(String csv) {
         if (csv == null || csv.isBlank()) return List.of();
-        return Arrays.stream(csv.split(","))
-                .map(String::trim)
-                .filter(t -> !t.isEmpty())
-                // 필요하면 소문자 통일:
-                // .map(String::toLowerCase)
-                .distinct()
-                .collect(Collectors.toUnmodifiableList());
+        return Arrays.stream(csv.split(",")).map(String::trim).filter(t -> !t.isEmpty())
+                .distinct().collect(Collectors.toUnmodifiableList());
     }
 }

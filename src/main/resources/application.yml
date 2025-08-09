@@ -29,7 +29,7 @@ spring:
 
   data:
     redis:
-      host: filmpass-redis.i4ysje.apn2.cache.amazonaws.com
+      host: ${REDIS_HOST}
       port: 6379
     web:
       pageable:

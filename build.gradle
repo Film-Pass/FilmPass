@@ -36,12 +36,12 @@ dependencies {
     testImplementation 'org.springframework.security:spring-security-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     runtimeOnly 'com.h2database:h2'
+    testImplementation 'com.h2database:h2'
 
     // redis cache
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     implementation 'org.springframework.boot:spring-boot-starter-cache'
 
-    testImplementation 'com.h2database:h2'
     // Validation 의존성
     implementation 'org.springframework.boot:spring-boot-starter-validation'
 

@@ -18,6 +18,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Base64;
 import java.util.Date;
+import java.util.UUID;
 
 @Slf4j
 @Component
@@ -57,13 +58,12 @@ public class JwtUtil {
     }
 
     // RefreshToken 생성 메서드
-    public String createRefreshToken(Long userId, String nickname, UserRole userRole) {
+    public String createRefreshToken(Long userId) {
         Date date = new Date();
 
         return Jwts.builder()
                         .setSubject(String.valueOf(userId))
-                        .claim("nickname", nickname)
-                        .claim("userRole", userRole)
+                        .claim("body", UUID.randomUUID())
                         .setExpiration(new Date(date.getTime() + REFRESH_TOKEN_TIME))
                         .setIssuedAt(date) // 발급일
                         .signWith(key, signatureAlgorithm) // 암호화 알고리즘

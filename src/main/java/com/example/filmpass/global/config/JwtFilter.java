@@ -1,8 +1,6 @@
 package com.example.filmpass.global.config;
 
 import com.example.filmpass.domain.user.enums.UserRole;
-import com.example.filmpass.global.exception.CustomException;
-import com.example.filmpass.global.exception.ErrorCode;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.*;

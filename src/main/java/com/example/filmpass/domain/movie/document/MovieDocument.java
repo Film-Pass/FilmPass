@@ -6,12 +6,11 @@ import org.springframework.data.elasticsearch.annotations.Document;
 
 import java.util.List;
 
-@Document(indexName = "movies")
+@Document(indexName = "movies_v2")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class MovieDocument {
 
     @Id

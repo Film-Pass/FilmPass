@@ -1,5 +1,6 @@
 package com.example.filmpass.domain.movie.document;
 
+import com.example.filmpass.domain.movie.entity.Movie;
 import com.example.filmpass.domain.movie.repository.MovieRepository;
 import com.example.filmpass.domain.movie.service.MovieElasticsearchService;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,8 @@ public class MovieDataSyncRunner implements CommandLineRunner {
     private final MovieElasticsearchService movieElasticsearchService;
 
     @Override
-    public void run(String... args) {movieRepository.findAll().forEach(movieElasticsearchService::save);
+    public void run(String... args) {
+        movieRepository.findAll().forEach(movie -> movieElasticsearchService.save(movie));
     }
+
 }

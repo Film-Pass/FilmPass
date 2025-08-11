@@ -1,6 +1,5 @@
 package com.example.filmpass.domain.movie.entity;
 
-import com.example.filmpass.domain.movie.repository.MovieRepository;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;

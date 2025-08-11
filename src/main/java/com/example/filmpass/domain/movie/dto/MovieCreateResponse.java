@@ -10,7 +10,7 @@ public class MovieCreateResponse {
     private String runningTime;
 
     public MovieCreateResponse(String title, String director, String genre, String runningTime) {
-        Title = title;
+        this.Title = title;
         this.director = director;
         this.genre = genre;
         this.runningTime = runningTime;

@@ -29,8 +29,8 @@ spring:
 
   data:
     redis:
-      host: 127.0.0.1
-      port: 6379
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
     web:
       pageable:
         max-page-size: 100

@@ -83,8 +83,6 @@ public class RedissonService {
                 }
                 acquiredLocks.add(lock);
             }
-
-            System.out.println("락 획득 성공");
             return executor.execute(); // Transaction 전파 확인하기 분리함으로써 잘한것인가 / 구조를 복잡하게 한게 아닐까?
 
         } catch (InterruptedException e) {
@@ -99,6 +97,31 @@ public class RedissonService {
             }
         }
     }
+
+    public <T> T runWithPhysicalMultiLock(List<String> keys, long waitTime, long useTime, LockExecutor<T> executor) {
+
+        RLock[] locks = keys.stream()
+                .map(redissonClient::getLock)
+                .toArray(RLock[]::new);
+
+        RLock multiLock = redissonClient.getMultiLock(locks);
+
+        try {
+            boolean isLock = multiLock.tryLock(waitTime, useTime, TimeUnit.SECONDS);
+            if (!isLock) {
+                throw new CustomException(ErrorCode.SEAT_RESERVATION_LOCKED);
+            }
+            return executor.execute();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new CustomException(ErrorCode.THREAD_INTERRUPTED);
+        } finally {
+            if (multiLock.isHeldByCurrentThread()) {
+                multiLock.unlock();
+            }
+        }
+    }
+
 
     /**
      * 락을 획득한 후 실행할 로직을 전달하기 위한 함수형 인터페이스

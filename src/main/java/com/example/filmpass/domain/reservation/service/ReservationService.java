@@ -66,10 +66,10 @@ public class ReservationService {
             throw new CustomException(ErrorCode.BROKEN_SEAT);
         }
 
-        List<String> lockKeys = seats.stream().sorted()
+        List<String> lockKeys = seats.stream()
                 .map(seat -> "lock:schedule:" + schedule.getId() + ":seat:" + seat.getId())
                 .toList();
-        return redissonService.runWithMultiLock(lockKeys, 3, 10, () ->
+        return redissonService.runWithPhysicalMultiLock(lockKeys, 3, 10, () ->
             createReservation(user, schedule, seats)
         );
     }

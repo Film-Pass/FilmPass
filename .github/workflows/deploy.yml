@@ -45,7 +45,7 @@ jobs:
 
       # ✅ EC2로 JAR 복사
       - name: Deploy to EC2
-        uses: appleboy/scp-action@v0.1.7da
+        uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ubuntu

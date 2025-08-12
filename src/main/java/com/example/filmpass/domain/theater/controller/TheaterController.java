@@ -43,8 +43,7 @@ public class TheaterController {
 
     // 극장 목록 조회
     @GetMapping
-    public ResponseEntity<ApiResponse> getAllTheaters(
-            @PageableDefault(size = 10, sort = "id") Pageable pageable) {
+    public ResponseEntity<ApiResponse> getAllTheaters(@PageableDefault(size = 10, sort = "id") Pageable pageable) {
         PagedResponse<TheaterResponse> theaters = theaterService.getAllTheaters(pageable);
         return ResponseEntity.ok(ApiResponse.success(theaters, "극장 목록 조회 성공"));
     }
@@ -53,9 +52,7 @@ public class TheaterController {
     @PatchMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     @TrackUserActionAnnotation("극장 수정")
-    public ResponseEntity<ApiResponse> updateTheater(
-            @PathVariable Long id,
-            @RequestBody TheaterRequest request) {
+    public ResponseEntity<ApiResponse> updateTheater(@PathVariable Long id, @RequestBody TheaterRequest request) {
         TheaterResponse response = theaterService.updateTheater(id, request);
         return ResponseEntity.ok(ApiResponse.success(response, "극장 수정 성공"));
     }

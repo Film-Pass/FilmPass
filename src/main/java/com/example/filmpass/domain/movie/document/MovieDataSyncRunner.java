@@ -1,6 +1,5 @@
 package com.example.filmpass.domain.movie.document;
 
-import com.example.filmpass.domain.movie.entity.Movie;
 import com.example.filmpass.domain.movie.repository.MovieRepository;
 import com.example.filmpass.domain.movie.service.MovieElasticsearchService;
 import lombok.RequiredArgsConstructor;

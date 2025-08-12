@@ -40,7 +40,9 @@ spring:
     type: redis
 
   elasticsearch:
-    uris: http://localhost:9200
+    uris: http://127.0.0.1:9200
+    username: elastic
+    password: elasticPW123!
 
 server:
   error:

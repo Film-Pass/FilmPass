@@ -6,7 +6,7 @@ services:
       SPRING_DATASOURCE_URL: ${DB_URL}         # 외부 MySQL 주소
       SPRING_DATASOURCE_USERNAME: ${DB_USERNAME}
       SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
-      SECRET_KEY: ${SECRET_KEY}
+      SECRET_KEY: VGhpcyBpcyBhIHZlcnkgc2VjdXJlIGtleSBmb3IgdGVzdGluZy4uLi4xMjM0
       SPRING_REDIS_HOST: ${REDIS_HOST}         # 외부 Redis 주소
       SPRING_REDIS_PORT: ${REDIS_PORT}
     ports:

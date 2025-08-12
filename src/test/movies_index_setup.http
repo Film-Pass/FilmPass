@@ -1,0 +1,88 @@
+### 1) movies_v2 인덱스 생성
+PUT http://127.0.0.1:9200/movies_v2
+Authorization: Basic ZWxhc3RpYzplbGFzdGljUFcxMjMh
+Content-Type: application/json
+
+{
+  "settings": {
+    "analysis": {
+      "filter": {
+        "english_stop": {
+          "type": "stop",
+          "stopwords": "_english_"
+        },
+        "english_keywords": {
+          "type": "keyword_marker",
+          "keywords": []
+        },
+        "english_stemmer": {
+          "type": "stemmer",
+          "language": "english"
+        },
+        "english_possessive_stemmer": {
+          "type": "stemmer",
+          "language": "possessive_english"
+        }
+      },
+      "analyzer": {
+        "nori_analyzer": {
+          "type": "custom",
+          "tokenizer": "nori_tokenizer",
+          "filter": ["lowercase", "nori_part_of_speech"]
+        },
+        "english_analyzer": {
+          "type": "custom",
+          "tokenizer": "standard",
+          "filter": [
+            "lowercase",
+            "english_possessive_stemmer",
+            "english_stop",
+            "english_stemmer"
+          ]
+        }
+      }
+    }
+  },
+  "mappings": {
+    "properties": {
+      "id": { "type": "long" },
+      "title": {
+        "type": "text",
+        "analyzer": "english_analyzer",
+        "fields": {
+          "ko": { "type": "text", "analyzer": "nori_analyzer" }
+        }
+      },
+      "description": {
+        "type": "text",
+        "analyzer": "english_analyzer",
+        "fields": {
+          "ko": { "type": "text", "analyzer": "nori_analyzer" }
+        }
+      },
+      "director": { "type": "text", "analyzer": "nori_analyzer" },
+      "genres": {
+        "type": "keyword",
+        "fields": {
+          "text": { "type": "text", "analyzer": "nori_analyzer" }
+        }
+      },
+      "release_date": { "type": "date", "format": "yyyy-MM-dd" },
+      "averageRating": { "type": "float" },
+      "poster_url": { "type": "keyword" },
+      "is_delete": { "type": "boolean" }
+    }
+  }
+}
+
+###
+
+### 2) 인덱스 생성 확인
+HEAD http://127.0.0.1:9200/movies_v2
+Authorization: Basic ZWxhc3RpYzplbGFzdGljUFcxMjMh
+
+###
+
+### 3) 인덱스 상세 조회 (settings, mappings 확인)
+GET http://127.0.0.1:9200/movies_v2
+Authorization: Basic ZWxhc3RpYzplbGFzdGljUFcxMjMh

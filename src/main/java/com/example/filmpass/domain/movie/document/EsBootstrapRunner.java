@@ -32,7 +32,7 @@ public class EsBootstrapRunner implements CommandLineRunner {
     private final MovieMapper movieMapper;
     private final ResourceLoader resourceLoader;
 
-    private static final String INDEX = "movies_v3";
+    private static final String INDEX = "movies_v2";
 
     @Override
     public void run(String... args) {
@@ -43,8 +43,8 @@ public class EsBootstrapRunner implements CommandLineRunner {
             // 1) 인덱스 생성 (settings/mappings)
             if (!ops.exists()) {
                 log.info("Creating index {} ...", INDEX);
-                Document settings = loadJsonAsDocument("classpath:es/movies_v3-settings.json");
-                Document mappings = loadJsonAsDocument("classpath:es/movies_v3-mappings.json");
+                Document settings = loadJsonAsDocument("classpath:es/movies_v2-settings.json");
+                Document mappings = loadJsonAsDocument("classpath:es/movies_v2-mappings.json");
                 ops.create(settings);
                 ops.putMapping(mappings);
                 log.info("Index {} created.", INDEX);
@@ -67,7 +67,7 @@ public class EsBootstrapRunner implements CommandLineRunner {
                 log.info("No movies to index (empty or all deleted).");
             }
         } catch (Exception e) {
-            // ❗ 여기서 죽으면 앱이 내려가므로 반드시 잡고 넘어갑니다.
+            //  여기서 죽으면 앱이 내려가므로 반드시 잡고 넘어감
             log.error("ES bootstrap failed; application will continue. cause={}", e.getMessage(), e);
         }
     }

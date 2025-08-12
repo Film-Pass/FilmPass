@@ -143,14 +143,15 @@ public class MovieService {
 
     //영화 상세 조회
     @Transactional(readOnly = true)
-    public FindMovieDetailResponse findMovieDtail(Long movieId) {
+    public FindMovieDetailResponse findMovieDetail(Long movieId) {
         Movie alreadyMovie = movieRepository.findById(movieId)
+
                 .orElseThrow(()-> new CustomException(ErrorCode.MOVIE_NOT_FOUND));
 
         return new FindMovieDetailResponse(alreadyMovie.getId(), alreadyMovie.getTitle(), alreadyMovie.getDirector(), alreadyMovie.getGenre(), alreadyMovie.getAvrRating(), alreadyMovie.getReviewCount(), alreadyMovie.getRunningTime(), alreadyMovie.getReleaseDate(), alreadyMovie.getDescription(), alreadyMovie.getPosterUrl());
     }
 
-    //영화  삭제
+    //영화 삭제
     @PreAuthorize("hasRole('ADMIN')")
     @Transactional
     public DeleteMovieResponse deleteMovie(Long movieId) {

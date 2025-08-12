@@ -3,10 +3,9 @@ package com.example.filmpass.domain.movie.controller;
 import com.example.filmpass.domain.movie.dto.*;
 import com.example.filmpass.domain.movie.service.MovieService;
 import com.example.filmpass.global.common.ApiResponse;
-import com.example.filmpass.domain.movie.entity.Movie;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,6 +25,7 @@ public class MovieController {
 
     //영화 등록 CreateMovie
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public ApiResponse movieCreateApi(@RequestBody MovieCreateRequest movieCreateRequest) {
         MovieCreateResponse movieCreateResponse = movieService.movieCreate(movieCreateRequest);
         return ApiResponse.success(movieCreateResponse,"영화 등록이 정상적으로 완료되었습니다.");
@@ -55,7 +55,7 @@ public class MovieController {
     //영화 상세 조회
     @GetMapping("/{movieId}")
     public ApiResponse findMovieDetail(@PathVariable Long movieId) {
-        FindMovieDetailResponse findMovieDetailResponse = movieService.findMovieDtail(movieId);
+        FindMovieDetailResponse findMovieDetailResponse = movieService.findMovieDetail(movieId);
         return ApiResponse.success(findMovieDetailResponse, "영화 상세 조회 성공");
     }
 

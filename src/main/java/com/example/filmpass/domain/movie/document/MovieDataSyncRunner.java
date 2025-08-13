@@ -16,8 +16,8 @@ import java.util.Objects;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-@ConditionalOnBean(ElasticsearchOperations.class) // ES 클라이언트가 있을 때만 실행
-@ConditionalOnProperty(prefix = "app.es", name = "sync", havingValue = "true", matchIfMissing = false) // 토글
+@ConditionalOnBean(ElasticsearchOperations.class) // ES가 있을 때만 실행
+@ConditionalOnProperty(prefix = "app.es", name = "sync", havingValue = "true", matchIfMissing = false)
 public class MovieDataSyncRunner implements CommandLineRunner {
 
     private final MovieRepository movieRepository;
@@ -42,7 +42,7 @@ public class MovieDataSyncRunner implements CommandLineRunner {
                     success++;
                 } catch (Exception ex) {
                     failed++;
-                    // 개별 실패는 기록만 하고 계속 진행 (앱 종료 X)
+                    // 개별 실패는 기록만 하고 계속 진행
                     log.warn("[ES Sync] 실패 movieId={}, cause={}",
                             Objects.requireNonNullElse(m.getId(), "null"), ex.getMessage());
                 }

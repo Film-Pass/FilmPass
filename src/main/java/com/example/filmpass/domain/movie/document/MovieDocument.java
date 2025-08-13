@@ -7,7 +7,6 @@ import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @Document(indexName = "movies_v2")
@@ -38,6 +37,5 @@ public class MovieDocument {
     @JsonProperty("release_date")
     private String releaseDate;
 
-    // ES 문서에 director가 아직 없으니 값이 필요하면 색인 쪽에서도 넣어주세요.
     private String director;
 }

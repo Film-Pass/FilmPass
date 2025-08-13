@@ -23,8 +23,8 @@ import java.util.Objects;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-@ConditionalOnBean(ElasticsearchOperations.class)                            // ES 클라이언트 있을 때만
-@ConditionalOnProperty(prefix = "app.es", name = "bootstrap", havingValue = "true", matchIfMissing = false) // 토글
+@ConditionalOnBean(ElasticsearchOperations.class)
+@ConditionalOnProperty(prefix = "app.es", name = "bootstrap", havingValue = "true", matchIfMissing = false)
 public class EsBootstrapRunner implements CommandLineRunner {
 
     private final ElasticsearchOperations es;
@@ -37,8 +37,7 @@ public class EsBootstrapRunner implements CommandLineRunner {
     @Override
     public void run(String... args) {
         try {
-            IndexCoordinates idx = IndexCoordinates.of(INDEX);
-            IndexOperations ops = es.indexOps(idx);
+            IndexCoordinates idx = IndexCoordinates.of(INDEX);IndexOperations ops = es.indexOps(idx);
 
             // 1) 인덱스 생성 (settings/mappings)
             if (!ops.exists()) {
@@ -67,7 +66,6 @@ public class EsBootstrapRunner implements CommandLineRunner {
                 log.info("No movies to index (empty or all deleted).");
             }
         } catch (Exception e) {
-            //  여기서 죽으면 앱이 내려가므로 반드시 잡고 넘어감
             log.error("ES bootstrap failed; application will continue. cause={}", e.getMessage(), e);
         }
     }

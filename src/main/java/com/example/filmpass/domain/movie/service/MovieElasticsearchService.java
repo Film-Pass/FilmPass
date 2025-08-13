@@ -21,14 +21,14 @@ public class MovieElasticsearchService {
     private final ElasticsearchOperations elasticTemplate;
     private final MovieMapper movieMapper;
 
-    /** DB 엔티티 -> ES 문서 저장 */
+
     public void save(Movie movie) {
         if (movie == null || movie.isDelete()) return;
         MovieDocument doc = movieMapper.toDocument(movie);
         if (doc != null) elasticTemplate.save(doc);
     }
 
-    /** 통합검색 (title/description + 장르 + 한글 폴백), 정렬 없음 */
+    // 통합 검색 (한글,영어)
     public Page<MovieDocument> unifiedSearch(String q, Pageable pageable) {
         if (q == null || q.isBlank()) return Page.empty(pageable);
 

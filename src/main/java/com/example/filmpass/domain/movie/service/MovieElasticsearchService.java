@@ -1,18 +1,26 @@
 package com.example.filmpass.domain.movie.service;
 
+import co.elastic.clients.elasticsearch._types.query_dsl.FieldValueFactorModifier;
+import co.elastic.clients.elasticsearch._types.query_dsl.FunctionBoostMode;
+import co.elastic.clients.elasticsearch._types.query_dsl.FunctionScoreMode;
 import co.elastic.clients.elasticsearch._types.query_dsl.Query;
 import co.elastic.clients.elasticsearch._types.query_dsl.QueryBuilders;
+import co.elastic.clients.elasticsearch._types.query_dsl.TextQueryType;
 import com.example.filmpass.domain.movie.document.MovieDocument;
 import com.example.filmpass.domain.movie.document.MovieMapper;
 import com.example.filmpass.domain.movie.entity.Movie;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.client.elc.NativeQuery;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.data.elasticsearch.core.SearchHit;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
+import java.util.List;
 
 @RequiredArgsConstructor
 @Service
@@ -21,59 +29,90 @@ public class MovieElasticsearchService {
     private final ElasticsearchOperations elasticTemplate;
     private final MovieMapper movieMapper;
 
-
     public void save(Movie movie) {
         if (movie == null || movie.isDelete()) return;
         MovieDocument doc = movieMapper.toDocument(movie);
         if (doc != null) elasticTemplate.save(doc);
     }
 
-    // 통합 검색 (한글,영어)
+    /**
+     * 통합 검색 (ko 본문 + 장르 정확매치 + 평점 가중 + 자동완성)
+     * - 본문: multi_match + fuzziness(AUTO)
+     * - 부분일치: phrase_prefix
+     * - 자동완성: edge_ngram 서브필드(.ac) 지원(없어도 lenient 로 안전)
+     * - 장르: keyword term 매치
+     * - 점수: vote_average 가중치
+     */
     public Page<MovieDocument> unifiedSearch(String q, Pageable pageable) {
         if (q == null || q.isBlank()) return Page.empty(pageable);
+        final String keyword = q.trim(); // effectively final
 
-        // 본문 검색
-        Query fullText = QueryBuilders.multiMatch(mmq -> mmq
-                .query(q)
-                .fields(Arrays.asList("title^2", "description"))
+        // 1) 본문 검색 (오타 허용)
+        Query fullText = QueryBuilders.multiMatch(m -> m
+                .query(keyword)
+                .fields(Arrays.asList("title_ko^3", "overview_ko"))
                 .fuzziness("AUTO")
+                .lenient(true)
         );
 
-        // 한글/부분 매치
-        var textFields = Arrays.asList("title", "description");
-        boolean useWildcard = q.length() <= 20;
-        var prefixes = textFields.stream()
-                .map(f -> QueryBuilders.prefix(p -> p.field(f).value(q))).toList();
-        var wildcards = useWildcard
-                ? textFields.stream()
-                .map(f -> QueryBuilders.wildcard(w -> w.field(f).value("*" + q + "*"))).toList()
-                : java.util.List.<Query>of();
+        // 2) 앞부분 부분일치 (phrase_prefix)
+        Query phrasePrefix = QueryBuilders.multiMatch(m -> m
+                .query(keyword)
+                .fields(Arrays.asList("title_ko^3", "overview_ko"))
+                .type(TextQueryType.PhrasePrefix)
+                .lenient(true)
+        );
 
-        // 장르 매치
-        Query genreExact = QueryBuilders.term(t -> t.field("genres").value(q));
-        Query genreText  = QueryBuilders.match(m -> m.field("genres.text").query(q));
+        // 3) 자동완성(edge_ngram 서브필드) — 필드가 없어도 lenient 로 무시
+        Query autocomplete = QueryBuilders.multiMatch(m -> m
+                .query(keyword)
+                .fields(Arrays.asList("title_ko.ac^4", "overview_ko.ac"))
+                .lenient(true)
+        );
 
-        // OR 결합
-        Query combined = QueryBuilders.bool(b -> {
+        // 4) 장르 정확 매치 (keyword)
+        Query genreExact = QueryBuilders.term(t -> t.field("genres").value(keyword));
+
+        // 5) 조합 (OR)
+        Query base = QueryBuilders.bool(b -> {
             b.should(fullText);
-            prefixes.forEach(b::should);
-            wildcards.forEach(b::should);
+            b.should(phrasePrefix);
+            b.should(autocomplete);
             b.should(genreExact);
-            b.should(genreText);
             b.minimumShouldMatch("1");
             return b;
         });
 
-        Pageable pageNoSort = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
+        // 6) 평점 가중 (vote_average)
+        Query scored = QueryBuilders.functionScore(fs -> fs
+                .query(base)
+                .functions(fns -> fns.fieldValueFactor(fvf -> fvf
+                        .field("vote_average")
+                        .factor(1.0)
+                        .modifier(FieldValueFactorModifier.Sqrt)
+                        .missing(0.0)
+                ))
+                .boostMode(FunctionBoostMode.Multiply)
+                .scoreMode(FunctionScoreMode.Sum)
+        );
 
-        var nq = NativeQuery.builder()
-                .withQuery(combined)
+        // 7) 페이징/정렬
+        int page = Math.max(0, pageable.getPageNumber());
+        int size = Math.min(Math.max(1, pageable.getPageSize()), 50);
+        Pageable pageNoSort = PageRequest.of(page, size);
+        // 필요 시 보조 정렬:
+        // Sort sort = Sort.by(Sort.Order.desc("_score"), Sort.Order.desc("release_date"));
+        // pageNoSort = PageRequest.of(page, size, sort);
+
+        // 8) 실행
+        NativeQuery nq = NativeQuery.builder()
+                .withQuery(scored)
                 .withPageable(pageNoSort)
-                .withTrackTotalHits(true)
+                .withTrackTotalHitsUpTo(10_000)
                 .build();
 
         var hits = elasticTemplate.search(nq, MovieDocument.class);
-        var items = hits.getSearchHits().stream()
+        List<MovieDocument> items = hits.getSearchHits().stream()
                 .map(SearchHit::getContent)
                 .toList();
 

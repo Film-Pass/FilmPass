@@ -1,9 +1,12 @@
 {
   "settings": {
-    "number_of_shards": 1,
-    "number_of_replicas": 1,
     "analysis": {
       "analyzer": {
+        "ko_nori": {
+          "type": "custom",
+          "tokenizer": "nori_tokenizer",
+          "filter": ["lowercase","nori_part_of_speech"]
+        },
         "autocomplete_analyzer": {
           "type": "custom",
           "tokenizer": "autocomplete_tokenizer",
@@ -20,7 +23,7 @@
           "type": "edge_ngram",
           "min_gram": 1,
           "max_gram": 20,
-          "token_chars": ["letter", "digit", "whitespace", "punctuation", "symbol"]
+          "token_chars": ["letter","digit","whitespace","punctuation","symbol"]
         }
       }
     }

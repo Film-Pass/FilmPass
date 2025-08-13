@@ -1,8 +1,6 @@
 package com.example.filmpass.global.config;
 
 import com.example.filmpass.domain.user.enums.UserRole;
-import com.example.filmpass.global.exception.CustomException;
-import com.example.filmpass.global.exception.ErrorCode;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.*;
@@ -10,6 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -21,6 +20,7 @@ import java.io.IOException;
 public class JwtFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
+    private final RedisTemplate redisTemplate;
 
     @Override
     protected void doFilterInternal(
@@ -33,14 +33,22 @@ public class JwtFilter extends OncePerRequestFilter {
         String bearerJwt = request.getHeader("Authorization");
 
         if(bearerJwt == null || !bearerJwt.startsWith("Bearer")) {
-            log.error("JWT 필터에서 예외 발생 - 토큰이 없음.");
+            log.warn("입력된 토큰이 존재하지 않는 요청입니다.");
             filterChain.doFilter(request, response);
             return;
         }
 
-        // bear 제거
+        // bearer 제거
         String token = jwtUtil.subStringToken(bearerJwt);
 
+        // 블랙리스트에 등록된 토큰인지 검증
+        if (Boolean.TRUE.equals(redisTemplate.hasKey("blacklist:access:" + token))) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("application/json");
+            response.getWriter().write("{\"message\":\"해당 Access Token 을 사용할 수 없습니다.\"}");
+            return;
+        }
 
         // payload 파싱오류시 예외발생
         try {

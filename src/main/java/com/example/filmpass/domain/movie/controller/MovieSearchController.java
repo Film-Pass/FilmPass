@@ -14,7 +14,7 @@ public class MovieSearchController {
 
     private final MovieElasticsearchService service;
 
-    @GetMapping("/unified")
+    @GetMapping("/elastic")
     public Page<MovieDocument> unified(
             @RequestParam("q") String q,
             @RequestParam(defaultValue="0") int page,

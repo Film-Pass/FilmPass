@@ -8,6 +8,7 @@ import com.example.filmpass.domain.auth.service.AuthService;
 import com.example.filmpass.global.aop.TrackUserActionAnnotation;
 import com.example.filmpass.global.common.ApiResponse;
 import com.example.filmpass.global.config.UserPrincipal;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -45,10 +46,13 @@ public class AuthController {
     @PostMapping("/api/auth/logout")
     public ApiResponse logout(
             @AuthenticationPrincipal UserPrincipal principal,
+            HttpServletRequest request,
             HttpServletResponse response
     ) {
 
         Long userId = principal.getUserId();
+
+        authService.logout(userId, request, response);
 
         return ApiResponse.success(null, "로그아웃 성공!");
 
@@ -76,6 +80,16 @@ public class AuthController {
             ) {
 
         return ApiResponse.success(authService.changeDiscountType(request, id, principal), "할인 타입 변경 성공!");
+
+    }
+
+    // Refresh Token 을 사용한 Access Token 재발급
+    @PostMapping("/api/auth/refresh")
+    public ApiResponse refresh(@CookieValue("refreshToken") String refreshToken,
+                               @AuthenticationPrincipal UserPrincipal principal,
+                               HttpServletRequest request) {
+
+        return ApiResponse.success(authService.refresh(refreshToken, principal, request), "재발급 성공!");
 
     }
 

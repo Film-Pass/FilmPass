@@ -11,13 +11,17 @@ import com.example.filmpass.global.config.UserPrincipal;
 import com.example.filmpass.global.exception.CustomException;
 import com.example.filmpass.global.exception.ErrorCode;
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -27,6 +31,7 @@ public class AuthService {
     private final RefreshTokenRepository refreshTokenRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
+    private final RedisTemplate<String, String> redisTemplate;
 
 
     // 회원가입 로직
@@ -95,7 +100,7 @@ public class AuthService {
 
         // 토큰 생성
         String accessToken = jwtUtil.createToken(user.getId(), user.getNickname(), user.getRole());
-        String refreshToken = jwtUtil.createRefreshToken(user.getId(), user.getNickname(), user.getRole());
+        String refreshToken = jwtUtil.createRefreshToken(user.getId());
 
         // RefreshToken 객체 생성
         LocalDateTime expiredAt = jwtUtil.extractExpiredAt(refreshToken);
@@ -120,7 +125,7 @@ public class AuthService {
 
     // 로그아웃 로직
     @Transactional
-    public void logout(Long userId, HttpServletResponse response) {
+    public void logout(Long userId, HttpServletRequest request, HttpServletResponse response) {
 
         refreshTokenRepository.deleteByUser_Id(userId);
 
@@ -131,6 +136,27 @@ public class AuthService {
         cookie.setMaxAge(0);
 
         response.addCookie(cookie);
+
+        // Access Token 가져오기
+        String authorizationHeader = request.getHeader("Authorization");
+
+        if(authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+            throw new CustomException(ErrorCode.ACCESS_TOKEN_NOT_FOUND);
+        }
+
+        String accessToken = authorizationHeader.substring(7);
+
+        // Access Token 만료시간
+        long expiration = Duration.between(LocalDateTime.now(), jwtUtil.extractExpiredAt(accessToken)).toMillis();
+
+        // Access Token 블랙리스트에 등록
+        if(expiration <= 0) {
+            return;
+        }
+
+        redisTemplate.opsForValue().set("blacklist:access:" + accessToken, "logout", expiration, TimeUnit.MILLISECONDS);
+
+
     }
 
 
@@ -183,6 +209,37 @@ public class AuthService {
         userRepository.save(user);
 
         return user.getDiscountType().name();
+
+    }
+
+
+    // 토큰 재발급
+    public String refresh(String refreshToken, UserPrincipal principal, HttpServletRequest request) {
+
+        if(refreshToken == null || refreshToken.isEmpty()) {
+            throw new CustomException(ErrorCode.REFRESH_TOKEN_NOT_FOUND);
+        }
+
+        // Access Token 가져오기
+        String authorizationHeader = request.getHeader("Authorization");
+
+        if(authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+            throw new CustomException(ErrorCode.ACCESS_TOKEN_NOT_FOUND);
+        }
+
+        String accessToken = authorizationHeader.substring(7);
+
+        // Access Token 만료시간
+        long expiration = Duration.between(LocalDateTime.now(), jwtUtil.extractExpiredAt(accessToken)).toMillis();
+
+        // 만료되지 않은 이전 토큰 블랙리스트에 등록
+        if(expiration > 0) {
+            redisTemplate.opsForValue().set("blacklist:access:" + accessToken, "logout", expiration, TimeUnit.MILLISECONDS);
+        }
+
+        String newAccessToken = jwtUtil.createToken(principal.getUserId(), principal.getNickname(), principal.getUserRole());
+
+        return newAccessToken;
 
     }
 

@@ -35,6 +35,8 @@ public enum ErrorCode {
     NICKNAME_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "이미 사용중인 닉네임입니다."),
     PASSWORD_MISMATCH(HttpStatus.BAD_REQUEST, "비밀번호가 틀립니다."),
     CANNOT_CHANGE_SAME_ROLE(HttpStatus.BAD_REQUEST, "같은 권한으로 변경할 수 없습니다."),
+    REFRESH_TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, "Refresh Token 이 존재하지 않습니다."),
+    ACCESS_TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, "ACCESS Token 이 존재하지 않습니다."),
     // JWT
     TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, "토큰이 존재하지 않습니다."),
     WRONG_TOKEN(HttpStatus.BAD_REQUEST, "잘못된 JWT 입니다."),

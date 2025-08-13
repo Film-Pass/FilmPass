@@ -40,7 +40,7 @@ public class MovieElasticsearchService {
         if (q == null || q.isBlank()) return Page.empty(pageable);
         final String keyword = q.trim(); // effectively final
 
-        // 1) 본문 검색 (오타 허용)
+        //  본문 검색
         Query fullText = QueryBuilders.multiMatch(m -> m
                 .query(keyword)
                 .fields(Arrays.asList("title_ko^3", "overview_ko"))
@@ -48,7 +48,7 @@ public class MovieElasticsearchService {
                 .lenient(true)
         );
 
-        // 2) 앞부분 부분일치 (phrase_prefix)
+        //  앞부분 부분일치
         Query phrasePrefix = QueryBuilders.multiMatch(m -> m
                 .query(keyword)
                 .fields(Arrays.asList("title_ko^3", "overview_ko"))
@@ -56,17 +56,17 @@ public class MovieElasticsearchService {
                 .lenient(true)
         );
 
-        // 3) 자동완성(edge_ngram 서브필드) — 필드가 없어도 lenient 로 무시
+        // 3) 자동완성
         Query autocomplete = QueryBuilders.multiMatch(m -> m
                 .query(keyword)
                 .fields(Arrays.asList("title_ko.ac^4", "overview_ko.ac"))
                 .lenient(true)
         );
 
-        // 4) 장르 정확 매치 (keyword)
+        // 4) 장르 매치
         Query genreExact = QueryBuilders.term(t -> t.field("genres").value(keyword));
 
-        // 5) 조합 (OR)
+        // 5) 조합
         Query base = QueryBuilders.bool(b -> {
             b.should(fullText);
             b.should(phrasePrefix);
@@ -76,7 +76,7 @@ public class MovieElasticsearchService {
             return b;
         });
 
-        // 6) 평점 가중 (vote_average)
+        // 6) 평점 가중
         Query scored = QueryBuilders.functionScore(fs -> fs
                 .query(base)
                 .functions(fns -> fns.fieldValueFactor(fvf -> fvf
@@ -93,9 +93,7 @@ public class MovieElasticsearchService {
         int page = Math.max(0, pageable.getPageNumber());
         int size = Math.min(Math.max(1, pageable.getPageSize()), 50);
         Pageable pageNoSort = PageRequest.of(page, size);
-        // 필요 시 보조 정렬:
-        // Sort sort = Sort.by(Sort.Order.desc("_score"), Sort.Order.desc("release_date"));
-        // pageNoSort = PageRequest.of(page, size, sort);
+
 
         // 8) 실행
         NativeQuery nq = NativeQuery.builder()

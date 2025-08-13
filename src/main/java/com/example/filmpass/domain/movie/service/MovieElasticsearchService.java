@@ -35,14 +35,7 @@ public class MovieElasticsearchService {
         if (doc != null) elasticTemplate.save(doc);
     }
 
-    /**
-     * 통합 검색 (ko 본문 + 장르 정확매치 + 평점 가중 + 자동완성)
-     * - 본문: multi_match + fuzziness(AUTO)
-     * - 부분일치: phrase_prefix
-     * - 자동완성: edge_ngram 서브필드(.ac) 지원(없어도 lenient 로 안전)
-     * - 장르: keyword term 매치
-     * - 점수: vote_average 가중치
-     */
+    // 통합 검색 (ko 본문 + 장르 정확매치 + 평점 가중 + 자동완성)
     public Page<MovieDocument> unifiedSearch(String q, Pageable pageable) {
         if (q == null || q.isBlank()) return Page.empty(pageable);
         final String keyword = q.trim(); // effectively final

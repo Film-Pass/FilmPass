@@ -2,10 +2,10 @@
   "mappings": {
     "dynamic": "false",
     "properties": {
-      "id":            { "type": "keyword" },
-
+      "id": { "type": "keyword" },
       "title_ko": {
         "type": "text",
+        "analyzer": "ko_nori",
         "fields": {
           "ac": {
             "type": "text",
@@ -14,9 +14,9 @@
           }
         }
       },
-
       "overview_ko": {
         "type": "text",
+        "analyzer": "ko_nori",
         "fields": {
           "ac": {
             "type": "text",
@@ -25,10 +25,9 @@
           }
         }
       },
-
-      "genres":        { "type": "keyword" },
-      "vote_average":  { "type": "float" },
-      "release_date":  { "type": "date", "format": "yyyy-MM-dd||strict_date_optional_time||epoch_millis" }
+      "genres":       { "type": "keyword" },
+      "vote_average": { "type": "float" },
+      "release_date": { "type": "date", "format": "yyyy-MM-dd||strict_date_optional_time||epoch_millis" }
     }
   }
 }

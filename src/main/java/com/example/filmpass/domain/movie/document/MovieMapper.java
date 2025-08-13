@@ -5,7 +5,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
 public class MovieMapper {
@@ -15,22 +14,27 @@ public class MovieMapper {
 
         MovieDocument doc = new MovieDocument();
         doc.setId(movie.getId());
-        doc.setTitle(safe(movie.getTitle()));
-        doc.setDirector(safe(movie.getDirector()));
+        doc.setTitle(trimToNull(movie.getTitle()));
+        doc.setDescription(trimToNull(movie.getDescription()));
         doc.setGenre(normalizeGenres(movie.getGenre()));
-        doc.setDescription(safe(movie.getDescription()));
         doc.setAverageRating(movie.getAvrRating());
-
+        doc.setReleaseDate(movie.getReleaseDate());
         return doc;
     }
 
-    private String safe(String s) {
-        return s == null ? "" : s;
+    private String trimToNull(String s) {
+        if (s == null) return null;
+        String t = s.trim();
+        return t.isEmpty() ? null : t;
     }
 
     private List<String> normalizeGenres(String csv) {
-        if (csv == null || csv.isBlank()) return List.of();
-        return Arrays.stream(csv.split(",")).map(String::trim).filter(t -> !t.isEmpty())
-                .distinct().collect(Collectors.toUnmodifiableList());
+        if (csv == null) return null;
+        List<String> list = Arrays.stream(csv.split(","))
+                .map(String::trim)
+                .filter(t -> !t.isEmpty())
+                .distinct()
+                .toList(); // JDK 16+
+        return list.isEmpty() ? null : list;
     }
 }

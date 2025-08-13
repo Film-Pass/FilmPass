@@ -36,7 +36,7 @@ public class MovieDocument {
 
     @Field(name = "release_date", type = FieldType.Date)
     @JsonProperty("release_date")
-    private LocalDate releaseDate;
+    private String releaseDate;
 
     // ES 문서에 director가 아직 없으니 값이 필요하면 색인 쪽에서도 넣어주세요.
     private String director;

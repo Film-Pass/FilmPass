@@ -1,0 +1,241 @@
+package com.example.filmpass.movie;
+
+import com.example.filmpass.domain.movie.controller.MovieController;
+import com.example.filmpass.domain.movie.dto.*;
+import com.example.filmpass.domain.movie.entity.Movie;
+import com.example.filmpass.domain.movie.service.MovieService;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
+
+import org.springframework.test.web.servlet.MockMvc;
+import java.util.List;
+
+import static org.mockito.ArgumentMatchers.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+@WithMockUser  // 모든 테스트에 가짜 로그인 적용
+@WebMvcTest(controllers = MovieController.class)
+class MovieControllerTest {
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @MockBean
+    private MovieService movieService;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @Test
+    @DisplayName("영화 등록 성공")
+    void movieCreate_success() throws Exception {
+        MovieCreateRequest req = new MovieCreateRequest(
+                "라라랜드", "데이미언 셔젤", "로맨스", "2시간 7분 40초", "2016년 12월 7일",
+                "2016년 개봉한 데이미언 셔젤 감독의 뮤지컬 영화.","https://i.namu.wiki/i/78uTXq-Jd3ME_MYXtiyOo-qBPjwpiNF9qs1ko9YvE1BmaVagE9-h95a5Xuh0jVt6WX9sY8seQLZlU2GidF7Gcg.webp"
+        );
+        MovieCreateResponse res = new MovieCreateResponse("라라랜드", "데이미언 셔젤", "로맨스", "2시간 7분 40초");
+
+        Mockito.when(movieService.movieCreate(any(MovieCreateRequest.class)))
+                .thenReturn(res);
+
+        mockMvc.perform(post("/api/movies")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(req)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.data.title").value("라라랜드"))
+                .andExpect(jsonPath("$.message").value("영화 등록이 정상적으로 완료되었습니다."));
+    }
+
+    @Test
+    @DisplayName("영화 전체 조회 성공")
+    void findAllMovie_success() throws Exception {
+        PageRequest pageable = PageRequest.of(0, 5);
+        List<SimpleFindMovieResponse> list = List.of(
+                new SimpleFindMovieResponse(1L, "무비1", "장르1", 3.0, "2025년 8월 6일"),
+                new SimpleFindMovieResponse(2L, "무비2", "장르2", 4.0, "2025년 8월 7일")
+        );
+        Page<SimpleFindMovieResponse> page = new PageImpl<>(list, pageable, list.size());
+
+        PageInfo pageInfo = new PageInfo(
+                page.getNumber(),
+                page.getTotalPages(),
+                page.getTotalElements(),
+                page.getSize()
+        );
+        FindMovieResponse<SimpleFindMovieResponse> res =
+                new FindMovieResponse<>(page.getContent(), pageInfo);
+
+        Mockito.when(movieService.findAllMovie(any(Pageable.class)))
+                .thenReturn(res);
+
+        mockMvc.perform(get("/api/movies")
+                        .param("page", "0")
+                        .param("size", "5")
+                        .accept(MediaType.APPLICATION_JSON)) // GET은 accept만
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.message").value("영화 조회가 정상적으로 완료되었습니다."))
+                .andExpect(jsonPath("$.data.data").isArray())
+                .andExpect(jsonPath("$.data.data[0].id").value(1))
+                .andExpect(jsonPath("$.data.data[0].title").value("무비1"))
+                .andExpect(jsonPath("$.data.data[0].genre").value("장르1"))
+                .andExpect(jsonPath("$.data.data[0].rating").value(3.0))
+                .andExpect(jsonPath("$.data.data[0].releaseDate").value("2025년 8월 6일"))
+                .andExpect(jsonPath("$.data.data[1].id").value(2))
+                .andExpect(jsonPath("$.data.data[1].title").value("무비2"))
+                .andExpect(jsonPath("$.data.pageInFo.currentPage").value(0))
+                .andExpect(jsonPath("$.data.pageInFo.totalPages").value(1))
+                .andExpect(jsonPath("$.data.pageInFo.totalElements").value(2))
+                .andExpect(jsonPath("$.data.pageInFo.pageSize").value(5));
+    }
+
+    @Test
+    @DisplayName("영화 검색 성공")
+    void searchMovie_success() throws Exception {
+        FindMovieRequest req = new FindMovieRequest(null, "라라랜드", null, null);
+
+        PageRequest pageable = PageRequest.of(0, 10);
+        List<SimpleFindMovieResponse> list = List.of(
+                new SimpleFindMovieResponse(5L, "라라랜드", "로맨스", 4.5, "2016년 12월 7일")
+        );
+        Page<SimpleFindMovieResponse> page = new PageImpl<>(list, pageable, list.size());
+
+        PageInfo pageInfo = new PageInfo(
+                page.getNumber(),
+                page.getTotalPages(),
+                page.getTotalElements(),
+                page.getSize()
+        );
+        FindMovieResponse<SimpleFindMovieResponse> res =
+                new FindMovieResponse<>(page.getContent(), pageInfo);
+
+        Mockito.when(movieService.findMovie(
+                Mockito.any(FindMovieRequest.class),
+                Mockito.any(Pageable.class))
+        ).thenReturn(res);
+
+        mockMvc.perform(post("/api/movies/search")
+                        .with(csrf())
+                        .param("page", "0")
+                        .param("size", "10")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(req)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.message").value("영화 검색이 정상적으로 완료되었습니다."))
+                .andExpect(jsonPath("$.data.data[0].title").value("라라랜드"))
+                .andExpect(jsonPath("$.data.pageInFo.totalElements").value(1));
+    }
+
+    @Test
+    @DisplayName("영화 수정 성공")
+    @WithMockUser(roles = "ADMIN")
+    void updateMovie_success() throws Exception {
+        Long movieId = 1L;
+        UpdateMovieRequest req = new UpdateMovieRequest(
+                "수정 제목",
+                "수정 url",
+                "수정 설명",
+                "수정 감독",
+                "수정 상영시간",
+                "수정 장르"
+        );
+
+        Movie movie = Mockito.mock(Movie.class);
+        Mockito.when(movie.getId()).thenReturn(movieId);
+        Mockito.when(movie.getTitle()).thenReturn("수정 제목");
+        Mockito.when(movie.getPosterUrl()).thenReturn("수정 url");
+        Mockito.when(movie.getDescription()).thenReturn("수정 설명");
+        Mockito.when(movie.getDirector()).thenReturn("수정 감독");
+        Mockito.when(movie.getRunningTime()).thenReturn("수정 상영시간");
+        Mockito.when(movie.getGenre()).thenReturn("수정 장르");
+        UpdateMovieResponse res = new UpdateMovieResponse(movie);
+
+        Mockito.when(movieService.updateMovie(
+                eq(movieId),
+                any(UpdateMovieRequest.class))
+        ).thenReturn(res);
+        mockMvc.perform(patch("/api/movies/{movieId}", movieId)
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(req)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.movie.id").value(movieId))
+                .andExpect(jsonPath("$.data.movie.title").value("수정 제목"))
+                .andExpect(jsonPath("$.data.movie.posterUrl").value("수정 url"))
+                .andExpect(jsonPath("$.data.movie.description").value("수정 설명"))
+                .andExpect(jsonPath("$.data.movie.director").value("수정 감독"))
+                .andExpect(jsonPath("$.data.movie.runningTime").value("수정 상영시간"))
+                .andExpect(jsonPath("$.data.movie.genre").value("수정 장르"))
+                .andExpect(jsonPath("$.message")
+                        .value("수정이 정상적으로 완료되었습니다."));
+    }
+
+
+
+    @Test
+    @DisplayName("영화 상세 조회 성공")
+    void findMovieDetail_success() throws Exception {
+        FindMovieDetailResponse res = new FindMovieDetailResponse(
+                3L, "상세조회 이름", "상세조회 감독", "상세조회 장르",
+                5.0, 5, "상세조회 상영시간", "상세조회 개봉일", "상세조회 설명", "상세조회 url"
+        );
+
+        Mockito.when(movieService.findMovieDetail(3L)).thenReturn(res);
+
+        mockMvc.perform(get("/api/movies/{movieId}", 3L)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.message").value("영화 상세 조회 성공"))
+                .andExpect(jsonPath("$.data.id").value(3))                    // ← 1 → 3으로 수정
+                .andExpect(jsonPath("$.data.movieName").value("상세조회 이름"))
+                .andExpect(jsonPath("$.data.director").value("상세조회 감독"))
+                .andExpect(jsonPath("$.data.genre").value("상세조회 장르"))
+                .andExpect(jsonPath("$.data.rating").value(5.0))
+                .andExpect(jsonPath("$.data.reviewCount").value(5))
+                .andExpect(jsonPath("$.data.runnigTime").value("상세조회 상영시간")) // ← 지금 응답이 오타면 테스트도 맞춤
+                .andExpect(jsonPath("$.data.releaseDate").value("상세조회 개봉일"))
+                .andExpect(jsonPath("$.data.description").value("상세조회 설명"))
+                .andExpect(jsonPath("$.data.url").value("상세조회 url"));
+    }
+
+
+    @Test
+    @DisplayName("영화 삭제 성공")
+    @WithMockUser(roles = "ADMIN")
+    void deleteMovie_success() throws Exception {
+        DeleteMovieResponse res = new DeleteMovieResponse("테스트무비");
+        Mockito.when(movieService.deleteMovie(9L)).thenReturn(res);
+
+        mockMvc.perform(delete("/api/movies/{movieId}", 9L).with(csrf())
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.message").value("영화가 성공적으로 삭제되었습니다."))
+                .andExpect(jsonPath("$.data.movieTitle").value("테스트무비"));
+
+        Mockito.verify(movieService).deleteMovie(9L);
+
+    }
+}

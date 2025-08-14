@@ -2,6 +2,7 @@ package com.example.filmpass.global.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -19,8 +20,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     @Bean
-    public JwtFilter jwtFilter(JwtUtil jwtUtil) {
-        return new JwtFilter(jwtUtil);
+    public JwtFilter jwtFilter(JwtUtil jwtUtil, RedisTemplate redisTemplate) {
+        return new JwtFilter(jwtUtil, redisTemplate);
     }
 
     @Bean
@@ -31,6 +32,17 @@ public class SecurityConfig {
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
                 .addFilterBefore(jwtFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class)
+
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, JwtFilter jwtFilter) throws Exception {
+
+        return httpSecurity
+                .csrf(AbstractHttpConfigurer::disable)  // csrf 비활성화
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션 비활성화
+                .httpBasic(AbstractHttpConfigurer::disable)
+                .formLogin(AbstractHttpConfigurer::disable) // 폼 로그인 비활성화
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class) // jwtFilter 추가
+
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/", "/api/auth/signup", "/api/auth/login").permitAll()
                         .requestMatchers(HttpMethod.GET,  "/api/movies/**").permitAll()

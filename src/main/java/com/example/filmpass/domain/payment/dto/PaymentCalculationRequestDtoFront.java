@@ -2,9 +2,13 @@ package com.example.filmpass.domain.payment.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@AllArgsConstructor
+@NoArgsConstructor
 public class PaymentCalculationRequestDtoFront {
 
     @NotNull(message = "금액은 빈값일 수 없습니다.")

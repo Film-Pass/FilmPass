@@ -38,6 +38,10 @@ dependencies {
     runtimeOnly 'com.h2database:h2'
     testImplementation 'com.h2database:h2'
 
+    // redis cache
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'org.springframework.boot:spring-boot-starter-cache'
+
     // Validation 의존성
     implementation 'org.springframework.boot:spring-boot-starter-validation'
 

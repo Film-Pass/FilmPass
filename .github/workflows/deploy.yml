@@ -20,28 +20,34 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
 
-      # 4. Gradle Wrapper 실행 권한 부여
+      # 3. Gradle Wrapper 실행 권한 부여
       - name: Grant execute permission for Gradle Wrapper
         run: chmod +x ./gradlew
 
-      # 5. Spring Boot 빌드 (테스트 제외 가능)
+      # 4. Spring Boot 빌드 (테스트 제외 가능)
       - name: Build with Gradle Wrapper
         run: ./gradlew clean build -x test
 
-      # 6. Docker Hub 로그인
-      - name: Docker login
-        run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+  deploy:
+   needs: build
+   runs-on: ubuntu-latest
 
-      # 7. Docker 이미지 빌드 & 푸시
-      - name: Build & Push Docker image
-        run: |
+   steps:
+
+      # 5. Docker Hub 로그인
+    - name: Docker login
+      run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+
+      # 6. Docker 이미지 빌드 & 푸시
+    - name: Build & Push Docker image
+      run: |
           docker build -t ${{ secrets.DOCKER_USERNAME }}/filmpass:latest .
           docker push ${{ secrets.DOCKER_USERNAME }}/filmpass:latest
 
-      # 8. EC2에서 pull & run
-      - name: Deploy to EC2
-        uses: appleboy/ssh-action@v0.1.10
-        with:
+      # 7. EC2에서 pull & run
+    - name: Deploy to EC2
+      uses: appleboy/ssh-action@v0.1.10
+      with:
           host: ${{ secrets.EC2_HOST }}
           username: ubuntu
           key: ${{  secrets.EC2_SSH_KEY }}

@@ -1,53 +1,56 @@
-name: CI/CD Deploy with Docker
+name: CI/CD using GitHub Actions & Docker
 
 on:
   push:
-    branches: [ feat-dev-test ]
+    branches: [ "feat-dev-test" ]
   pull_request:
-    branches: [ feat-dev-test ]
+    branches: [ "feat-dev-test" ]
 
 jobs:
-  build-and-push:
+  build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
 
     steps:
-      # ✅ 소스코드 체크아웃
-      - name: Checkout source code
-        uses: actions/checkout@v4
+      # 1. 소스코드 체크아웃
+      - uses: actions/checkout@v4
 
-      # ✅ Docker Buildx 설정
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      # ✅ Docker Hub 로그인
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v3
+      # 2. JDK 17 설치
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
         with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
+          java-version: '17'
+          distribution: 'temurin'
 
-      # ✅ Docker 이미지 빌드 및 푸시
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          push: true
-          tags: yoyo99828/filmpass:latest
+      # 3. Gradle 캐시 설정 (빌드 속도 향상)
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
 
-  deploy:
-    needs: build-and-push
-    runs-on: ubuntu-latest
+      # 4. Spring Boot 빌드 (테스트 제외 가능)
+      - name: Build with Gradle Wrapper
+        run: ./gradlew clean build -x test
 
-    steps:
-      # ✅ EC2에서 이미지 pull & 컨테이너 실행
+      # 5. Docker Hub 로그인
+      - name: Docker login
+        run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+
+      # 6. Docker 이미지 빌드 & 푸시
+      - name: Build & Push Docker image
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/filmpass:latest .
+          docker push ${{ secrets.DOCKER_USERNAME }}/filmpass:latest
+
+      # 7. EC2에서 pull & run
       - name: Deploy to EC2
         uses: appleboy/ssh-action@v0.1.10
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ubuntu
-          key: ${{ secrets.EC2_SSH_KEY }}
+          key: ${{  secrets.EC2_SSH_KEY }}
           script: |
-            docker pull yoyo99828/filmpass:latest
+            docker pull ${{ secrets.DOCKER_USERNAME }}/filmpass:latest
             docker stop filmpass || true
             docker rm filmpass || true
-            docker run -d --name filmpass -p 8080:8080 yoyo99828/filmpass:latest
+            docker run -d --name filmpass -p 8080:8080 ${{ secrets.DOCKER_USERNAME }}/filmpass:latest
+            docker image prune -a -f

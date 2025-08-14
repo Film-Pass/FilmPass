@@ -1,4 +1,12 @@
 services:
+  mysql:
+   image: mysql:8.0
+   container_name: mysql_server
+   ports:
+    - "3306:3306"
+   volumes:
+    - mysql_data:/var/lib/mysql
+   restart: unless-stopped
   redis:
     image: redis:7.0
     container_name: redis_server
@@ -44,5 +52,6 @@ services:
     restart: unless-stopped
 
 volumes:
+  mysql_data:
   redis_data:
   es_data:

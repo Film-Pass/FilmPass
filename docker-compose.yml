@@ -1,76 +1,46 @@
-version: "3.8"
+version: "3.9"
 
 services:
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    image: filmpass-app-image
-    container_name: filmpass-app
-    env_file:
-      - .env
-    ports:
-      - "8080:8080"
-    depends_on:
-      - elasticsearch
-    restart: always
-    logging:
-      driver: json-file
-      options:
-        max-size: "10m"
-        max-file: "3"
-
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.9.0
-    container_name: elasticsearch
-    environment:
-      - discovery.type=single-node
-      - xpack.security.enabled=false      # 보안 비활성화
-      - xpack.security.transport.ssl.enabled=false
-      - ES_JAVA_OPTS=-Xms1g -Xmx1g
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.6.0
+    container_name: es_lecture
     ports:
       - "9200:9200"
-      - "9300:9300"
+    environment:
+      - node.name=es_lecture
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+    networks:
+      - neulpoom_network
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
     volumes:
-      - esdata:/usr/share/elasticsearch/data
-    restart: always
-    logging:
-      driver: json-file
-      options:
-        max-size: "50m"
-        max-file: "5"
+      - es_data:/usr/share/elasticsearch/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsSL http://localhost:9200/_cluster/health | grep '\"status\"'"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
 
   kibana:
-    image: docker.elastic.co/kibana/kibana:8.9.0
-    container_name: kibana
-    environment:
-      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    image: docker.elastic.co/kibana/kibana:8.6.0
+    container_name: kibana_lecture
     ports:
       - "5601:5601"
-    depends_on:
-      - elasticsearch
-    restart: always
-    logging:
-      driver: json-file
-      options:
-        max-size: "20m"
-        max-file: "3"
-
-  zookeeper:
-    image: bitnami/zookeeper:latest
-    container_name: zookeeper
     environment:
-      - ALLOW_ANONYMOUS_LOGIN=yes
-    ports:
-      - "2181:2181"
-    restart: always
-    logging:
-      driver: json-file
-      options:
-        max-size: "10m"
-        max-file: "3"
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    networks:
+      - neulpoom_network
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
 
 volumes:
-  esdata:
+  es_data:
     driver: local
 
+networks:
+  neulpoom_network:

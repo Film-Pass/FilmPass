@@ -4,6 +4,7 @@ on:
     branches: [ "feat-dev-test" ]
   pull_request:
     branches: [ "feat-dev-test" ]
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -12,48 +13,65 @@ jobs:
     steps:
       # 1. 소스코드 체크아웃
       - uses: actions/checkout@v4
+
       # 2. Gradle 캐시 설정 (빌드 속도 향상)
+      - name: Cache Gradle packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.gradle/caches
+          key: gradle-home-v1-linux-build-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: gradle-home-v1-linux-
+
+      # 3. Gradle Setup
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
-      # 3. Gradle Wrapper 실행 권한 부여
+
+      # 4. Gradle Wrapper 실행 권한 부여
       - name: Grant execute permission for Gradle Wrapper
         run: chmod +x ./gradlew
-      # 4. Spring Boot 빌드 (테스트 제외 가능)
+
+      # 5. Spring Boot 빌드 (테스트 제외 가능)
       - name: Build with Gradle Wrapper
         run: ./gradlew clean build -x test
-      # 5. 빌드 산출물 업로드 (deploy job에서 사용)
+
+      # 6. 빌드 산출물 업로드 (deploy job에서 사용)
       - name: Upload jar artifact
         uses: actions/upload-artifact@v4
         with:
           name: app-jar
           path: build/libs/FilmPass-0.0.1-SNAPSHOT.jar
+
   deploy:
     needs: build
     runs-on: ubuntu-latest
     steps:
       # 1. 소스코드 체크아웃 (Dockerfile 가져오기)
       - uses: actions/checkout@v4
+
       # 2. 빌드 산출물 다운로드
       - name: Download jar artifact
         uses: actions/download-artifact@v4
         with:
           name: app-jar
           path: build/libs
+
       # 3. Docker Hub 로그인
       - name: Docker login
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-      # 4. Docker 이미지 빌드 & 푸시
+
+      # 4. Docker 이미지 빌드 & 푸시 (BuildKit + GHA 캐시)
       - name: Build & Push Docker image
         run: |
           # BuildKit 활성화
           DOCKER_BUILDKIT=1 docker build \
             --cache-from=type=gha \
             --cache-to=type=gha,mode=max \
-             -t ${{ secrets.DOCKER_USERNAME }}/filmpass:latest .
+            -t ${{ secrets.DOCKER_USERNAME }}/filmpass:latest .
           docker push ${{ secrets.DOCKER_USERNAME }}/filmpass:latest
+
       # 5. EC2에서 pull & run
       - name: Deploy to EC2
         uses: appleboy/ssh-action@v1.0.3

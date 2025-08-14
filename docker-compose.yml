@@ -25,6 +25,8 @@ services:
     container_name: elasticsearch
     environment:
       - discovery.type=single-node
+      - xpack.security.enabled=false      # 보안 비활성화
+      - xpack.security.transport.ssl.enabled=false
       - ES_JAVA_OPTS=-Xms1g -Xmx1g
     ports:
       - "9200:9200"
@@ -41,6 +43,8 @@ services:
   kibana:
     image: docker.elastic.co/kibana/kibana:8.9.0
     container_name: kibana
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
     ports:
       - "5601:5601"
     depends_on:
@@ -69,3 +73,4 @@ services:
 volumes:
   esdata:
     driver: local
+

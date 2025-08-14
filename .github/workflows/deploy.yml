@@ -50,6 +50,8 @@ jobs:
         run: |
       # BuildKit 활성화
          DOCKER_BUILDKIT=1 docker build \
+         --cache-from=type=gha \
+         --cache-to=type=gha,mode=max \
          -t ${{ secrets.DOCKER_USERNAME }}/filmpass:latest .
          docker push ${{ secrets.DOCKER_USERNAME }}/filmpass:latest
       # 5. EC2에서 pull & run

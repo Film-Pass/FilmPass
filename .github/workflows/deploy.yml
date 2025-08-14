@@ -21,6 +21,12 @@ jobs:
       # 4. Spring Boot 빌드 (테스트 제외 가능)
       - name: Build with Gradle Wrapper
         run: ./gradlew clean build -x test
+      # (선택) 빌드 결과 아티팩트 업로드 (디버깅/확인용)
+      - name: Upload jar artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-jar
+          path: build/libs/*.jar
   deploy:
     needs: build
     runs-on: ubuntu-latest

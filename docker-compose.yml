@@ -1,19 +1,19 @@
 version: "3.8"
+
 services:
   app:
+    build:
+      context: .
+      dockerfile: Dockerfile
     image: filmpass-app-image
-    environment:
-      SPRING_DATASOURCE_URL: ${DB_URL}         # 외부 MySQL 주소
-      SPRING_DATASOURCE_USERNAME: ${DB_USERNAME}
-      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
-      SECRET_KEY: VGhpcyBpcyBhIHZlcnkgc2VjdXJlIGtleSBmb3IgdGVzdGluZy4uLi4xMjM0
-      SPRING_REDIS_HOST: ${REDIS_HOST}         # 외부 Redis 주소
-      SPRING_REDIS_PORT: ${REDIS_PORT}
+    container_name: filmpass-app
+    env_file:
+      - .env
     ports:
-      - "8080:8080"                            # 포트 충돌 방지용 변경
+      - "8080:8080"
     depends_on:
       - elasticsearch
-      - kafka
+    restart: always
     logging:
       driver: json-file
       options:
@@ -25,12 +25,13 @@ services:
     container_name: elasticsearch
     environment:
       - discovery.type=single-node
-      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+      - ES_JAVA_OPTS=-Xms1g -Xmx1g
     ports:
       - "9200:9200"
       - "9300:9300"
     volumes:
-      - esdata:/usr/share/elasticsearch/data    # 데이터 저장용 볼륨(호스트 디스크 제한 가능)
+      - esdata:/usr/share/elasticsearch/data
+    restart: always
     logging:
       driver: json-file
       options:
@@ -44,6 +45,12 @@ services:
       - "5601:5601"
     depends_on:
       - elasticsearch
+    restart: always
+    logging:
+      driver: json-file
+      options:
+        max-size: "20m"
+        max-file: "3"
 
   zookeeper:
     image: bitnami/zookeeper:latest
@@ -52,34 +59,13 @@ services:
       - ALLOW_ANONYMOUS_LOGIN=yes
     ports:
       - "2181:2181"
+    restart: always
     logging:
       driver: json-file
       options:
         max-size: "10m"
         max-file: "3"
 
-  kafka:
-    image: bitnami/kafka:latest
-    container_name: kafka
-    environment:
-      - KAFKA_BROKER_ID=1
-      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
-      - ALLOW_PLAINTEXT_LISTENER=yes
-      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:9092
-      - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
-    ports:
-      - "9092:9092"
-    depends_on:
-      - zookeeper
-    volumes:
-      - kafkadata:/bitnami/kafka                 # 데이터 저장용 볼륨
-    logging:
-      driver: json-file
-      options:
-        max-size: "20m"
-        max-file: "5"
-
 volumes:
   esdata:
-  kafkadata:
+    driver: local

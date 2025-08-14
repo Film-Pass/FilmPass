@@ -41,19 +41,19 @@ jobs:
       # 6. Docker 이미지 빌드 & 푸시
     - name: Build & Push Docker image
       run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/filmpass:latest .
-          docker push ${{ secrets.DOCKER_USERNAME }}/filmpass:latest
+        docker build -t ${{ secrets.DOCKER_USERNAME }}/filmpass:latest .
+        docker push ${{ secrets.DOCKER_USERNAME }}/filmpass:latest
 
       # 7. EC2에서 pull & run
     - name: Deploy to EC2
       uses: appleboy/ssh-action@v0.1.10
       with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ubuntu
-          key: ${{  secrets.EC2_SSH_KEY }}
-          script: |
-            docker pull ${{ secrets.DOCKER_USERNAME }}/filmpass:latest
-            docker stop filmpass || true
-            docker rm filmpass || true
-            docker run -d --name filmpass -p 8080:8080 ${{ secrets.DOCKER_USERNAME }}/filmpass:latest
-            docker image prune -a -f
+        host: ${{ secrets.EC2_HOST }}
+        username: ubuntu
+        key: ${{  secrets.EC2_SSH_KEY }}
+        script: |
+           docker pull ${{ secrets.DOCKER_USERNAME }}/filmpass:latest
+           docker stop filmpass || true
+           docker rm filmpass || true
+           docker run -d --name filmpass -p 8080:8080 ${{ secrets.DOCKER_USERNAME }}/filmpass:latest
+           docker image prune -a -f

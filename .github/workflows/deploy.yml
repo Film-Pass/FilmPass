@@ -48,11 +48,11 @@ jobs:
       # 4. Docker 이미지 빌드 & 푸시
       - name: Build & Push Docker image
         run: |
-      # BuildKit 활성화
+        # BuildKit 활성화
          DOCKER_BUILDKIT=1 docker build \
-         --cache-from=type=gha \
-         --cache-to=type=gha,mode=max \
-         -t ${{ secrets.DOCKER_USERNAME }}/filmpass:latest .
+           --cache-from=type=gha \
+           --cache-to=type=gha,mode=max \
+            -t ${{ secrets.DOCKER_USERNAME }}/filmpass:latest .
          docker push ${{ secrets.DOCKER_USERNAME }}/filmpass:latest
       # 5. EC2에서 pull & run
       - name: Deploy to EC2

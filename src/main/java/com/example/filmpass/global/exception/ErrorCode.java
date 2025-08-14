@@ -5,7 +5,8 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 public enum ErrorCode {
-
+    //시스템
+    THREAD_INTERRUPTED(HttpStatus.CONFLICT, "쓰레드가 인터럽트되었습니다."),
     // 극장 단건 조회로 추가
     THEATER_NOT_FOUND(HttpStatus.NOT_FOUND, "극장을 찾을 수 없습니다."),
     INVALID_INPUT(HttpStatus.BAD_REQUEST, "입력 값이 유효하지 않습니다."),
@@ -27,6 +28,7 @@ public enum ErrorCode {
     // 좌석
     DUPLICATE_SEAT_NUMBER(HttpStatus.BAD_REQUEST, "이미 등록된 좌석번호입니다."),
     SEAT_NOT_FOUND(HttpStatus.NOT_FOUND, "좌석을 찾을 수 없습니다."),
+    SEAT_RESERVATION_LOCKED(HttpStatus.CONFLICT, "누군가 예매 중인 좌석 입니다."),
     BROKEN_SEAT(HttpStatus.BAD_REQUEST, "고장난 좌석은 예매할 수 없습니다."),
     // Auth
     EMAIL_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "이미 사용중인 이메일입니다."),

@@ -24,6 +24,7 @@ repositories {
 
 dependencies {
     // Spring Boot
+    implementation 'org.redisson:redisson-spring-boot-starter:3.50.0'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-web'

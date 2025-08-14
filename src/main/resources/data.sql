@@ -52,10 +52,10 @@ VALUES (1, 'FilmPass', '서울특별시 스파르타 123-123');
 
 
 -- 6) 스크린 정보
-INSERT INTO screens (id, name, address, theater_id, amount)
+INSERT INTO screens (id, name, address, theater_id, amount, screen_type)
 VALUES
-    (1, '스크린 1', '서울특별시 스파르타 123-123', 1, 10000),
-    (2, '스크린 2', '서울특별시 스파르타 123-123', 1, 10000);
+    (1, '스크린 1', '서울특별시 스파르타 123-123', 1, 10000, 'THREE_D'),
+    (2, '스크린 2', '서울특별시 스파르타 123-123', 1, 10000, 'FOUR_DX');
 
 
 -- 7) 상영 스케줄 정보

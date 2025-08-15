@@ -18,10 +18,10 @@ import java.time.Duration;
 public class RedisCacheConfig {
 
     // Redis 와 통신할 Lettuce 생성
-    @Bean
-    public RedisConnectionFactory redisConnectionFactory() {
-        return new LettuceConnectionFactory("localhost", 6379);
-    }
+//    @Bean
+//    public RedisConnectionFactory redisConnectionFactory() {
+//        return new LettuceConnectionFactory("localhost", 6379);
+//    }
 
     @Bean
     public CacheManager cacheManager(RedisConnectionFactory redisConnectionFactory) {

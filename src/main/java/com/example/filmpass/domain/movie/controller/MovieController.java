@@ -2,11 +2,11 @@ package com.example.filmpass.domain.movie.controller;
 
 import com.example.filmpass.domain.movie.dto.*;
 import com.example.filmpass.domain.movie.service.MovieService;
-import com.example.filmpass.global.common.ApiResponse;
+import com.example.filmpass.global.common.CommonResponse;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,44 +25,50 @@ public class MovieController {
 
     //영화 등록 CreateMovie
     @PostMapping
+    @Operation(summary = "(관리자 전용) 영화 등록", description = "영화를 등록합니다.")
     @ResponseStatus(HttpStatus.CREATED)
-    public ApiResponse movieCreateApi(@RequestBody MovieCreateRequest movieCreateRequest) {
+    public CommonResponse movieCreateApi(@RequestBody MovieCreateRequest movieCreateRequest) {
         MovieCreateResponse movieCreateResponse = movieService.movieCreate(movieCreateRequest);
-        return ApiResponse.success(movieCreateResponse,"영화 등록이 정상적으로 완료되었습니다.");
+        return CommonResponse.success(movieCreateResponse,"영화 등록이 정상적으로 완료되었습니다.");
     }
 
     //영화 전체 조회
     @GetMapping
-    public ApiResponse findAllMovieApi(Pageable pageable) {
+    @Operation(summary = "영화 목록 조회", description = "영화목록을 조회합니다.")
+    public CommonResponse findAllMovieApi(Pageable pageable) {
         FindMovieResponse<SimpleFindMovieResponse> findMovieResponse = movieService.findAllMovie(pageable);
-        return ApiResponse.success(findMovieResponse, "영화 조회가 정상적으로 완료되었습니다.");
+        return CommonResponse.success(findMovieResponse, "영화 조회가 정상적으로 완료되었습니다.");
     }
 
     //영화 검색
     @PostMapping("/search")
-    public ApiResponse findMovieApi(@RequestBody FindMovieRequest findMovieRequest, Pageable pageable) {
+    @Operation(summary = "영화 검색", description = "영화를 검색합니다.")
+    public CommonResponse findMovieApi(@RequestBody FindMovieRequest findMovieRequest, Pageable pageable) {
         FindMovieResponse<SimpleFindMovieResponse> findMovieResponse = movieService.findMovie(findMovieRequest, pageable);
-        return ApiResponse.success(findMovieResponse, "영화 검색이 정상적으로 완료되었습니다.");
+        return CommonResponse.success(findMovieResponse, "영화 검색이 정상적으로 완료되었습니다.");
     }
 
     //영화 수정
     @PatchMapping("/{movieId}")
-    public ApiResponse updateMovieApi(@PathVariable Long movieId, @RequestBody UpdateMovieRequest updateMovieRequest) {
+    @Operation(summary = "(관리자 전용) 영화 정보 수정", description = "영화의 정보를 수정합니다.")
+    public CommonResponse updateMovieApi(@PathVariable Long movieId, @RequestBody UpdateMovieRequest updateMovieRequest) {
         UpdateMovieResponse updateMovieResponse = movieService.updateMovie(movieId, updateMovieRequest);
-        return ApiResponse.success(updateMovieResponse, "수정이 정상적으로 완료되었습니다.");
+        return CommonResponse.success(updateMovieResponse, "수정이 정상적으로 완료되었습니다.");
     }
 
     //영화 상세 조회
     @GetMapping("/{movieId}")
-    public ApiResponse findMovieDetail(@PathVariable Long movieId) {
+    @Operation(summary = "영화 상세정보 조회", description = "영화 상세정보를 조회합니다.")
+    public CommonResponse findMovieDetail(@PathVariable Long movieId) {
         FindMovieDetailResponse findMovieDetailResponse = movieService.findMovieDetail(movieId);
-        return ApiResponse.success(findMovieDetailResponse, "영화 상세 조회 성공");
+        return CommonResponse.success(findMovieDetailResponse, "영화 상세 조회 성공");
     }
 
     //영화 삭제
     @DeleteMapping("/{movieId}")
-    public ApiResponse deleteMovieApi(@PathVariable Long movieId) {
+    @Operation(summary = "(관리자 전용) 영화 삭제", description = "영화를 삭제합니다.")
+    public CommonResponse deleteMovieApi(@PathVariable Long movieId) {
         DeleteMovieResponse deleteMovieResponse = movieService.deleteMovie(movieId);
-        return ApiResponse.success(deleteMovieResponse,"영화가 성공적으로 삭제되었습니다.");
+        return CommonResponse.success(deleteMovieResponse,"영화가 성공적으로 삭제되었습니다.");
     }
 }

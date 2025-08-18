@@ -55,19 +55,12 @@ public class AuthController {
     // 로그아웃
     @PostMapping("/api/auth/logout")
     @Operation(summary = "로그아웃 요청", description = "사용자의 RefreshToken 을 제거합니다.")
-    public CommonResponse logout(@AuthenticationPrincipal UserPrincipal principal, HttpServletResponse response) {
-    public ApiResponse logout(
-            @AuthenticationPrincipal UserPrincipal principal,
-            HttpServletRequest request,
-            HttpServletResponse response
-    ) {
+    public CommonResponse logout(@AuthenticationPrincipal UserPrincipal principal,HttpServletRequest request, HttpServletResponse response) {
 
         Long userId = principal.getUserId();
 
-        return CommonResponse.success(null, "로그아웃 성공!");
         authService.logout(userId, request, response);
-
-        return ApiResponse.success(null, "로그아웃 성공!");
+        return CommonResponse.success(null, "로그아웃 성공!");
 
     }
 
@@ -96,11 +89,11 @@ public class AuthController {
 
     // Refresh Token 을 사용한 Access Token 재발급
     @PostMapping("/api/auth/refresh")
-    public ApiResponse refresh(@CookieValue("refreshToken") String refreshToken,
+    public CommonResponse refresh(@CookieValue("refreshToken") String refreshToken,
                                @AuthenticationPrincipal UserPrincipal principal,
                                HttpServletRequest request) {
 
-        return ApiResponse.success(authService.refresh(refreshToken, principal, request), "재발급 성공!");
+        return CommonResponse.success(authService.refresh(refreshToken, principal, request), "재발급 성공!");
 
     }
 

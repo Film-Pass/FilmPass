@@ -7,7 +7,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,9 +26,8 @@ public class MovieController {
     //영화 등록 CreateMovie
     @PostMapping
     @Operation(summary = "(관리자 전용) 영화 등록", description = "영화를 등록합니다.")
-    public CommonResponse movieCreateApi(@RequestBody MovieCreateRequest movieCreateRequest) {
     @ResponseStatus(HttpStatus.CREATED)
-    public ApiResponse movieCreateApi(@RequestBody MovieCreateRequest movieCreateRequest) {
+    public CommonResponse movieCreateApi(@RequestBody MovieCreateRequest movieCreateRequest) {
         MovieCreateResponse movieCreateResponse = movieService.movieCreate(movieCreateRequest);
         return CommonResponse.success(movieCreateResponse,"영화 등록이 정상적으로 완료되었습니다.");
     }
@@ -62,16 +60,14 @@ public class MovieController {
     @GetMapping("/{movieId}")
     @Operation(summary = "영화 상세정보 조회", description = "영화 상세정보를 조회합니다.")
     public CommonResponse findMovieDetail(@PathVariable Long movieId) {
-        FindMovieDetailResponse findMovieDetailResponse = movieService.findMovieDtail(movieId);
-        return CommonResponse.success(findMovieDetailResponse, "영화 상세 조회 성공");
-    public ApiResponse findMovieDetail(@PathVariable Long movieId) {
         FindMovieDetailResponse findMovieDetailResponse = movieService.findMovieDetail(movieId);
-        return ApiResponse.success(findMovieDetailResponse, "영화 상세 조회 성공");
+        return CommonResponse.success(findMovieDetailResponse, "영화 상세 조회 성공");
     }
 
     //영화 삭제
     @DeleteMapping("/{movieId}")
-    public ApiResponse deleteMovieApi(@PathVariable Long movieId) {
+    @Operation(summary = "(관리자 전용) 영화 삭제", description = "영화를 삭제합니다.")
+    public CommonResponse deleteMovieApi(@PathVariable Long movieId) {
         DeleteMovieResponse deleteMovieResponse = movieService.deleteMovie(movieId);
         return CommonResponse.success(deleteMovieResponse,"영화가 성공적으로 삭제되었습니다.");
     }

@@ -16,15 +16,14 @@ jobs:
 
       # 2. Gradle 캐시 설정 (특수문자 제거)
       - name: Cache Gradle packages
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
-          path: ~/.gradle/caches
-          key: gradle-home-v1-linux-build-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: gradle-home-v1-linux-
-
-      # 3. Gradle Setup
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3
+         path: |
+          ~/.gradle/caches
+          ~/.gradle/wrapper
+         key: gradle-home-v1-linux-build-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+         restore-keys: |
+           gradle-home-v1-linux-
 
       # 4. Gradle Wrapper 실행 권한 부여
       - name: Grant execute permission for Gradle Wrapper

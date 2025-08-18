@@ -57,7 +57,7 @@ public class TheaterController {
     @Operation(summary = "(관리자 전용) 극장 정보 수정.", description = "극장의 정보를 수정합니다.")
     @PreAuthorize("hasRole('ADMIN')")
     @TrackUserActionAnnotation("극장 수정")
-    public ResponseEntity<ApiResponse> updateTheater(@PathVariable Long id, @RequestBody TheaterRequest request) {
+    public ResponseEntity<CommonResponse> updateTheater(@PathVariable Long id, @RequestBody TheaterRequest request) {
         TheaterResponse response = theaterService.updateTheater(id, request);
         return ResponseEntity.ok(CommonResponse.success(response, "극장 수정 성공"));
     }

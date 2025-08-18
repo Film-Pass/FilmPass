@@ -57,7 +57,7 @@ public class SeatController {
     @Operation(summary = "(관리자 전용) 좌석 정보 수정", description = "좌석의 정보를 수정합니다.")
     @PreAuthorize("hasRole('ADMIN')")
     @TrackUserActionAnnotation("좌석 수정")
-        public ResponseEntity<ApiResponse> updateSeat(@PathVariable Long seatId, @RequestBody SeatRequest request) {
+        public ResponseEntity<CommonResponse> updateSeat(@PathVariable Long seatId, @RequestBody SeatRequest request) {
         SeatResponse updatedSeat = seatService.updateSeat(seatId, request);
         return ResponseEntity.ok(CommonResponse.success(updatedSeat, "좌석 수정 성공"));
     }

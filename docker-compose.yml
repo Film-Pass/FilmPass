@@ -1,44 +1,29 @@
 services:
   app:
-    image: yoyo99828/filmpass
+    image: yoyo99828/filmpass:latest
     container_name: filmpass
     ports:
       - "8080:8080"
     environment:
-      DB_PASSWORD: BQQIIGOqri7I7xdQYn0d
-      REDIS_HOST: redis
-      REDIS_PORT: 6379
-      SECRET_KEY: +1M+K6fjrubxyPDwED063Hiitce4RrWgCvcuCc+c44I=
-      DB_URL: jdbc:mysql://filmpass-db.c38cw66kqirq.ap-northeast-2.rds.amazonaws.com:3306/filmpass
-      DB_USERNAME: root
+      DB_URL: ${SPRING_DATASOURCE_URL}
+      DB_USERNAME: ${SPRING_DATASOURCE_USERNAME}
+      DB_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      REDIS_HOST: ${REDIS_HOST}   # GitHub Actions에서 전달
+      REDIS_PORT: ${REDIS_PORT}   # GitHub Actions에서 전달
     depends_on:
-      - mysql
       - redis
       - elasticsearch
-    secrets:
-      - FilmPass_DB
-      - secret_key
-    #restart: unless-stopped
-
-  mysql:
-    image: mysql:8.0
-    container_name: mysql_server
-    ports:
-      - "3306:3306"
-    volumes:
-      - mysql_data:/var/lib/mysql
-    secrets:
-      - FilmPass_DB
-    #restart: unless-stopped
+    restart: unless-stopped
 
   redis:
     image: redis:7.0
-    container_name: redis
+    container_name: redis_server
     ports:
       - "6379:6379"
     volumes:
       - redis_data:/data
-    #restart: unless-stopped
+    restart: unless-stopped
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.6.0
@@ -62,7 +47,7 @@ services:
       - ELASTICSEARCH_HOSTS=http://es_server:9200
     depends_on:
       - elasticsearch
-    #restart: unless-stopped
+    restart: unless-stopped
 
   zookeeper:
     image: zookeeper:3.7
@@ -71,16 +56,9 @@ services:
       - "2181:2181"
     volumes:
       - zk_data:/data
-    #restart: unless-stopped
-
-secrets:
-  FilmPass_DB:
-    file: ./secrets/FilmPass_DB.txt
-  secret_key:
-    file: ./secrets/secret_key.txt
+    restart: unless-stopped
 
 volumes:
-  mysql_data:
   redis_data:
   es_data:
   zk_data:

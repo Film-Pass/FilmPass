@@ -8,6 +8,7 @@ import com.example.filmpass.domain.review.repository.ReviewRepository;
 import com.example.filmpass.global.exception.CustomException;
 import com.example.filmpass.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -163,4 +164,24 @@ public class MovieService {
 
         return deleteMovieResponse;
     }
+
+    // 영화 전체 조회 (캐싱)
+    @Cacheable(value = "movies:v2", key = "#pageable.pageNumber + '-' + #pageable.pageSize")
+    @Transactional(readOnly = true)
+    public FindMovieResponse<SimpleFindMovieResponse> findAllMovieV2(Pageable pageable) {
+        Page<Movie> moviePage = movieRepository.findAll(pageable);
+//        if (moviePage.isEmpty()) {
+//            throw new CustomException(ErrorCode.MOVIE_LIST_NOT_FOUND);
+//        }
+
+        List<SimpleFindMovieResponse> simpleFindMovieResponseList = moviePage.stream()
+                .map(movie -> new SimpleFindMovieResponse(
+                        movie.getId(), movie.getTitle(), movie.getGenre(), movie.getAvrRating(), movie.getReleaseDate()
+                ))
+                .toList();
+
+        PageInfo pageInfo = new PageInfo(moviePage.getNumber(), moviePage.getTotalPages(), moviePage.getTotalElements(), moviePage.getSize());
+        return new  FindMovieResponse<SimpleFindMovieResponse> (simpleFindMovieResponseList, pageInfo);
+    }
+
 }

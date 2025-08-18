@@ -1,58 +1,41 @@
 name: CI/CD using GitHub Actions & Docker Compose
-
 on:
   push:
     branches: ["feat-dev-test"]
   pull_request:
     branches: ["feat-dev-test"]
-
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      # 1. 코드 체크아웃
       - uses: actions/checkout@v4
-
-      # 2. JDK 17 설치
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
-
-      # 3. Gradle Wrapper 권한
       - name: Grant Gradle Wrapper execute permissions
         run: chmod +x ./gradlew
-
-      # 4. Gradle 설치
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
-
-      # 5. 빌드 (테스트 제외)
       - name: Build with Gradle
         run: ./gradlew build -x test
-
-      # 6. Docker 로그인
       - name: Docker login
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-
-      # 7. Docker 이미지 빌드 & 푸시
       - name: Build & push Docker image
         run: |
           IMAGE=${{ secrets.DOCKER_USERNAME }}/filmpass
           TAG=${{ github.sha }}
           docker build -t $IMAGE:$TAG -f ./Dockerfile .
           docker push $IMAGE:$TAG
-
   deploy:
     needs: build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - name: Deploy to EC2 with Docker Compose
         uses: appleboy/ssh-action@master
         with:
@@ -60,29 +43,26 @@ jobs:
           username: ubuntu
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            echo "Starting deployment..."
-            cd ~/howWeather-backend
+            set -euo pipefail
+            echo "[1/6] Move to project dir"
+            cd ~/filmPass-backend   # <-- 실제 서버의 프로젝트 디렉토리로 수정하세요
+            echo "[2/6] Sync repo"
             git fetch --all
             git reset --hard origin/feat-dev-test
-
             IMAGE=${{ secrets.DOCKER_USERNAME }}/filmpass:${{ github.sha }}
-
-            echo "Stopping old service..."
+            echo "[3/6] Pull new image"
+            docker pull $IMAGE
+            echo "[4/6] Create/Update .env"
+            cat > .env <<EOF
+            DOCKER_IMAGE=$IMAGE
+            DB_URL=${{ secrets.SPRING_DATASOURCE_URL }}
+            DB_USER=${{ secrets.SPRING_DATASOURCE_USERNAME }}
+            DB_PASSWORD=${{ secrets.SPRING_DATASOURCE_PASSWORD }}
+            JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }}
+            EOF
+            echo "[5/6] Recreate services"
             docker-compose down
-
-            echo "Running new service with environment variables..."
-            docker-compose run -d --rm \
-              -e SPRING_DATASOURCE_URL="${{ secrets.SPRING_DATASOURCE_URL }}" \
-              -e SPRING_DATASOURCE_USERNAME="${{ secrets.SPRING_DATASOURCE_USERNAME }}" \
-              -e SPRING_DATASOURCE_PASSWORD="${{ secrets.SPRING_DATASOURCE_PASSWORD }}" \
-              -e JWT_SECRET_KEY="${{ secrets.JWT_SECRET_KEY }}" \
-              -e DOCKER_IMAGE="$IMAGE" \
-              filmpass
-
-            echo "Recreating service with build..."
-            docker-compose up -d --build filmpass
-
-            echo "Checking containers..."
+            docker-compose up -d --remove-orphans
+            echo "[6/6] Status"
             docker-compose ps
-            echo "Deployment completed successfully!"
-
+            docker images | grep filmpass | head -n 5

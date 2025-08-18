@@ -72,25 +72,20 @@ jobs:
           docker push $IMAGE:$TAG
 
       # 5. EC2 배포
-      - name: Deploy to EC2
+      - name: Deploy to EC2 with Docker Compose
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ubuntu
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            IMAGE=${{ secrets.DOCKERHUB_USERNAME }}/filmpass
-            TAG=${{ github.sha }}
-            
-            docker pull $IMAGE:$TAG
-            docker stop spring-boot-app || true
-            docker rm spring-boot-app || true
-            
-            docker run -d --name spring-boot-app --restart=always -p 8080:8080 \
-              -e SPRING_DATASOURCE_URL=${{ secrets.SPRING_DATASOURCE_URL }} \
-              -e SPRING_DATASOURCE_USERNAME=${{ secrets.SPRING_DATASOURCE_USERNAME }} \
-              -e SPRING_DATASOURCE_PASSWORD=${{ secrets.SPRING_DATASOURCE_PASSWORD }} \
-              -e JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }} \
-              $IMAGE:$TAG
-            
+            export DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}
+            export SPRING_DATASOURCE_URL=${{ secrets.SPRING_DATASOURCE_URL }}
+            export SPRING_DATASOURCE_USERNAME=${{ secrets.SPRING_DATASOURCE_USERNAME }}
+            export SPRING_DATASOURCE_PASSWORD=${{ secrets.SPRING_DATASOURCE_PASSWORD }}
+            export JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }}
+            export GITHUB_SHA=${{ github.sha }}
+
+            docker-compose -f /path/to/docker-compose.yml pull
+            docker-compose -f /path/to/docker-compose.yml up -d
             docker image prune -f

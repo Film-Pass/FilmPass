@@ -2,8 +2,10 @@ package com.example.filmpass.domain.movie.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor
 public class PageInfo {
     private int currentPage;
     private int totalPages;

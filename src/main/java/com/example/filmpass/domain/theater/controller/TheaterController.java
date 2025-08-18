@@ -47,8 +47,7 @@ public class TheaterController {
     // 극장 목록 조회
     @GetMapping
     @Operation(summary = "극장의 목록을 조회합니다.", description = "극장목록과 극장정보를 조회합니다.")
-    public ResponseEntity<CommonResponse> getAllTheaters(
-            @PageableDefault(size = 10, sort = "id") Pageable pageable) {
+    public ResponseEntity<CommonResponse> getAllTheaters(@PageableDefault(size = 10, sort = "id") Pageable pageable) {
         PagedResponse<TheaterResponse> theaters = theaterService.getAllTheaters(pageable);
         return ResponseEntity.ok(CommonResponse.success(theaters, "극장 목록 조회 성공"));
     }
@@ -58,9 +57,7 @@ public class TheaterController {
     @Operation(summary = "(관리자 전용) 극장 정보 수정.", description = "극장의 정보를 수정합니다.")
     @PreAuthorize("hasRole('ADMIN')")
     @TrackUserActionAnnotation("극장 수정")
-    public ResponseEntity<CommonResponse> updateTheater(
-            @PathVariable Long id,
-            @RequestBody TheaterRequest request) {
+    public ResponseEntity<CommonResponse> updateTheater(@PathVariable Long id, @RequestBody TheaterRequest request) {
         TheaterResponse response = theaterService.updateTheater(id, request);
         return ResponseEntity.ok(CommonResponse.success(response, "극장 수정 성공"));
     }

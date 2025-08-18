@@ -2,8 +2,9 @@ package com.example.filmpass.domain.payment;
 
 import com.example.filmpass.domain.payment.dto.PaymentConfirmRequestDto;
 import com.example.filmpass.domain.payment.dto.PaymentCalculationRequestDtoFront;
-import com.example.filmpass.global.common.ApiResponse;
+import com.example.filmpass.global.common.CommonResponse;
 import com.example.filmpass.global.config.UserPrincipal;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -21,22 +22,24 @@ public class PaymentController {
 
     // 결제 진행 API
     @PostMapping("/api/payments/calculation")
-    public ResponseEntity<ApiResponse> createPaymentKey(
+    @Operation(summary = "결제 진행", description = "결제 요금을 받아 결제를 진행합니다.")
+    public ResponseEntity<CommonResponse> createPaymentKey(
             @Valid @RequestBody PaymentCalculationRequestDtoFront requestDto,
             @AuthenticationPrincipal UserPrincipal principal // Payment 전용 엔티티를 하나 생성해야 하기에 유저정보 재활용함.
             ) {
 
         return ResponseEntity.ok(
-                ApiResponse.success(paymentService.createPaymentKey(requestDto, principal),
+                CommonResponse.success(paymentService.createPaymentKey(requestDto, principal),
                         "결제 진행 및 토큰 생성 완료!"));
 
     }
 
     // 결제 검증 API
     @PostMapping("/api/payments/confirm")
-    public ResponseEntity<ApiResponse> confirmPaymentAtPG(@RequestBody PaymentConfirmRequestDto requestDto) {
+    @Operation(summary = "결제 검증", description = "결제 정보를 받아 결제를 검증합니다.")
+    public ResponseEntity<CommonResponse> confirmPaymentAtPG(@RequestBody PaymentConfirmRequestDto requestDto) {
 
-        return ResponseEntity.ok(ApiResponse.success(
+        return ResponseEntity.ok(CommonResponse.success(
                 paymentService.confirmPaymentAtPG(requestDto), "결제 검증 성공!"
                 )
         );

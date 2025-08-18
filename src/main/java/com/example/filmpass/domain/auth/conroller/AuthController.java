@@ -89,6 +89,7 @@ public class AuthController {
 
     // Refresh Token 을 사용한 Access Token 재발급
     @PostMapping("/api/auth/refresh")
+    @Operation(summary = "Access Token 재발급", description = "Refresh Token 으로 Access Token 을 재발급 합니다.")
     public CommonResponse refresh(@CookieValue("refreshToken") String refreshToken,
                                @AuthenticationPrincipal UserPrincipal principal,
                                HttpServletRequest request) {

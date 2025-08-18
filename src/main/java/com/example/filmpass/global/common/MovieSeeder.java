@@ -20,6 +20,7 @@ public class MovieSeeder {
 
     private int seedCount = 5000;
 
+    // 데이터 5000 개를 무작위 값을 insert 하여 생성
     @Bean
     CommandLineRunner seedMovies(MovieRepository movieRepository, MovieService movieService) {
         return args -> {
@@ -31,7 +32,7 @@ public class MovieSeeder {
                 System.out.println("[seed] inserting " + seedCount + " movies ...");
                 Random r = new Random(42);
 
-                int batch = 500; // 배치로 넣자 (JPA flush 부담 줄이기)
+                int batch = 500; // 배치 등록
                 List<Movie> buf = new ArrayList<>(batch);
 
                 for (int i = 1; i <= seedCount; i++) {
@@ -42,7 +43,7 @@ public class MovieSeeder {
                     String[] genres = {"ACTION", "DRAMA", "COMEDY", "SF", "ROMANCE", "THRILLER", "ANIMATION"};
                     String genre = genres[r.nextInt(genres.length)];
 
-                    String runningTime = (80 + r.nextInt(61)) + "min"; // 80~140분
+                    String runningTime = (80 + r.nextInt(61)) + "min"; // 80~140분 사이 무작위 값
 
                     // 랜덤 개봉일 (2020-01-01 ~ 2024-12-31)
                     LocalDate start = LocalDate.of(2020, 1, 1);
@@ -64,7 +65,7 @@ public class MovieSeeder {
                 if (!buf.isEmpty()) movieRepository.saveAll(buf);
                 System.out.println("[seed] done.");
 
-                current = movieRepository.count(); // ✅ 시드 후 실제 개수로 갱신
+                current = movieRepository.count();
             }
 
             // 캐시 워밍업

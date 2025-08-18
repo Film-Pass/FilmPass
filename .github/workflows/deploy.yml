@@ -77,10 +77,10 @@ jobs:
               -e SPRING_DATASOURCE_PASSWORD="${{ secrets.SPRING_DATASOURCE_PASSWORD }}" \
               -e JWT_SECRET_KEY="${{ secrets.JWT_SECRET_KEY }}" \
               -e DOCKER_IMAGE="$IMAGE" \
-              spring-boot-app
+              filmpass
 
             echo "Recreating service with build..."
-            docker-compose up -d --build spring-boot-app
+            docker-compose up -d --build filmpass
 
             echo "Checking containers..."
             docker-compose ps

@@ -1,7 +1,7 @@
 services:
   app:
     image: yoyo99828/filmpass
-    container_name: spring-boot-app
+    container_name: filmpass
     ports:
       - "8080:8080"
     depends_on:

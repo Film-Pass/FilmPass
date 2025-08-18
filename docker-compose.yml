@@ -9,8 +9,10 @@ services:
       DB_USERNAME: ${SPRING_DATASOURCE_USERNAME}
       DB_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
       JWT_SECRET_KEY: ${JWT_SECRET_KEY}
-      REDIS_HOST: ${REDIS_HOST}   # GitHub Actions에서 전달
-      REDIS_PORT: ${REDIS_PORT}   # GitHub Actions에서 전달
+      REDIS_HOST: ${REDIS_HOST}
+      REDIS_PORT: ${REDIS_PORT}
+      ELASTICSEARCH_USERNAME: ${ELASTICSEARCH_USERNAME}
+      ELASTICSEARCH_PASSWORD: ${ELASTICSEARCH_PASSWORD}
     depends_on:
       - redis
       - elasticsearch
@@ -33,7 +35,7 @@ services:
     environment:
       - node.name=es_server
       - discovery.type=single-node
-      - xpack.security.enabled=false
+      - xpack.security.enabled=true
     volumes:
       - es_data:/usr/share/elasticsearch/data
     restart: unless-stopped
@@ -49,6 +51,15 @@ services:
       - elasticsearch
     restart: unless-stopped
 
+  mysql:
+    image: mysql:8.0
+    container_name: mysql_server
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    restart: unless-stopped
+
   zookeeper:
     image: zookeeper:3.7
     container_name: zookeeper_server
@@ -61,4 +72,6 @@ services:
 volumes:
   redis_data:
   es_data:
+  mysql_data:
   zk_data:
+

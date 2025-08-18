@@ -66,6 +66,9 @@ jobs:
             SPRING_DATASOURCE_USERNAME=${{ secrets.SPRING_DATASOURCE_USERNAME }} \
             SPRING_DATASOURCE_PASSWORD=${{ secrets.SPRING_DATASOURCE_PASSWORD }} \
             JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }} \
+            ELASTICSEARCH_USERNAME=${{ secret.ELASTICSEARCH_USERNAME }} \
+            ELASTICSEARCH_PASSWORD=${{ secret.ELASTICSEARCH_PASSWORD }} 
+            
             docker-compose up -d --build
             # 불필요한 이미지 정리
             docker image prune -a -f

@@ -20,6 +20,7 @@ import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -138,7 +139,7 @@ public class AuthServiceTest {
         when(passwordEncoder.matches(password, encodedPassword)).thenReturn(true);
         when(refreshTokenRepository.existsByUser_Id(1L)).thenReturn(false);
         when(jwtUtil.createToken(1L, "사용자 닉네임", UserRole.GUEST)).thenReturn("accessToken");
-        when(jwtUtil.createRefreshToken(1L, "사용자 닉네임", UserRole.GUEST)).thenReturn("refreshTokenClaim");
+        when(jwtUtil.createRefreshToken(1L)).thenReturn("refreshTokenClaim");
         when(jwtUtil.extractExpiredAt("refreshTokenClaim")).thenReturn(LocalDateTime.now().plusDays(7));
 
         // when
@@ -226,7 +227,7 @@ public class AuthServiceTest {
         // given - 세팅값 X
 
         // when
-        authService.logout(1L, response);
+        authService.logout(1L, new MockHttpServletRequest(), response);
 
         // then
         verify(response).addCookie(cookieCaptor.capture());

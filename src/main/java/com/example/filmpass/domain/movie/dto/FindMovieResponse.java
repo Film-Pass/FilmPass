@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 
 @Getter
+@NoArgsConstructor
 public class FindMovieResponse<T> {
     private List<T> data;
     private PageInfo pageInFo;

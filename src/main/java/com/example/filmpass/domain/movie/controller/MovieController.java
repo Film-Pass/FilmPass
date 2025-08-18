@@ -71,4 +71,13 @@ public class MovieController {
         DeleteMovieResponse deleteMovieResponse = movieService.deleteMovie(movieId);
         return CommonResponse.success(deleteMovieResponse,"영화가 성공적으로 삭제되었습니다.");
     }
+
+    //영화 전체 조회 (캐싱)
+    @GetMapping("/v2")
+    @Operation(summary = "(캐싱) 영화 목록 조회", description = "캐시에 저장된 영화 목록을 조회합니다.")
+    public CommonResponse findAllMovieApiV2(Pageable pageable) {
+        FindMovieResponse<SimpleFindMovieResponse> findMovieResponse = movieService.findAllMovieV2(pageable);
+        return CommonResponse.success(findMovieResponse, "영화 조회가 정상적으로 완료되었습니다.");
+    }
+
 }

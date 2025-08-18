@@ -19,14 +19,20 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableMethodSecurity
 public class SecurityConfig {
 
-    // JwtFitler 를 Bean 으로 등록
     @Bean
     public JwtFilter jwtFilter(JwtUtil jwtUtil, RedisTemplate redisTemplate) {
         return new JwtFilter(jwtUtil, redisTemplate);
     }
 
-    // security 필터 설정
     @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtUtil jwtUtil) throws Exception {
+        return http
+                .csrf(AbstractHttpConfigurer::disable)
+                .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .httpBasic(AbstractHttpConfigurer::disable)
+                .formLogin(AbstractHttpConfigurer::disable)
+                .addFilterBefore(jwtFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class)
+
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, JwtFilter jwtFilter) throws Exception {
 
         return httpSecurity
@@ -36,12 +42,17 @@ public class SecurityConfig {
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable) // 폼 로그인 비활성화
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class) // jwtFilter 추가
+
                 .authorizeHttpRequests(auth -> auth
-// 인증 필요없는 요청들
-                        .requestMatchers("/api/auth/signup", "/api/auth/login","/").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/movies/").permitAll()
+                        .requestMatchers("/", "/api/auth/signup", "/api/auth/login").permitAll()
+                        .requestMatchers(HttpMethod.GET,  "/api/movies/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/movies/search").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/seat/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/theaters/*",
+                                "/api/movies/*",
+                                "/api/theaters",
+                                "/api/movies").permitAll()
+
                         .requestMatchers(HttpMethod.GET, "/api/movies/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/theaters/*", "/api/movies/*"
                         , "/api/theaters", "/api/movies").permitAll()
@@ -51,13 +62,10 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 .build();
-
     }
 
-    // Password Encoder 를 Bean 으로 등록
     @Bean
     PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
 }

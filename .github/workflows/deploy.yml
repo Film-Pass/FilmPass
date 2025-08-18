@@ -44,15 +44,11 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             set -euo pipefail
-            echo "[1/6] Move to project dir"
+            echo "[1/5] Move to project dir"
             cd ~/filmPass-backend   # <-- 실제 서버의 프로젝트 디렉토리로 수정하세요
-            echo "[2/6] Sync repo"
-            git fetch --all
-            git reset --hard origin/feat-dev-test
-            IMAGE=${{ secrets.DOCKER_USERNAME }}/filmpass:${{ github.sha }}
-            echo "[3/6] Pull new image"
+            echo "[2/5] Pull new image"
             docker pull $IMAGE
-            echo "[4/6] Create/Update .env"
+            echo "[3/5] Create/Update .env"
             cat > .env <<EOF
             DOCKER_IMAGE=$IMAGE
             DB_URL=${{ secrets.SPRING_DATASOURCE_URL }}
@@ -60,9 +56,9 @@ jobs:
             DB_PASSWORD=${{ secrets.SPRING_DATASOURCE_PASSWORD }}
             JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }}
             EOF
-            echo "[5/6] Recreate services"
+            echo "[4/5] Recreate services"
             docker-compose down
             docker-compose up -d --remove-orphans
-            echo "[6/6] Status"
+            echo "[5/5] Status"
             docker-compose ps
             docker images | grep filmpass | head -n 5

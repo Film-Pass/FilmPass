@@ -52,6 +52,13 @@ public class SecurityConfig {
                                 "/api/movies/*",
                                 "/api/theaters",
                                 "/api/movies").permitAll()
+
+                        .requestMatchers(HttpMethod.GET, "/api/movies/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/theaters/*", "/api/movies/*"
+                        , "/api/theaters", "/api/movies").permitAll()
+                                .requestMatchers("/v3/api-docs/**",
+                                        "/swagger-ui/**",
+                                        "/swagger-ui.html").permitAll()
                         .anyRequest().authenticated()
                 )
                 .build();

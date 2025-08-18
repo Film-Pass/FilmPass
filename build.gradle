@@ -52,6 +52,9 @@ dependencies {
 
     //elasticsearch
     implementation 'org.springframework.boot:spring-boot-starter-data-elasticsearch:3.4.7'
+
+    // swagger
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.9'
 }
 
 tasks.named('test') {

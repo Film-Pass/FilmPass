@@ -23,6 +23,24 @@ public class JwtFilter extends OncePerRequestFilter {
     private final RedisTemplate redisTemplate;
 
     @Override
+    protected boolean shouldNotFilter(HttpServletRequest req) {
+        String path = req.getServletPath();      // ★ 여기!
+        var m = new org.springframework.util.AntPathMatcher();
+        return m.match("/", path)
+                || m.match("/error", path)
+                || m.match("/v3/api-docs/**", path)
+                || m.match("/swagger-ui/**", path)
+                || m.match("/swagger-ui.html", path)
+                || m.match("/swagger-resources/**", path)
+                || m.match("/webjars/**", path)
+                || m.match("/api/auth/login", path)
+                || m.match("/api/auth/signup", path)
+                || m.match("/api/movies/**", path)
+                || m.match("/api/theaters/**", path)
+                || m.match("/api/seat/**", path);
+    }
+
+    @Override
     protected void doFilterInternal(
             HttpServletRequest request,
             HttpServletResponse response,
@@ -31,15 +49,15 @@ public class JwtFilter extends OncePerRequestFilter {
 
         String uri = request.getRequestURI();
 
-        // 🔐 Swagger 관련 요청은 토큰 검증 없이 통과
-        if (uri.startsWith("/swagger-ui")
-                || uri.startsWith("/v3/api-docs")
-                || uri.startsWith("/swagger-resources")     // 일부 UI 리소스
-                || uri.startsWith("/webjars/")              // UI 자바스크립트
-                || uri.equals("/swagger-ui.html")) {        // Swagger 리다이렉트용
-            filterChain.doFilter(request, response);
-            return;
-        }
+//        // 🔐 Swagger 관련 요청은 토큰 검증 없이 통과
+//        if (uri.startsWith("/swagger-ui")
+//                || uri.startsWith("/v3/api-docs")
+//                || uri.startsWith("/swagger-resources")     // 일부 UI 리소스
+//                || uri.startsWith("/webjars/")              // UI 자바스크립트
+//                || uri.equals("/swagger-ui.html")) {        // Swagger 리다이렉트용
+//            filterChain.doFilter(request, response);
+//            return;
+//        }
 
         // 토큰이 비었는지 검증
         String bearerJwt = request.getHeader("Authorization");

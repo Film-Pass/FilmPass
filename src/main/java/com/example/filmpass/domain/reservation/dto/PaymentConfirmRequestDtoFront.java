@@ -3,9 +3,13 @@ package com.example.filmpass.domain.reservation.dto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@AllArgsConstructor
+@NoArgsConstructor
 public class PaymentConfirmRequestDtoFront {
 
     @Schema(description = "주문 식별자", example = "응답에서 복붙필요")

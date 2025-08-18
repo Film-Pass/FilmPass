@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -55,10 +56,18 @@ public class AuthController {
     @PostMapping("/api/auth/logout")
     @Operation(summary = "로그아웃 요청", description = "사용자의 RefreshToken 을 제거합니다.")
     public CommonResponse logout(@AuthenticationPrincipal UserPrincipal principal, HttpServletResponse response) {
+    public ApiResponse logout(
+            @AuthenticationPrincipal UserPrincipal principal,
+            HttpServletRequest request,
+            HttpServletResponse response
+    ) {
 
         Long userId = principal.getUserId();
 
         return CommonResponse.success(null, "로그아웃 성공!");
+        authService.logout(userId, request, response);
+
+        return ApiResponse.success(null, "로그아웃 성공!");
 
     }
 
@@ -82,6 +91,16 @@ public class AuthController {
             ) {
 
         return CommonResponse.success(authService.changeDiscountType(request, id, principal), "할인 타입 변경 성공!");
+
+    }
+
+    // Refresh Token 을 사용한 Access Token 재발급
+    @PostMapping("/api/auth/refresh")
+    public ApiResponse refresh(@CookieValue("refreshToken") String refreshToken,
+                               @AuthenticationPrincipal UserPrincipal principal,
+                               HttpServletRequest request) {
+
+        return ApiResponse.success(authService.refresh(refreshToken, principal, request), "재발급 성공!");
 
     }
 

@@ -17,4 +17,11 @@ public class FindMovieRequest {
 
     @Schema(description = "영화 장르", example = "null")
     private String genre;
+
+    public FindMovieRequest(Long id, String title, String director, String genre) {
+        this.id = id;
+        this.title = title;
+        this.director = director;
+        this.genre = genre;
+    }
 }

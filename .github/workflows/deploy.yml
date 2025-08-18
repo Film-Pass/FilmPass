@@ -54,25 +54,23 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             echo "Starting deployment..."
-            mkdir -p ~/howWeather-backend
             cd ~/howWeather-backend
             git fetch --all
             git reset --hard origin/feat-dev-test
 
-            if [ ! -f docker-compose.yml ]; then
-              echo "docker-compose.yml not found! Exiting."
-              exit 1
-            fi
+            IMAGE=${{ secrets.DOCKERHUB_USERNAME }}/filmpass:${{ github.sha }}
 
-           cat > .env <<EOL
-           DB_URL=${{ secrets.SPRING_DATASOURCE_URL }}
-           DB_USER=${{ secrets.SPRING_DATASOURCE_USERNAME }}
-           DB_PASSWORD=${{ secrets.SPRING_DATASOURCE_PASSWORD }}
-           JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }}
-           DOCKER_IMAGE=${{ secrets.DOCKERHUB_USERNAME }}/filmpass:${{ github.sha }}
-           EOL
-  
-           docker-compose --env-file .env down
-           docker-compose --env-file .env up -d --build
-           docker-compose ps
-           echo "Deployment completed successfully!"
+            echo "Stopping old service..."
+            docker-compose down
+
+            echo "Running new service with environment variables..."
+            SPRING_DATASOURCE_URL=${{ secrets.SPRING_DATASOURCE_URL }} \
+            SPRING_DATASOURCE_USERNAME=${{ secrets.SPRING_DATASOURCE_USERNAME }} \
+            SPRING_DATASOURCE_PASSWORD=${{ secrets.SPRING_DATASOURCE_PASSWORD }} \
+            JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }} \
+            DOCKER_IMAGE=$IMAGE \
+            docker-compose up -d --build
+
+            echo "Checking containers..."
+            docker-compose ps
+            echo "Deployment completed successfully!"

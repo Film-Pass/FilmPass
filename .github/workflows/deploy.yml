@@ -64,16 +64,15 @@ jobs:
               exit 1
             fi
 
-            cat > .env <<EOL
-  DB_URL=${{ secrets.SPRING_DATASOURCE_URL }}
-  DB_USER=${{ secrets.SPRING_DATASOURCE_USERNAME }}
-  DB_PASSWORD=${{ secrets.SPRING_DATASOURCE_PASSWORD }}
-  JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }}
-  DOCKER_IMAGE=${{ secrets.DOCKERHUB_USERNAME }}/filmpass:${{ github.sha }}
-  EOL
+           cat > .env <<EOL
+           DB_URL=${{ secrets.SPRING_DATASOURCE_URL }}
+           DB_USER=${{ secrets.SPRING_DATASOURCE_USERNAME }}
+           DB_PASSWORD=${{ secrets.SPRING_DATASOURCE_PASSWORD }}
+           JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }}
+           DOCKER_IMAGE=${{ secrets.DOCKERHUB_USERNAME }}/filmpass:${{ github.sha }}
+           EOL
   
-  docker-compose --env-file .env down
-  docker-compose --env-file .env up -d --build
-  docker-compose ps
-  echo "Deployment completed successfully!"
-
+           docker-compose --env-file .env down
+           docker-compose --env-file .env up -d --build
+           docker-compose ps
+           echo "Deployment completed successfully!"

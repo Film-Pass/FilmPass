@@ -26,16 +26,27 @@ public class ReviewController {
 
     // 리뷰 생성
     @PostMapping
+
+    public ResponseEntity<ApiResponse> createReview(@Valid @RequestBody ReviewRequestDto request) {
+           ReviewResponseDto response = reviewService.createReview(request);
+           ApiResponse responseBody = ApiResponse.success(response, "리뷰가 등록되었습니다.");
+
     @Operation(summary = "리뷰 생성", description = "리뷰를 생성합니다.")
     public ResponseEntity<CommonResponse> createReview(@Valid @RequestBody ReviewRequestDto request) {
         ReviewResponseDto response = reviewService.createReview(request);
         CommonResponse responseBody = CommonResponse.success(response, "리뷰가 등록되었습니다.");
+      
         return ResponseEntity.status(HttpStatus.CREATED).body(responseBody);
     }
 
 
     // 리뷰 수정
     @PatchMapping("/{reviewId}")
+
+    public ResponseEntity<ApiResponse> updateReview(@PathVariable Long reviewId, @Valid @RequestBody ReviewRequestDto request) {
+           ReviewResponseDto response = reviewService.updateReview(reviewId, request);
+        return ResponseEntity.ok(ApiResponse.success(response, "리뷰가 수정되었습니다."));
+
     @Operation(summary = "리뷰정보 수정", description = "작성한 리뷰의 정보를 수정합니다.")
     public ResponseEntity<CommonResponse> updateReview(
             @PathVariable Long reviewId,
@@ -43,15 +54,21 @@ public class ReviewController {
     ) {
         ReviewResponseDto response = reviewService.updateReview(reviewId, request);
         return ResponseEntity.ok(CommonResponse.success(response, "리뷰가 수정되었습니다."));
+
     }
 
     // 영화별 리뷰 목록 조회
     @GetMapping("/{movieId}")
+
+    public ResponseEntity<ApiResponse> getReviewsByMovie(@PathVariable Long movieId,
+           @PageableDefault(page = 0, size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
+
     @Operation(summary = "리뷰 목록 조회", description = "작성한 영화의 리뷰 목록을 조회합니다.")
     public ResponseEntity<CommonResponse> getReviewsByMovie(
             @PathVariable Long movieId,
             @PageableDefault(page = 0, size = 10, sort = "createdAt", direction = Sort.Direction.DESC)
             Pageable pageable
+
     ) {
         Page<ReviewResponseDto> reviews = reviewService.getReviewsByMovie(movieId, pageable);
         return ResponseEntity.ok(CommonResponse.success(reviews, "해당 영화 리뷰 목록 조회 완료"));
@@ -59,6 +76,10 @@ public class ReviewController {
 
     // 리뷰 삭제
     @DeleteMapping("/{reviewId}")
+
+    public ResponseEntity<ApiResponse> deleteReview(@PathVariable Long reviewId) {reviewService.deleteReview(reviewId);
+        return ResponseEntity.ok(ApiResponse.success(null, "리뷰가 삭제되었습니다."));
+
     @Operation(summary = "리뷰 삭제", description = "작성한 리뷰를 삭제합니다.")
     public ResponseEntity<CommonResponse> deleteReview(@PathVariable Long reviewId) {
         reviewService.deleteReview(reviewId);
@@ -72,7 +93,7 @@ public class ReviewController {
     public ResponseEntity<CommonResponse> createCriticReview(@Valid @RequestBody ReviewRequestDto request) {
         ReviewResponseDto response = reviewService.createCriticReview(request);
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(CommonResponse.success(response, "평론가 리뷰가 등록되었습니다."));
+        .body(ApiResponse.success(response, "평론가 리뷰가 등록되었습니다."));
     }
 
 }

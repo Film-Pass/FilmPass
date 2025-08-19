@@ -56,7 +56,7 @@ services:
     ports: ["5601:5601"]
     environment:
       - ELASTICSEARCH_HOSTS=http://es_server:9200
-      - ELASTICSEARCH_USERNAME=kibana_system
+      - ELASTICSEARCH_USERNAME=${KIBANA_SYSTEM_USERNAME}
       - ELASTICSEARCH_PASSWORD=${KIBANA_SYSTEM_PASSWORD}
       - XPACK_SECURITY_ENABLED=true
       - XPACK_ENCRYPTEDSAVEDOBJECTS_ENCRYPTIONKEY=${KIBANA_ENCRYPTION_KEY}
@@ -72,7 +72,7 @@ services:
       - FLEET_URL=http://kibana_server:5601
       - FLEET_SERVER_SERVICE_TOKEN=${FLEET_SERVER_SERVICE_TOKEN}
       - ELASTICSEARCH_HOST=http://es_server:9200
-      - ELASTICSEARCH_USERNAME=elastic
+      - ELASTICSEARCH_USERNAME=${ELASTICSEARCH_USERNAME}
       - ELASTICSEARCH_PASSWORD=${ELASTICSEARCH_PASSWORD}
       - FLEET_SERVER_CERT=/usr/share/elastic-agent/certs/fleet.crt
       - FLEET_SERVER_CERT_KEY=/usr/share/elastic-agent/certs/fleet.key

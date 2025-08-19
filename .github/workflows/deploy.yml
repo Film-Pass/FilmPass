@@ -46,7 +46,20 @@ jobs:
       # 1. 소스코드 체크아웃 (Dockerfile / docker-compose.yml 가져오기)
       - uses: actions/checkout@v4
 
-      # 2. EC2 접속 후 배포
+      # 2. EC2로 파일 전송
+      - name: Copy files to EC2
+        uses: appleboy/scp-action@v0.1.6
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          source: |
+            docker-compose.yml
+            Dockerfile
+            build/libs/FilmPass-0.0.1-SNAPSHOT.jar
+          target: /home/ubuntu/
+
+      # 3. EC2 접속 후 배포
       - name: Deploy to EC2
         uses: appleboy/ssh-action@v1.0.3
         with:
@@ -54,7 +67,7 @@ jobs:
           username: ubuntu
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            cd /home/ubuntu/your-project-folder
+            cd /home/ubuntu
             # 최신 이미지 빌드 & pull
             docker-compose pull
             # 기존 컨테이너 중지 및 제거

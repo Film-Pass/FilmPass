@@ -1,6 +1,6 @@
 services:
   app:
-    image: yoyo99828/filmpass:latest
+    build: .
     container_name: filmpass
     ports:
       - "8080:8080"

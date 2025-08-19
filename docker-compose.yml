@@ -53,6 +53,7 @@ services:
       - XPACK_SECURITY_ENABLED=true
       - XPACK_ENCRYPTEDSAVEDOBJECTS_ENCRYPTIONKEY=${KIBANA_ENCRYPTION_KEY}
       - KIBANA_SYSTEM_PASSWORD=${KIBANA_SYSTEM_PASSWORD}
+      - NODE_OPTIONS=
     depends_on:
       - elasticsearch
     restart: unless-stopped

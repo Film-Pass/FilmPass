@@ -28,7 +28,7 @@ public class JwtUtil {
     private static final long ACCESS_TOKEN_TIME = 60 * 60 * 1000L; // 만료시간 60분
     private static final long REFRESH_TOKEN_TIME = 60 * 60 * 1000 * 24 * 7L; // 만료시간 7일
 
-    @Value("${SECRET_KEY}")
+    @Value("${JWT_SECRET_KEY}")
     private String secretKey;
     private Key key;
     private final SignatureAlgorithm signatureAlgorithm =  SignatureAlgorithm.HS256;

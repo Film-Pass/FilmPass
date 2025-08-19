@@ -48,10 +48,7 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ubuntu
           key: ${{ secrets.EC2_SSH_KEY }}
-          source: |
-            docker-compose.yml
-            Dockerfile
-            build/libs/*.jar
+          source: "./docker-compose.yml,./Dockerfile,./build/libs/*.jar"
           target: /home/ubuntu
       # 4) EC2 접속 후 배포
       - name: Deploy to EC2

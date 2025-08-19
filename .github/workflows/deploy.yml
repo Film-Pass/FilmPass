@@ -56,7 +56,7 @@ jobs:
           source: |
             docker-compose.yml
             Dockerfile
-            build/libs/FilmPass-0.0.1-SNAPSHOT.jar
+            FilmPass-0.0.1-SNAPSHOT.jar
           target: /home/ubuntu/
 
       # 3. EC2 접속 후 배포

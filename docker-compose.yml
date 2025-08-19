@@ -35,7 +35,7 @@ services:
     environment:
       - node.name=es_server
       - discovery.type=single-node
-      - xpack.security.enabled=false
+      - xpack.security.enabled=true
       - xpack.security.authc.api_key.enabled=true
       - ELASTIC_PASSWORD=${ELASTICSEARCH_PASSWORD}
     volumes:
@@ -49,6 +49,10 @@ services:
       - "5601:5601"
     environment:
       - ELASTICSEARCH_HOSTS=http://es_server:9200
+      - ELASTICSEARCH_USERNAME=kibana_system
+      - XPACK_SECURITY_ENABLED=true
+      - XPACK_ENCRYPTEDSAVEDOBJECTS_ENCRYPTIONKEY=${KIBANA_ENCRYPTION_KEY}
+      - KIBANA_SYSTEM_PASSWORD=${ secrets.KIBANA_SYSTEM_PASSWORD }
     depends_on:
       - elasticsearch
     restart: unless-stopped

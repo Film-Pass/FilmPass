@@ -75,6 +75,28 @@ services:
       - zk_data:/data
     restart: unless-stopped
 
+  fleet_server:
+    image: docker.elastic.co/beats/elastic-agent:8.11.1
+    container_name: fleet_server
+    environment:
+      - FLEET_SERVER_ENABLE=1
+      - FLEET_ENROLL=1
+      - FLEET_URL=http://kibana_server:5601
+      - FLEET_SERVER_SERVICE_TOKEN=AAEAAWVsYXN0aWMvZmxlZXQtc2VydmVyL3Rva2VuLTE3NTU2MDA1NjkxNDQ6YU53QkhqWW9RaDZlVTZaUTYxNmp1dw
+      - ELASTICSEARCH_HOST=http://es_server:9200
+      - ELASTICSEARCH_USERNAME=elastic
+      - ELASTICSEARCH_PASSWORD=${ELASTICSEARCH_PASSWORD}
+      - FLEET_SERVER_CERT=/usr/share/elastic-agent/certs/fleet.crt
+      - FLEET_SERVER_CERT_KEY=/usr/share/elastic-agent/certs/fleet.key
+    ports:
+      - "8220:8220"
+    volumes:
+      - ./certs:/usr/share/elastic-agent/certs:ro
+    depends_on:
+      - elasticsearch
+      - kibana
+    restart: unless-stopped
+
 volumes:
   redis_data:
   es_data:

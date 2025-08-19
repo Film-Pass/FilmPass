@@ -46,14 +46,7 @@ jobs:
       # 1. 소스코드 체크아웃 (Dockerfile / docker-compose.yml 가져오기)
       - uses: actions/checkout@v4
 
-      # 2. Build artifact 다운로드
-      - name: Download jar artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: app-jar
-          path: build/libs/
-
-      # 3. EC2로 파일 전송
+      # 2. EC2로 파일 전송
       - name: Copy files to EC2
         uses: appleboy/scp-action@v0.1.6
         with:
@@ -66,7 +59,7 @@ jobs:
             build/libs/FilmPass-0.0.1-SNAPSHOT.jar
           target: /home/ubuntu/
 
-      # 4. EC2 접속 후 배포
+      # 3. EC2 접속 후 배포
       - name: Deploy to EC2
         uses: appleboy/ssh-action@v1.0.3
         with:

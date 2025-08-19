@@ -1,4 +1,3 @@
-USE filmpass-db;
 -- 1) FK 제약 잠시 끄기
 SET FOREIGN_KEY_CHECKS = 0;
 

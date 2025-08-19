@@ -1,9 +1,10 @@
+version: "3.8"
+
 services:
   app:
     build: .
     container_name: filmpass
-    ports:
-      - "8080:8080"
+    ports: ["8080:8080"]
     environment:
       DB_URL: ${SPRING_DATASOURCE_URL}
       DB_USERNAME: ${SPRING_DATASOURCE_USERNAME}
@@ -11,33 +12,40 @@ services:
       JWT_SECRET_KEY: ${JWT_SECRET_KEY}
       REDIS_HOST: ${REDIS_HOST}
       REDIS_PORT: ${REDIS_PORT}
-      ELASTICSEARCH_USERNAME: ${ELASTICSEARCH_USERNAME}
-      ELASTICSEARCH_PASSWORD: ${ELASTICSEARCH_PASSWORD}
+      SPRING_ELASTICSEARCH_URIS: http://es_server:9200
+      SPRING_ELASTICSEARCH_USERNAME: ${ELASTICSEARCH_USERNAME}
+      SPRING_ELASTICSEARCH_PASSWORD: ${ELASTICSEARCH_PASSWORD}
+      ELASTIC_APM_SERVER_URLS: http://apm_agent:8200
+      ELASTIC_APM_SECRET_TOKEN: ${APM_SECRET_TOKEN}
+      ELASTIC_APM_SERVICE_NAME: FilmPass
+      ELASTIC_APM_ENVIRONMENT: dev
     depends_on:
+      - mysql
       - redis
       - elasticsearch
+      - apm_agent
     restart: unless-stopped
 
   redis:
     image: redis:7.0
     container_name: redis_server
-    ports:
-      - "6379:6379"
-    volumes:
-      - redis_data:/data
+    ports: ["6379:6379"]
+    volumes: ["redis_data:/data"]
     restart: unless-stopped
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.11.1
     container_name: es_server
-    ports:
-      - "9200:9200"
+    ports: ["9200:9200"]
     environment:
       - node.name=es_server
       - discovery.type=single-node
       - xpack.security.enabled=true
       - xpack.security.authc.api_key.enabled=true
+      - xpack.security.http.ssl.enabled=false
+      - xpack.security.transport.ssl.enabled=false
       - ELASTIC_PASSWORD=${ELASTICSEARCH_PASSWORD}
+      - ES_JAVA_OPTS=-Xms1g -Xmx1g
     volumes:
       - es_data:/usr/share/elasticsearch/data
     restart: unless-stopped
@@ -45,34 +53,14 @@ services:
   kibana:
     image: docker.elastic.co/kibana/kibana:8.11.1
     container_name: kibana_server
-    ports:
-      - "5601:5601"
+    ports: ["5601:5601"]
     environment:
-    - ELASTICSEARCH_HOSTS=http://es_server:9200
-    - ELASTICSEARCH_USERNAME=${KIBANA_SYSTEM_USERNAME}
-    - ELASTICSEARCH_PASSWORD=${KIBANA_SYSTEM_PASSWORD}
-    - XPACK_SECURITY_ENABLED=true
-    - XPACK_ENCRYPTEDSAVEDOBJECTS_ENCRYPTIONKEY=${KIBANA_ENCRYPTION_KEY}
-    depends_on:
-      - elasticsearch
-    restart: unless-stopped
-
-  mysql:
-    image: mysql:8.0
-    container_name: mysql_server
-    ports:
-      - "3306:3306"
-    volumes:
-      - mysql_data:/var/lib/mysql
-    restart: unless-stopped
-
-  zookeeper:
-    image: zookeeper:3.7
-    container_name: zookeeper_server
-    ports:
-      - "2181:2181"
-    volumes:
-      - zk_data:/data
+      - ELASTICSEARCH_HOSTS=http://es_server:9200
+      - ELASTICSEARCH_USERNAME=kibana_system
+      - ELASTICSEARCH_PASSWORD=${KIBANA_SYSTEM_PASSWORD}
+      - XPACK_SECURITY_ENABLED=true
+      - XPACK_ENCRYPTEDSAVEDOBJECTS_ENCRYPTIONKEY=${KIBANA_ENCRYPTION_KEY}
+    depends_on: [elasticsearch]
     restart: unless-stopped
 
   fleet_server:
@@ -82,19 +70,51 @@ services:
       - FLEET_SERVER_ENABLE=1
       - FLEET_ENROLL=1
       - FLEET_URL=http://kibana_server:5601
-      - FLEET_SERVER_SERVICE_TOKEN=AAEAAWVsYXN0aWMvZmxlZXQtc2VydmVyL3Rva2VuLTE3NTU2MDA1NjkxNDQ6YU53QkhqWW9RaDZlVTZaUTYxNmp1dw
+      - FLEET_SERVER_SERVICE_TOKEN=${FLEET_SERVER_SERVICE_TOKEN}
       - ELASTICSEARCH_HOST=http://es_server:9200
       - ELASTICSEARCH_USERNAME=elastic
       - ELASTICSEARCH_PASSWORD=${ELASTICSEARCH_PASSWORD}
       - FLEET_SERVER_CERT=/usr/share/elastic-agent/certs/fleet.crt
       - FLEET_SERVER_CERT_KEY=/usr/share/elastic-agent/certs/fleet.key
-    ports:
-      - "8220:8220"
     volumes:
       - ./certs:/usr/share/elastic-agent/certs:ro
-    depends_on:
-      - elasticsearch
-      - kibana
+    ports: ["8220:8220"]
+    depends_on: [elasticsearch, kibana]
+    restart: unless-stopped
+
+  apm_agent:
+    image: docker.elastic.co/beats/elastic-agent:8.11.1
+    container_name: apm_agent
+    environment:
+      - FLEET_ENROLL=1
+      - FLEET_URL=https://fleet_server:8220
+      - FLEET_ENROLLMENT_TOKEN=${FLEET_APM_TOKEN}
+      - FLEET_CA=/usr/share/elastic-agent/certs/ca.crt
+    volumes:
+      - ./certs/ca.crt:/usr/share/elastic-agent/certs/ca.crt:ro
+    ports: ["8200:8200"]
+    depends_on: [fleet_server]
+    restart: unless-stopped
+
+  mysql:
+    image: mysql:8.0
+    container_name: mysql_server
+    ports: ["3306:3306"]
+    environment:
+      - MYSQL_DATABASE=filmpass
+      - MYSQL_USER=${SPRING_DATASOURCE_USERNAME}
+      - MYSQL_PASSWORD=${SPRING_DATASOURCE_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${SPRING_DATASOURCE_PASSWORD}
+    command: ["--character-set-server=utf8mb4","--collation-server=utf8mb4_unicode_ci"]
+    volumes:
+      - mysql_data:/var/lib/mysql
+    restart: unless-stopped
+
+  zookeeper:
+    image: zookeeper:3.7
+    container_name: zookeeper_server
+    ports: ["2181:2181"]
+    volumes: ["zk_data:/data"]
     restart: unless-stopped
 
 volumes:
@@ -102,4 +122,3 @@ volumes:
   es_data:
   mysql_data:
   zk_data:
-

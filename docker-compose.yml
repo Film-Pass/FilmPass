@@ -35,7 +35,7 @@ services:
     environment:
       - node.name=es_server
       - discovery.type=single-node
-      - xpack.security.enabled=true
+      - xpack.security.enabled=false
       - xpack.security.authc.api_key.enabled=true
       - ELASTIC_PASSWORD=${ELASTICSEARCH_PASSWORD}
     volumes:
@@ -49,8 +49,6 @@ services:
       - "5601:5601"
     environment:
       - ELASTICSEARCH_HOSTS=http://es_server:9200
-      - ELASTICSEARCH_USERNAME=${ELASTICSEARCH_USERNAME}
-      - ELASTICSEARCH_PASSWORD=${ELASTICSEARCH_PASSWORD}
     depends_on:
       - elasticsearch
     restart: unless-stopped

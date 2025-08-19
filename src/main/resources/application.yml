@@ -50,4 +50,4 @@ server:
 
 jwt:
   secret:
-    key: ${SECRET_KEY}
+    key: ${JWT_SECRET_KEY}

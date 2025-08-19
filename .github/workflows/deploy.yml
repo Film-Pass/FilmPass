@@ -1,64 +1,59 @@
 name: CI/CD using GitHub Actions & Docker Compose
-
 on:
   push:
     branches: ["dev-test"]
   pull_request:
     branches: ["dev-test"]
-
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      # 1. 소스코드 체크아웃
+      # 1) 소스 체크아웃
       - uses: actions/checkout@v4
-
-      # 2. Gradle 캐시 설정
-      - name: Cache Gradle packages
-        uses: actions/cache@v4
+      # 2) (선택) JDK 세팅
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
         with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: gradle-home-v1-linux-build-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            gradle-home-v1-linux-
-
-      # 3. Gradle Wrapper 실행 권한
+          distribution: temurin
+          java-version: '17'
+          cache: gradle
+      # 3) Gradle Wrapper 실행 권한
       - name: Grant execute permission for Gradle Wrapper
         run: chmod +x ./gradlew
-
-      # 4. Spring Boot 빌드 (테스트 제외 가능)
+      # 4) Spring Boot 빌드 (필요 시 테스트 제외)
       - name: Build with Gradle Wrapper
         run: ./gradlew clean build -x test
-
-      # 5. 빌드 산출물 업로드
+      # 5) JAR 아티팩트 업로드 (파일명 변경 시에도 동작하도록 와일드카드)
       - name: Upload jar artifact
         uses: actions/upload-artifact@v4
         with:
           name: app-jar
-          path: build/libs/FilmPass-0.0.1-SNAPSHOT.jar
-
+          path: build/libs/*.jar
   deploy:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      # 1. 소스코드 체크아웃 (Dockerfile / docker-compose.yml 가져오기)
+      # 1) 소스 체크아웃 (Dockerfile / docker-compose.yml 가져오기)
       - uses: actions/checkout@v4
-
-      # 3. EC2로 전송
+      # 2) 빌드 산출물(JAR) 다운로드
+      - name: Download jar artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: app-jar
+          path: build/libs
+      # 3) EC2로 파일 전송
       - name: Copy files to EC2
         uses: appleboy/scp-action@v0.1.6
         with:
-         host: ${{ secrets.EC2_HOST }}
-         username: ubuntu
-         key: ${{ secrets.EC2_SSH_KEY }}
-         source: |
-           docker-compose.yml
-           Dockerfile
-           build/libs/FilmPass-0.0.1-SNAPSHOT.jar
-         target: /home/ubuntu/
-      # 2. EC2 접속 후 배포
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          source: |
+            docker-compose.yml
+            Dockerfile
+            build/libs/*.jar
+          target: /home/ubuntu
+      # 4) EC2 접속 후 배포
       - name: Deploy to EC2
         uses: appleboy/ssh-action@v1.0.3
         with:
@@ -66,21 +61,23 @@ jobs:
           username: ubuntu
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            cd /home/ubuntu/your-project-folder
-            # 최신 이미지 빌드 & pull
-            docker-compose pull
-            # 기존 컨테이너 중지 및 제거
-            docker-compose down
-            # 환경변수 전달 후 컨테이너 실행
-            REDIS_HOST=${{ secrets.REDIS_HOST }} \
-            REDIS_PORT=${{ secrets.REDIS_PORT }} \
-            SPRING_DATASOURCE_URL=${{ secrets.SPRING_DATASOURCE_URL }} \
-            SPRING_DATASOURCE_USERNAME=${{ secrets.SPRING_DATASOURCE_USERNAME }} \
-            SPRING_DATASOURCE_PASSWORD=${{ secrets.SPRING_DATASOURCE_PASSWORD }} \
-            ELASTICSEARCH_USERNAME=${{ secrets.ELASTICSEARCH_USERNAME }} \
-            ELASTICSEARCH_PASSWORD=${{ secrets.ELASTICSEARCH_PASSWORD }} \
-            JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }} 
-            
-            docker-compose up -d --build
+            set -euo pipefail
+            PROJECT_DIR="/home/ubuntu"
+            cd "$PROJECT_DIR"
+            # 환경변수 파일(.env) 생성 - docker compose 가 자동으로 읽음
+            cat > .env << 'EOF'
+            REDIS_HOST=${{ secrets.REDIS_HOST }}
+            REDIS_PORT=${{ secrets.REDIS_PORT }}
+            SPRING_DATASOURCE_URL=${{ secrets.SPRING_DATASOURCE_URL }}
+            SPRING_DATASOURCE_USERNAME=${{ secrets.SPRING_DATASOURCE_USERNAME }}
+            SPRING_DATASOURCE_PASSWORD=${{ secrets.SPRING_DATASOURCE_PASSWORD }}
+            ELASTICSEARCH_USERNAME=${{ secrets.ELASTICSEARCH_USERNAME }}
+            ELASTICSEARCH_PASSWORD=${{ secrets.ELASTICSEARCH_PASSWORD }}
+            JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }}
+            EOF
+            # 최신 이미지(로컬 빌드 기반)로 재기동
+            # compose 파일이 로컬 Dockerfile을 빌드하도록 구성되어 있어야 합니다.
+            docker compose down --remove-orphans || true
+            docker compose up -d --build
             # 불필요한 이미지 정리
             docker image prune -a -f

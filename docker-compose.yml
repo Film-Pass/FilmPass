@@ -35,7 +35,7 @@ services:
     environment:
       - node.name=es_server
       - discovery.type=single-node
-      - xpack.security.enabled=false
+      - xpack.security.enabled=true
       - xpack.security.authc.api_key.enabled=true
       - ELASTIC_PASSWORD=${ELASTICSEARCH_PASSWORD}
     volumes:

@@ -40,9 +40,10 @@ spring:
     type: redis
 
   elasticsearch:
-    uris: ${ELASTICSEARCH_HOST} #http://127.0.0.1:9200
-    username: ${ELASTICSEARCH_USERNAME} #elastic
-    password: ${ELASTICSEARCH_PASSWORD} #elasticPW123!
+    rest:
+      uris: ${ELASTICSEARCH_HOST} #http://127.0.0.1:9200
+      username: ${ELASTICSEARCH_USERNAME} #elastic
+      password: ${ELASTICSEARCH_PASSWORD} #elasticPW123!
 
 server:
   error:

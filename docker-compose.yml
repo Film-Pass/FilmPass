@@ -55,7 +55,7 @@ services:
     container_name: kibana_server
     ports: ["5601:5601"]
     environment:
-      - ELASTICSEARCH_HOSTS=http://es_server:9200
+      - ELASTICSEARCH_HOSTS=$ELASTICSEARCH_HOSTS}
       - ELASTICSEARCH_USERNAME=${KIBANA_SYSTEM_USERNAME}
       - ELASTICSEARCH_PASSWORD=${KIBANA_SYSTEM_PASSWORD}
       - XPACK_SECURITY_ENABLED=true

@@ -32,7 +32,7 @@ public class EsBootstrapRunner implements CommandLineRunner {
     private final MovieMapper movieMapper;
     private final ResourceLoader resourceLoader;
 
-    private static final String INDEX = "movies_v2";
+    private static final String INDEX = "movies_v3";
 
     @Override
     public void run(String... args) {

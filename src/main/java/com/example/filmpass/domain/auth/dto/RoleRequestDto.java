@@ -16,5 +16,6 @@ public class RoleRequestDto {
     @Schema(description = "변경할 권한", example = "ADMIN")
     @NotNull(message = "권한을 입력해주세요.")
     private UserRole userRole;
+    private Boolean isCritic;
 
 }

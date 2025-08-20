@@ -14,11 +14,13 @@ public class UserPrincipal implements UserDetails {
     private Long userId;
     private String nickname;
     private UserRole userRole;
+    private boolean isCritic;
 
-    public UserPrincipal(Long userId, String nickname, UserRole userRole) {
+    public UserPrincipal(Long userId, String nickname, UserRole userRole, boolean isCritic) {
         this.userId = userId;
         this.nickname = nickname;
         this.userRole = userRole;
+        this.isCritic = isCritic;
     }
 
     @Override

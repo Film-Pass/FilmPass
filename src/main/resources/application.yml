@@ -4,6 +4,10 @@ spring:
   application:
     name: FilmPass
 
+  app:
+    es:
+     sync: true
+
   datasource:
     url: ${DB_URL}
     driver-class-name: com.mysql.cj.jdbc.Driver

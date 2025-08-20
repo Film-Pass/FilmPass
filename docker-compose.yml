@@ -5,6 +5,8 @@ services:
     build: .
     container_name: filmpass
     ports: ["8080:8080"]
+    env_file:
+      - .env
     environment:
       DB_URL: ${SPRING_DATASOURCE_URL}
       DB_USERNAME: ${SPRING_DATASOURCE_USERNAME}
@@ -35,7 +37,7 @@ services:
     environment:
       - node.name=es_server
       - discovery.type=single-node
-      - xpack.security.enabled=true
+      - xpack.security.enabled=false
       - xpack.security.authc.api_key.enabled=true
       - xpack.security.http.ssl.enabled=false
       - xpack.security.transport.ssl.enabled=false

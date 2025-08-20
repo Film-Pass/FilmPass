@@ -69,13 +69,13 @@ public class ReviewController {
     }
 
     //평론가가 쓴 평론
-    @PreAuthorize("hasRole('CRITIC')")
     @PostMapping("/critics")
-    @Operation(summary = "(평론가 전용) 리뷰 생성", description = "평론가 전용 리뷰를 생성합니다.")
+    @Operation(summary = "평론가 리뷰 생성", description = "CRITIC 권한 사용자가 리뷰를 생성합니다.")
+    @PreAuthorize("hasRole('CRITIC')")
     public ResponseEntity<CommonResponse> createCriticReview(@Valid @RequestBody ReviewRequestDto request) {
         ReviewResponseDto response = reviewService.createCriticReview(request);
         return ResponseEntity.status(HttpStatus.CREATED)
-        .body(CommonResponse.success(response, "평론가 리뷰가 등록되었습니다."));
+                .body(CommonResponse.success(response, "평론가 리뷰가 등록되었습니다."));
     }
 
 }

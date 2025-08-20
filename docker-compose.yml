@@ -19,7 +19,6 @@ services:
       - mysql
       - redis
       - elasticsearch
-      - apm_agent
     restart: unless-stopped
 
   redis:

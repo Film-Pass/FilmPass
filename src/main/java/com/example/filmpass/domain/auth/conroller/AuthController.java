@@ -98,14 +98,5 @@ public class AuthController {
         return CommonResponse.success(authService.refresh(refreshToken, principal, request), "재발급 성공!");
 
     }
-
-    @PatchMapping("/api/auth/critic/{id}")
-    @Operation(summary = "(관리자 전용) CRITIC 권한 부여", description = "해당 사용자의 권한을 CRITIC으로 변경합니다.")
-    @TrackUserActionAnnotation("CRITIC 권한 부여")
-    @PreAuthorize("hasRole('ADMIN')")
-    public CommonResponse grantCritic(@PathVariable Long id, @AuthenticationPrincipal UserPrincipal principal) {
-        String role = authService.grantCritic(id, principal);
-        return CommonResponse.success(role, "critic 권한 부여 성공.");
-    }
 }
 

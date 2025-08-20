@@ -242,31 +242,4 @@ public class AuthService {
         return newAccessToken;
 
     }
-
-    // critic 권한 부여
-    @Transactional
-    public String grantCritic(Long targetUserId, UserPrincipal principal) {
-        // assertAdmin(principal);
-        if (principal == null || principal.getUserRole() != UserRole.ADMIN) {
-            throw new CustomException(ErrorCode.NOT_ADMIN);
-        }
-
-        User user = userRepository.findById(targetUserId)
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-
-        if (user.getRole() == UserRole.CRITIC) {
-            throw new CustomException(ErrorCode.CANNOT_CHANGE_SAME_ROLE);
-        }
-
-        user.setRole(UserRole.CRITIC);
-        userRepository.save(user);
-
-        // invalidateRefreshTokensOf(user.getId());
-        if (refreshTokenRepository.existsByUser_Id(user.getId())) {
-            refreshTokenRepository.deleteByUser_Id(user.getId());
-        }
-
-        return user.getRole().name();
-    }
-
 }

@@ -1,5 +1,6 @@
 package com.example.filmpass.domain.movie.entity;
 
+import com.example.filmpass.domain.movie.document.MovieEntityListener;
 import com.example.filmpass.domain.movie.repository.MovieRepository;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -7,6 +8,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
+import org.springframework.beans.factory.annotation.Configurable;
+
 import java.time.LocalDateTime;
 
 @Entity
@@ -18,6 +21,8 @@ import java.time.LocalDateTime;
 @Where(clause = "is_delete = false")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@EntityListeners(MovieEntityListener.class)
+@Configurable
 public class Movie {
 
     @Id

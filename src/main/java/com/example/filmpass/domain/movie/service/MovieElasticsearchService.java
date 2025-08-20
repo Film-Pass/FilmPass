@@ -29,18 +29,27 @@ public class MovieElasticsearchService {
     private final ElasticsearchOperations elasticTemplate;
     private final MovieMapper movieMapper;
 
+    //ES 색인 저장
     public void save(Movie movie) {
         if (movie == null || movie.isDelete()) return;
         MovieDocument doc = movieMapper.toDocument(movie);
-        if (doc != null) elasticTemplate.save(doc);
+        if (doc != null) {
+            elasticTemplate.save(doc);
+        }
     }
 
-    // 통합 검색 (ko 본문 + 장르 정확매치 + 평점 가중 + 자동완성)
+   //ES 문서 삭제
+    public void delete(Long id) {
+        if (id == null) return;
+        elasticTemplate.delete(String.valueOf(id), MovieDocument.class);
+    }
+
+    //통합 검색 (본문/자동완성/장르/평점 가중)
     public Page<MovieDocument> unifiedSearch(String q, Pageable pageable) {
         if (q == null || q.isBlank()) return Page.empty(pageable);
-        final String keyword = q.trim(); // effectively final
+        final String keyword = q.trim();
 
-        //  본문 검색
+        // 1) 본문 검색
         Query fullText = QueryBuilders.multiMatch(m -> m
                 .query(keyword)
                 .fields(Arrays.asList("title_ko^3", "overview_ko"))
@@ -48,7 +57,7 @@ public class MovieElasticsearchService {
                 .lenient(true)
         );
 
-        //  앞부분 부분일치
+        // 2) 앞부분 부분일치
         Query phrasePrefix = QueryBuilders.multiMatch(m -> m
                 .query(keyword)
                 .fields(Arrays.asList("title_ko^3", "overview_ko"))
@@ -93,7 +102,6 @@ public class MovieElasticsearchService {
         int page = Math.max(0, pageable.getPageNumber());
         int size = Math.min(Math.max(1, pageable.getPageSize()), 50);
         Pageable pageNoSort = PageRequest.of(page, size);
-
 
         // 8) 실행
         NativeQuery nq = NativeQuery.builder()

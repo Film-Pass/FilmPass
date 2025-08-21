@@ -34,4 +34,16 @@ public class ScheduleController {
         ScheduleResponseDto response = scheduleService.updateSchedule(scheduleId, requestDto);
         return ResponseEntity.ok(CommonResponse.success(response, "상영 일정이 수정되었습니다."));
     }
+
+    // 상영 일정 목록 조회
+    @GetMapping("/{theaterId}/{movieId}")
+    @Operation(summary = "상영 일정 조회", description = "상영 일정 목록을 조회합니다.")
+    public ResponseEntity<CommonResponse> getSchedules(
+            @PathVariable Long theaterId,
+            @PathVariable Long movieId
+    ) {
+
+        return ResponseEntity.ok(CommonResponse.success(scheduleService.getSchedules(theaterId, movieId),"상영 일정 목록이 조회되었습니다."));
+
+    }
 }

@@ -25,7 +25,7 @@ public class MovieDataSyncRunner implements CommandLineRunner {
     private final ElasticsearchClient esClient;
     private final MovieMapper movieMapper;
 
-    private static final String INDEX = "movies_v2";
+    private static final String INDEX = "movies_v3";
 
     @Override
     public void run(String... args) {

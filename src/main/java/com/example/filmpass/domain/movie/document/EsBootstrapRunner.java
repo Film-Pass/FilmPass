@@ -31,7 +31,7 @@ public class EsBootstrapRunner implements CommandLineRunner {
     private final MovieElasticsearchService movieElasticsearchService;
     private final ResourceLoader resourceLoader;
 
-    private static final String INDEX = "movies_v2";
+    private static final String INDEX = "movies_v3";
 
     @Override
     public void run(String... args) {
@@ -41,7 +41,7 @@ public class EsBootstrapRunner implements CommandLineRunner {
                 log.info("Creating index {} ...", INDEX);
 
                 // settings
-                Resource settingsRes = resourceLoader.getResource("classpath:es/movies_v2-settings.json");
+                Resource settingsRes = resourceLoader.getResource("classpath:es/movies_v3-settings.json");
                 try (InputStream is = settingsRes.getInputStream()) {
                     client.indices().create(CreateIndexRequest.of(b -> b
                             .index(INDEX)
@@ -50,7 +50,7 @@ public class EsBootstrapRunner implements CommandLineRunner {
                 }
 
                 // mappings
-                Resource mappingsRes = resourceLoader.getResource("classpath:es/movies_v2-mappings.json");
+                Resource mappingsRes = resourceLoader.getResource("classpath:es/movies_v3-mappings.json");
                 try (InputStream is = mappingsRes.getInputStream()) {
                     client.indices().putMapping(PutMappingRequest.of(b -> b
                             .index(INDEX)

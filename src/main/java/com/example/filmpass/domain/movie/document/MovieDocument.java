@@ -15,7 +15,7 @@ import java.util.List;
 public class MovieDocument {
 
     @Id
-    private Long id;
+    private String id;
 
     @Field(name = "title_ko", type = FieldType.Text)
     @JsonProperty("title_ko")

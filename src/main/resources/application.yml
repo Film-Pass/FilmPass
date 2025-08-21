@@ -40,9 +40,9 @@ spring:
     type: redis
 
   elasticsearch:
-    uris: http://127.0.0.1:9200
+    uris: https://filmpasses.es.ap-northeast-2.aws.elastic-cloud.com
     username: elastic
-    password: elasticPW123!
+    password: WBBvVFnb7jBailgswUMFv26r
 
 server:
   error:

@@ -13,7 +13,7 @@ public class MovieMapper {
         if (movie == null) return null;
 
         MovieDocument doc = new MovieDocument();
-        doc.setId(movie.getId());
+        doc.setId(movie.getId().toString());
         doc.setTitle(trimToNull(movie.getTitle()));
         doc.setDescription(trimToNull(movie.getDescription()));
         doc.setGenre(normalizeGenres(movie.getGenre()));

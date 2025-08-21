@@ -37,27 +37,11 @@ public class JwtFilter extends OncePerRequestFilter {
                 || m.match("/api/auth/signup", path)
                 || m.match("/api/movies/**", path)
                 || m.match("/api/theaters/**", path)
-                || m.match("/api/seat/**", path);
+                || m.match("/api/seat/**", path)
+                || m.match("/api/schedules/**", path);
+
     }
 
-
-    @Override
-    protected boolean shouldNotFilter(HttpServletRequest req) {
-        String path = req.getServletPath();      // ★ 여기!
-        var m = new org.springframework.util.AntPathMatcher();
-        return m.match("/", path)
-                || m.match("/error", path)
-                || m.match("/v3/api-docs/**", path)
-                || m.match("/swagger-ui/**", path)
-                || m.match("/swagger-ui.html", path)
-                || m.match("/swagger-resources/**", path)
-                || m.match("/webjars/**", path)
-                || m.match("/api/auth/login", path)
-                || m.match("/api/auth/signup", path)
-                || m.match("/api/movies/**", path)
-                || m.match("/api/theaters/**", path)
-                || m.match("/api/seat/**", path);
-    }
 
     @Override
     protected void doFilterInternal(

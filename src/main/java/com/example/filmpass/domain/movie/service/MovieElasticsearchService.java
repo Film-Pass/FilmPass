@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -21,6 +22,17 @@ public class MovieElasticsearchService {
 
     private final ElasticsearchClient client;
     private final MovieMapper movieMapper;
+
+    public Map<String, Object> ping() throws IOException {
+        var info = client.info();               // 루트 API
+        var health = client.cluster().health(); // 클러스터 헬스
+        return Map.of(
+                "name", info.name(),
+                "cluster", info.clusterName(),
+                "version", info.version().number(),
+                "cluster_status", health.status().jsonValue()
+        );
+    }
 
     // 색인
     public void save(Movie movie) {
@@ -55,6 +67,12 @@ public class MovieElasticsearchService {
     // 검색
     public List<MovieDocument> unifiedSearch(String q, int page, int size) throws IOException {
         if (q == null || q.isBlank()) return List.of();
+
+        // 재할당 대신 final 로컬 변수로 안전하게 사용 (람다 캡처 에러 방지)
+        final int p  = Math.max(0, page);
+        final int sz = Math.max(1, Math.min(size, 100));
+        final int from = p * sz;
+
         String keyword = q.trim();
 
         MultiMatchQuery fullText = MultiMatchQuery.of(m -> m
@@ -105,8 +123,8 @@ public class MovieElasticsearchService {
         SearchRequest request = SearchRequest.of(s -> s
                 .index("movies_v3")
                 .query(qb -> qb.functionScore(scored))
-                .from(page * size)
-                .size(size)
+                .from(from)  // final 변수 사용
+                .size(sz)    // final 변수 사용
         );
 
         SearchResponse<MovieDocument> response = client.search(request, MovieDocument.class);

@@ -51,7 +51,7 @@ dependencies {
     runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.5'
 
     //elasticsearch
-    implementation 'co.elastic.clients:elasticsearch-java:9.1.2'
+    implementation 'org.springframework.boot:spring-boot-starter-data-elasticsearch'
 
     // swagger
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.9'

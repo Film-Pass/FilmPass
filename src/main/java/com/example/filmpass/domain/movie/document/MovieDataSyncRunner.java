@@ -17,8 +17,8 @@ import java.util.Objects;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-@ConditionalOnBean(ElasticsearchClient.class) // ES 클라이언트가 있을 때만 실행
-@ConditionalOnProperty(prefix = "app.es", name = "sync", havingValue = "true", matchIfMissing = false)
+//@ConditionalOnBean(ElasticsearchClient.class) // ES 클라이언트가 있을 때만 실행
+//@ConditionalOnProperty(prefix = "app.es", name = "sync", havingValue = "true", matchIfMissing = false)
 public class MovieDataSyncRunner implements CommandLineRunner {
 
     private final MovieRepository movieRepository;
@@ -47,7 +47,7 @@ public class MovieDataSyncRunner implements CommandLineRunner {
                     if (doc != null) {
                         IndexRequest<MovieDocument> req = IndexRequest.of(i -> i
                                 .index(INDEX)
-                                .id(doc.getId())
+                                .id(String.valueOf(doc.getId()))
                                 .document(doc)
                         );
                         IndexResponse resp = esClient.index(req);

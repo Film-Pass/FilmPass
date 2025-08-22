@@ -42,7 +42,7 @@ public class JwtUtil {
     }
 
     // 토큰 생성 메서드
-    public String createToken(Long userId, String nickname, UserRole userRole) {
+    public String createToken(Long userId, String nickname, UserRole userRole, boolean isCritic) {
 
         Date date = new Date();
 
@@ -51,6 +51,7 @@ public class JwtUtil {
                      .setSubject(String.valueOf(userId))
                      .claim("nickname", nickname)
                      .claim("userRole", userRole.name())
+                     .claim("isCritic", isCritic)
                      .setExpiration(new Date(date.getTime() + ACCESS_TOKEN_TIME))
                      .setIssuedAt(date)
                      .signWith(key, signatureAlgorithm)

@@ -42,11 +42,13 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers(HttpMethod.GET,  "/api/movies/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/movies/search").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/movies/search/v2").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/seat/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/theaters/*",
                                 "/api/movies/*",
                                 "/api/theaters",
-                                "/api/movies").permitAll()
+                                "/api/movies",
+                                "/api/schedules/*/*").permitAll()
 
                         .requestMatchers(HttpMethod.GET, "/api/movies/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/theaters/*", "/api/movies/*"

@@ -1,8 +1,10 @@
 package com.example.filmpass.domain.movie.dto;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor
 public class FindMovieDetailResponse {
     private Long id;
     private String movieName;

@@ -24,12 +24,9 @@ public class JwtFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest req) {
-        String path = req.getServletPath();
-        String method = req.getMethod();
-
+        String path = req.getServletPath();      // ★ 여기!
         var m = new org.springframework.util.AntPathMatcher();
-
-        if (m.match("/", path)
+        return m.match("/", path)
                 || m.match("/error", path)
                 || m.match("/v3/api-docs/**", path)
                 || m.match("/swagger-ui/**", path)
@@ -37,23 +34,14 @@ public class JwtFilter extends OncePerRequestFilter {
                 || m.match("/swagger-resources/**", path)
                 || m.match("/webjars/**", path)
                 || m.match("/api/auth/login", path)
-                || m.match("/api/auth/signup", path)) {
-            return true;
-        }
+                || m.match("/api/auth/signup", path)
+                || m.match("/api/movies/**", path)
+                || m.match("/api/theaters/**", path)
+                || m.match("/api/seat/**", path)
+                || m.match("/api/schedules/**", path);
 
-        if ("GET".equals(method) &&
-                (m.match("/api/movies/**", path)
-                        || m.match("/api/theaters/**", path)
-                        || m.match("/api/seat/**", path))) {
-            return true;
-        }
-
-        if ("POST".equals(method) && m.match("/api/movies/search", path)) {
-            return true;
-        }
-
-        return false;
     }
+
 
     @Override
     protected void doFilterInternal(
@@ -61,6 +49,18 @@ public class JwtFilter extends OncePerRequestFilter {
             HttpServletResponse response,
             FilterChain filterChain
     ) throws ServletException, IOException {
+
+        String uri = request.getRequestURI();
+
+//        // 🔐 Swagger 관련 요청은 토큰 검증 없이 통과
+//        if (uri.startsWith("/swagger-ui")
+//                || uri.startsWith("/v3/api-docs")
+//                || uri.startsWith("/swagger-resources")     // 일부 UI 리소스
+//                || uri.startsWith("/webjars/")              // UI 자바스크립트
+//                || uri.equals("/swagger-ui.html")) {        // Swagger 리다이렉트용
+//            filterChain.doFilter(request, response);
+//            return;
+//        }
 
         // 토큰이 비었는지 검증
         String bearerJwt = request.getHeader("Authorization");
@@ -91,9 +91,10 @@ public class JwtFilter extends OncePerRequestFilter {
             Long userId = Long.valueOf(claims.getSubject());
             String nickname = String.valueOf(claims.get("nickname"));
             UserRole userRole = UserRole.of(claims.get("userRole", String.class));
+            Boolean isCritic = claims.get("isCritic", Boolean.class);
 
             // Security Context 에 저장
-            UserPrincipal userPrincipal = new UserPrincipal(userId, nickname, userRole);
+            UserPrincipal userPrincipal = new UserPrincipal(userId, nickname, userRole, isCritic);
 
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                     userPrincipal,

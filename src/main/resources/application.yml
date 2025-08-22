@@ -40,9 +40,9 @@ spring:
       port: ${REDIS_PORT}
 
     elasticsearch:
-      uris: https://filmpasses.es.ap-northeast-2.aws.elastic-cloud.com
-      username: elastic
-      password: WBBvVFnb7jBailgswUMFv26r
+      uris: ${ELASTICSEARCH_HOST}
+      username: ${ELASTICSEARCH_USERNAME}
+      password: ${ELASTICSEARCH_PASSWORD}
       repositories:
         enabled: true
 

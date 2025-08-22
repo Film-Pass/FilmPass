@@ -8,9 +8,9 @@ services:
     env_file:
       - .env
     environment:
-      DB_URL: ${SPRING_DATASOURCE_URL}
-      DB_USERNAME: ${SPRING_DATASOURCE_USERNAME}
-      DB_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+      DB_URL: ${DB_URL}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
       JWT_SECRET_KEY: ${JWT_SECRET_KEY}
       REDIS_HOST: ${REDIS_HOST}
       REDIS_PORT: ${REDIS_PORT}
@@ -18,7 +18,6 @@ services:
       SPRING_ELASTICSEARCH_USERNAME: ${ELASTICSEARCH_USERNAME}
       SPRING_ELASTICSEARCH_PASSWORD: ${ELASTICSEARCH_PASSWORD}
     depends_on:
-      - mysql
       - redis
       - elasticsearch
     restart: unless-stopped
@@ -35,9 +34,10 @@ services:
     container_name: es_server
     ports: ["9200:9200"]
     environment:
+      - network.host=0.0.0.0
       - node.name=es_server
       - discovery.type=single-node
-      - xpack.security.enabled=false
+      - xpack.security.enabled=true
       - xpack.security.authc.api_key.enabled=true
       - xpack.security.http.ssl.enabled=false
       - xpack.security.transport.ssl.enabled=false
@@ -52,26 +52,12 @@ services:
     container_name: kibana_server
     ports: ["5601:5601"]
     environment:
-      - ELASTICSEARCH_HOST=${ELASTICSEARCH_HOST}
+      - ELASTICSEARCH_HOSTS=${ELASTICSEARCH_HOST}
       - ELASTICSEARCH_USERNAME=${KIBANA_SYSTEM_USERNAME}
       - ELASTICSEARCH_PASSWORD=${KIBANA_SYSTEM_PASSWORD}
       - XPACK_SECURITY_ENABLED=true
       - XPACK_ENCRYPTEDSAVEDOBJECTS_ENCRYPTIONKEY=${KIBANA_ENCRYPTION_KEY}
     depends_on: [elasticsearch]
-    restart: unless-stopped
-
-  mysql:
-    image: mysql:8.0
-    container_name: mysql_server
-    ports: ["3306:3306"]
-    environment:
-      - MYSQL_DATABASE=filmpass
-      - MYSQL_USER=${SPRING_DATASOURCE_USERNAME}
-      - MYSQL_PASSWORD=${SPRING_DATASOURCE_PASSWORD}
-      - MYSQL_ROOT_PASSWORD=${SPRING_DATASOURCE_PASSWORD}
-    command: ["--character-set-server=utf8mb4","--collation-server=utf8mb4_unicode_ci"]
-    volumes:
-      - mysql_data:/var/lib/mysql
     restart: unless-stopped
 
   zookeeper:
@@ -84,5 +70,4 @@ services:
 volumes:
   redis_data:
   es_data:
-  mysql_data:
   zk_data:

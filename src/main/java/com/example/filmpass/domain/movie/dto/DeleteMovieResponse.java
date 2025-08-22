@@ -4,9 +4,9 @@ import lombok.Getter;
 
 @Getter
 public class DeleteMovieResponse {
-    private String movieTitle;
+    private String Title;
 
-    public DeleteMovieResponse(String movieTitle) {
-        this.movieTitle = movieTitle;
+    public DeleteMovieResponse(String Title) {
+        this.Title = Title;
     }
 }

@@ -8,12 +8,12 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 public class FindMovieResponse<T> {
-    private List<T> data;
+    private List<T> Movie;
     private PageInfo pageInFo;
 
 
     public FindMovieResponse(List<T> data, PageInfo pageInFo) {
-        this.data = data;
+        this.Movie = data;
         this.pageInFo = pageInFo;
     }
 }

@@ -49,9 +49,6 @@ public class MovieService {
         if (genre == null || genre.trim().isEmpty()) {
             throw new CustomException(ErrorCode.MOVIE_GENRE_REQUIRED);
         }
-        if(movieRepository.findByTitle(title).isPresent()){
-            throw new CustomException(ErrorCode.MOVIE_ALREADY_EXISTS);
-        }
 
         Movie movie = new Movie(title, director, genre, runningTime, releaseDate, description, posterUrl);
         movieRepository.save(movie);

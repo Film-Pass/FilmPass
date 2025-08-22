@@ -7,26 +7,26 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class FindMovieDetailResponse {
     private Long id;
-    private String movieName;
+    private String title;
     private String director;
     private String genre;
-    private Double rating;
+    private Double avrRating;
     private Integer reviewCount;
     private String runnigTime;
     private String releaseDate;
     private String description;
-    private String url;
+    private String posterUrl;
 
-    public FindMovieDetailResponse(Long id, String movieName, String director, String genre, Double rating, Integer reviewCount, String runnigTime, String releaseDate, String description, String url) {
+    public FindMovieDetailResponse(Long id, String title, String director, String genre, Double avrRating, Integer reviewCount, String runnigTime, String releaseDate, String description, String posterUrl) {
         this.id = id;
-        this.movieName = movieName;
+        this.title = title;
         this.director = director;
         this.genre = genre;
-        this.rating = rating;
+        this.avrRating = avrRating;
         this.reviewCount = reviewCount;
         this.runnigTime = runnigTime;
         this.releaseDate = releaseDate;
         this.description = description;
-        this.url = url;
+        this.posterUrl = posterUrl;
     }
 }

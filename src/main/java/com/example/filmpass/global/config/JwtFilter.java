@@ -37,8 +37,11 @@ public class JwtFilter extends OncePerRequestFilter {
                 || m.match("/api/auth/signup", path)
                 || m.match("/api/movies/**", path)
                 || m.match("/api/theaters/**", path)
-                || m.match("/api/seat/**", path);
+                || m.match("/api/seat/**", path)
+                || m.match("/api/schedules/**", path);
+
     }
+
 
     @Override
     protected void doFilterInternal(

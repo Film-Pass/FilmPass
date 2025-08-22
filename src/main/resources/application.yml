@@ -51,3 +51,8 @@ server:
 jwt:
   secret:
     key: ${SECRET_KEY}
+
+logging:
+  level:
+    org.springframework.cache: TRACE
+    org.springframework.data.redis: DEBUG

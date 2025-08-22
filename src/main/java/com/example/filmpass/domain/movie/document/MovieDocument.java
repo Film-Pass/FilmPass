@@ -9,13 +9,13 @@ import org.springframework.data.elasticsearch.annotations.FieldType;
 
 import java.util.List;
 
-@Document(indexName = "movies_v2")
+@Document(indexName = "movies_v3")
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
 public class MovieDocument {
 
     @Id
-    private Long id;
+    private String id;
 
     @Field(name = "title_ko", type = FieldType.Text)
     @JsonProperty("title_ko")

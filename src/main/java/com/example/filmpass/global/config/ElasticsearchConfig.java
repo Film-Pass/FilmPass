@@ -1,61 +1,41 @@
 package com.example.filmpass.global.config;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
-import co.elastic.clients.transport.rest_client.RestClientTransport;
 import co.elastic.clients.json.jackson.JacksonJsonpMapper;
+import co.elastic.clients.transport.ElasticsearchTransport;
+import co.elastic.clients.transport.rest_client.RestClientTransport;
 import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.CredentialsProvider;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.elasticsearch.client.elc.ElasticsearchTemplate;
-import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
-import org.springframework.data.elasticsearch.core.convert.ElasticsearchConverter;
 
 @Configuration
 public class ElasticsearchConfig {
 
-    @Value("${ELASTICSEARCH_HOST}")
-    private String esHost;
-
-    @Value("${ELASTICSEARCH_USERNAME}")
-    private String esUsername;
-
-    @Value("${ELASTICSEARCH_PASSWORD}")
-    private String esPassword;
-
     @Bean
-    public RestClient restClient() {
-        // URL에서 host, port 분리
-        String host = esHost.replace("http://", "").split(":")[0];
-        int port = Integer.parseInt(esHost.replace("http://", "").split(":")[1]);
+    public ElasticsearchClient elasticsearchClient() {
+        // 1) 클라우드 엔드포인트로 교체 (호스트만 넣고, scheme/port는 분리)
+        HttpHost host = new HttpHost("filmpasses.es.ap-northeast-2.aws.elastic-cloud.com", 9243, "https");
 
-        BasicCredentialsProvider credsProvider = new BasicCredentialsProvider();
-        credsProvider.setCredentials(
-                AuthScope.ANY,
-                new UsernamePasswordCredentials(esUsername, esPassword)
-        );
+        // 2) Basic 인증 자격증명
+        CredentialsProvider cp = new BasicCredentialsProvider();
+        cp.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials("elastic", "WBBvVFnb7jBailgswUMFv26r"));
 
-        RestClientBuilder builder = RestClient.builder(new HttpHost(host, port))
-                .setHttpClientConfigCallback(httpClientBuilder ->
-                        httpClientBuilder.setDefaultCredentialsProvider(credsProvider)
-                );
+        // 3) 타임아웃 등 옵션
+        RestClientBuilder builder = RestClient.builder(host)
+                .setHttpClientConfigCallback(hcb -> hcb
+                        .setDefaultCredentialsProvider(cp))
+                .setRequestConfigCallback(rcb -> rcb
+                        .setConnectTimeout(5_000)
+                        .setSocketTimeout(30_000));
 
-        return builder.build();
-    }
-
-    @Bean
-    public ElasticsearchClient elasticsearchClient(RestClient restClient) {
-        RestClientTransport transport = new RestClientTransport(restClient, new JacksonJsonpMapper());
+        RestClient lowLevel = builder.build();
+        ElasticsearchTransport transport = new RestClientTransport(lowLevel, new JacksonJsonpMapper());
         return new ElasticsearchClient(transport);
-    }
-
-    @Bean
-    public ElasticsearchOperations elasticTemplate(ElasticsearchClient client, ElasticsearchConverter converter) {
-        return new ElasticsearchTemplate(client, converter);
     }
 }

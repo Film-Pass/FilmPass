@@ -39,7 +39,10 @@ public class JwtFilter extends OncePerRequestFilter {
                 || m.match("/api/theaters/**", path)
                 || m.match("/api/seat/**", path)
                 || m.match("/api/search/**", path);
+                || m.match("/api/schedules/**", path);
+
     }
+
 
     @Override
     protected void doFilterInternal(
@@ -89,9 +92,10 @@ public class JwtFilter extends OncePerRequestFilter {
             Long userId = Long.valueOf(claims.getSubject());
             String nickname = String.valueOf(claims.get("nickname"));
             UserRole userRole = UserRole.of(claims.get("userRole", String.class));
+            Boolean isCritic = claims.get("isCritic", Boolean.class);
 
             // Security Context 에 저장
-            UserPrincipal userPrincipal = new UserPrincipal(userId, nickname, userRole);
+            UserPrincipal userPrincipal = new UserPrincipal(userId, nickname, userRole, isCritic);
 
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                     userPrincipal,

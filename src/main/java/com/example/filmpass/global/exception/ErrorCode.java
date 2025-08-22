@@ -61,7 +61,6 @@ public enum ErrorCode {
     SEAT_ALREADY_RESERVED(HttpStatus.BAD_REQUEST, "이미 예약된 좌석이 포함되어 있습니다."),
     INVALID_SCHEDULE(HttpStatus.BAD_REQUEST, "상영 회차가 존재하지 않습니다."),
     // Movie
-    MOVIE_ALREADY_EXISTS(HttpStatus.BAD_REQUEST,"같은 이름의 영화가 이미 존재합니다"),
     MOVIE_LIST_NOT_FOUND(HttpStatus.NOT_FOUND,"영화가 존재하지 않습니다"),
     MOVIE_NOT_FOUND_BY_ID(HttpStatus.NOT_FOUND,"ID값에 해당하는 영화가 존재하지 않습니다."),
     MOVIE_NOT_FOUND_BY_TITLE(HttpStatus.NOT_FOUND,"제목과 일치하는 영화가 존재하지 않습니다."),

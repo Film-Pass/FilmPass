@@ -99,7 +99,7 @@ public class AuthService {
         }
 
         // 토큰 생성
-        String accessToken = jwtUtil.createToken(user.getId(), user.getNickname(), user.getRole());
+        String accessToken = jwtUtil.createToken(user.getId(), user.getNickname(), user.getRole(), user.isCritic());
         String refreshToken = jwtUtil.createRefreshToken(user.getId());
 
         // RefreshToken 객체 생성
@@ -163,27 +163,28 @@ public class AuthService {
     // 유저 권한 변경 로직
     @Transactional
     public String changeRole(RoleRequestDto request, Long id, UserPrincipal principal) {
-
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
-        // ADMIN 만 권한변경 가능하도록 검증
-        if(principal.getUserRole() != UserRole.ADMIN) {
+        if (principal.getUserRole() != UserRole.ADMIN) {
             throw new CustomException(ErrorCode.NOT_ADMIN);
         }
 
-        // 입력한 권한이 현재 권한과 같은 Role 인지 검증
-        if(user.getRole() == request.getUserRole()) {
+        if (user.getRole() == request.getUserRole()) {
             throw new CustomException(ErrorCode.CANNOT_CHANGE_SAME_ROLE);
         }
 
+        UserRole newRole = request.getUserRole();
+        user.setRole(newRole);
 
-        user.setRole(request.getUserRole());
+        if (newRole == UserRole.CRITIC) {
+            user.setCritic(true);
+        } else {
+            user.setCritic(false);
+        }
 
         userRepository.save(user);
-
         return user.getRole().name();
-
     }
 
 
@@ -237,10 +238,9 @@ public class AuthService {
             redisTemplate.opsForValue().set("blacklist:access:" + accessToken, "logout", expiration, TimeUnit.MILLISECONDS);
         }
 
-        String newAccessToken = jwtUtil.createToken(principal.getUserId(), principal.getNickname(), principal.getUserRole());
+        String newAccessToken = jwtUtil.createToken(principal.getUserId(), principal.getNickname(), principal.getUserRole(), principal.isCritic());
 
         return newAccessToken;
 
     }
-
 }

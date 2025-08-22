@@ -57,17 +57,10 @@ services:
       - ELASTICSEARCH_PASSWORD=${KIBANA_SYSTEM_PASSWORD}
       - XPACK_SECURITY_ENABLED=true
       - XPACK_ENCRYPTEDSAVEDOBJECTS_ENCRYPTIONKEY=${KIBANA_ENCRYPTION_KEY}
-    depends_on: [elasticsearch]
-    restart: unless-stopped
-
-  zookeeper:
-    image: zookeeper:3.7
-    container_name: zookeeper_server
-    ports: ["2181:2181"]
-    volumes: ["zk_data:/data"]
+    depends_on:
+      - elasticsearch
     restart: unless-stopped
 
 volumes:
   redis_data:
   es_data:
-  zk_data:

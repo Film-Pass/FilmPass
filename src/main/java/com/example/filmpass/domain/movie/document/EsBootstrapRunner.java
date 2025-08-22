@@ -23,8 +23,8 @@ import java.util.Objects;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-//@ConditionalOnBean(ElasticsearchOperations.class)
-//@ConditionalOnProperty(prefix = "app.es", name = "bootstrap", havingValue = "true", matchIfMissing = false)
+@ConditionalOnBean(ElasticsearchOperations.class)
+@ConditionalOnProperty(prefix = "app.es", name = "bootstrap", havingValue = "true", matchIfMissing = false)
 public class EsBootstrapRunner implements CommandLineRunner {
 
     private final ElasticsearchOperations es;

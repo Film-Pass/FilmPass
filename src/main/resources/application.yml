@@ -7,6 +7,7 @@ spring:
   app:
     es:
      sync: true
+     bootstrap: true   # Elasticsearch 초기화 사용
 
   datasource:
     url: ${DB_URL}

@@ -1,14 +1,15 @@
 package com.example.filmpass.domain.movie.document;
 
+import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import co.elastic.clients.elasticsearch.core.IndexRequest;
+import co.elastic.clients.elasticsearch.core.IndexResponse;
 import com.example.filmpass.domain.movie.entity.Movie;
 import com.example.filmpass.domain.movie.repository.MovieRepository;
-import com.example.filmpass.domain.movie.service.MovieElasticsearchService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.stereotype.Component;
 
 import java.util.Objects;
@@ -16,16 +17,19 @@ import java.util.Objects;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-@ConditionalOnBean(ElasticsearchOperations.class) // ES가 있을 때만 실행
-@ConditionalOnProperty(prefix = "app.es", name = "sync", havingValue = "true", matchIfMissing = false)
+//@ConditionalOnBean(ElasticsearchClient.class) // ES 클라이언트가 있을 때만 실행
+//@ConditionalOnProperty(prefix = "app.es", name = "sync", havingValue = "true", matchIfMissing = false)
 public class MovieDataSyncRunner implements CommandLineRunner {
 
     private final MovieRepository movieRepository;
-    private final MovieElasticsearchService movieElasticsearchService;
+    private final ElasticsearchClient esClient;
+    private final MovieMapper movieMapper;
+
+    private static final String INDEX = "movies_v3";
 
     @Override
     public void run(String... args) {
-        log.info("[ES Sync] 시작");
+        log.info("[ES] 시작");
 
         int total = 0;
         int success = 0;
@@ -38,19 +42,32 @@ public class MovieDataSyncRunner implements CommandLineRunner {
                     continue;
                 }
                 try {
-                    movieElasticsearchService.save(m); // 기존 단건 저장 로직 사용
-                    success++;
+                    // 단건 색인
+                    var doc = movieMapper.toDocument(m);
+                    if (doc != null) {
+                        IndexRequest<MovieDocument> req = IndexRequest.of(i -> i
+                                .index(INDEX)
+                                .id(String.valueOf(doc.getId()))
+                                .document(doc)
+                        );
+                        IndexResponse resp = esClient.index(req);
+                        if (resp.result().name().equalsIgnoreCase("created") ||
+                                resp.result().name().equalsIgnoreCase("updated")) {
+                            success++;
+                        } else {
+                            failed++;
+                            log.warn("[ES] 색인 결과 실패 movieId={}, result={}", doc.getId(), resp.result());
+                        }
+                    }
                 } catch (Exception ex) {
                     failed++;
-                    // 개별 실패는 기록만 하고 계속 진행
-                    log.warn("[ES Sync] 실패 movieId={}, cause={}",
+                    log.warn("[ES] 실패 movieId={}, cause={}",
                             Objects.requireNonNullElse(m.getId(), "null"), ex.getMessage());
                 }
             }
-            log.info("[ES Sync] 완료 total={}, success={}, failed={}", total, success, failed);
+            log.info("[ES] 완료 total={}, success={}, failed={}", total, success, failed);
         } catch (Exception e) {
-            // 최상위 예외도 삼켜서 앱이 내려가지 않게
-            log.error("[ES Sync] 실행 중 예외. 애플리케이션은 계속 동작합니다. cause={}", e.getMessage(), e);
+            log.error("[ES] 실행 중 예외. 애플리케이션은 계속 동작합니다. cause={}", e.getMessage(), e);
         }
     }
 }

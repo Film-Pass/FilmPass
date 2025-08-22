@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class MovieController {
     private final MovieService movieService;
 
-    //영화 등록 CreateMovie
+    //영화 등록
     @PostMapping
     @Operation(summary = "(관리자 전용) 영화 등록", description = "영화를 등록합니다.")
     @ResponseStatus(HttpStatus.CREATED)
@@ -80,4 +80,44 @@ public class MovieController {
         return CommonResponse.success(findMovieResponse, "영화 조회가 정상적으로 완료되었습니다.");
     }
 
+    //영화 상세 조회 (캐싱)
+    @GetMapping("/{movieId}/v2")
+    @Operation(summary = "(캐싱) 영화 상세정보 조회", description = "영화 상세정보를 조회합니다.")
+    public CommonResponse findMovieDetailV2(@PathVariable Long movieId) {
+        FindMovieDetailResponse findMovieDetailResponse = movieService.findMovieDetailV2(movieId);
+        return CommonResponse.success(findMovieDetailResponse, "영화 상세 조회 성공");
+    }
+
+    //영화 수정 (캐싱)
+    @PatchMapping("/{movieId}/v2")
+    @Operation(summary = "(관리자 전용, 캐시 무효화) 영화 정보 수정", description = "영화의 정보를 수정합니다.")
+    public CommonResponse updateMovieApiV2(@PathVariable Long movieId, @RequestBody UpdateMovieRequest updateMovieRequest) {
+        UpdateMovieResponse updateMovieResponse = movieService.updateMovieV2(movieId, updateMovieRequest);
+        return CommonResponse.success(updateMovieResponse, "수정이 정상적으로 완료되었습니다.");
+    }
+
+    //영화 삭제 (캐싱)
+    @DeleteMapping("/{movieId}/v2")
+    @Operation(summary = "(관리자 전용, 캐시 무효화) 영화 삭제", description = "영화를 삭제합니다.")
+    public CommonResponse deleteMovieApiV2(@PathVariable Long movieId) {
+        DeleteMovieResponse deleteMovieResponse = movieService.deleteMovieV2(movieId);
+        return CommonResponse.success(deleteMovieResponse,"영화가 성공적으로 삭제되었습니다.");
+    }
+
+    //영화 등록 (캐싱)
+    @PostMapping("/v2")
+    @Operation(summary = "(관리자 전용, 캐시 무효화) 영화 등록", description = "영화를 등록합니다.")
+    @ResponseStatus(HttpStatus.CREATED)
+    public CommonResponse movieCreateApiV2(@RequestBody MovieCreateRequest movieCreateRequest) {
+        MovieCreateResponse movieCreateResponse = movieService.movieCreateV2(movieCreateRequest);
+        return CommonResponse.success(movieCreateResponse,"영화 등록이 정상적으로 완료되었습니다.");
+    }
+
+    //영화 검색 (캐싱)
+    @PostMapping("/search/v2")
+    @Operation(summary = "영화 검색", description = "영화를 검색합니다.")
+    public CommonResponse findMovieApiV2(@RequestBody FindMovieRequest findMovieRequest, Pageable pageable) {
+        FindMovieResponse<SimpleFindMovieResponse> findMovieResponse = movieService.findMovieV2(findMovieRequest, pageable);
+        return CommonResponse.success(findMovieResponse, "영화 검색이 정상적으로 완료되었습니다.");
+    }
 }

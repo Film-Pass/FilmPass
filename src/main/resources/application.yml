@@ -52,13 +52,4 @@ jwt:
   secret:
     key: ${SECRET_KEY}
 
-logging:
-  level:
-    org.springframework.data.elasticsearch: TRACE
-    org.springframework.boot.autoconfigure.data.elasticsearch: TRACE
-    co.elastic.clients.transport: TRACE
-    org.elasticsearch.client.RestClient: DEBUG
 
-app:
-  es:
-    bootstrap: true

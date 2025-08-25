@@ -45,21 +45,27 @@ public class ReservationService {
   
     public ReservationResponse reserve(Long userId, ReservationRequest request) {
 
-        // 1. 유저 조회
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
-        // 2. 스케쥴 조회
         Schedule schedule = scheduleRepository.findById(request.getScheduleId())
                 .orElseThrow(() -> new CustomException(ErrorCode.INVALID_SCHEDULE));
 
-        // 3. 좌석 조회
+        if (LocalDateTime.now().isAfter(schedule.getStartAt())) {
+            throw new CustomException(ErrorCode.EXPIRED_SCHEDULE);
+        }
+
         List<Seat> seats = seatRepository.findAllById(request.getSeatIds());
         if (seats.size() != request.getSeatIds().size()) {
             throw new CustomException(ErrorCode.SEAT_NOT_FOUND);
         }
-      
-         // 4. 고장난 좌석 조회
+
+        for (Seat seat : seats) {
+            if (!seat.getScreen().equals(schedule.getScreen())) {
+                throw new CustomException(ErrorCode.SEAT_NOT_FOUND);
+            }
+        }
+
         boolean hasBrokenSeat = seats.stream()
                 .anyMatch(seat -> seat.getStatus() == SeatStatus.BROKEN);
         if (hasBrokenSeat) {
@@ -77,8 +83,10 @@ public class ReservationService {
     @Transactional
     protected ReservationResponse createReservation(User user, Schedule schedule, List<Seat> seats) {
         final List<Reservation> reservedReservation = reservationRepository.findAllByScheduleAndSeatIn(schedule, seats);
-        if (!reservedReservation.isEmpty()) {
-            throw new CustomException(ErrorCode.SEAT_ALREADY_RESERVED);
+        for(Reservation reservation : reservedReservation) {
+            if (!reservation.isSoftDeleted()) {
+                throw new CustomException(ErrorCode.SEAT_ALREADY_RESERVED);
+            }
         }
         final List<ReservationInfo> reservationInfos = new ArrayList<>();
 

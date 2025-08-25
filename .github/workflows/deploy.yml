@@ -1,9 +1,9 @@
 name: CI/CD using GitHub Actions & Docker Compose
 on:
   push:
-    branches: ["dev-test"]
+    branches: ["release/v2"]
   pull_request:
-    branches: ["dev-test"]
+    branches: ["release/v2"]
 jobs:
   build:
     runs-on: ubuntu-latest

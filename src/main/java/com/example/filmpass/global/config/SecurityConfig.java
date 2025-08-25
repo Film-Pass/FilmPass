@@ -1,10 +1,9 @@
 package com.example.filmpass.global.config;
 
-import com.example.filmpass.global.config.JwtFilter;
-import com.example.filmpass.global.config.JwtUtil;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -28,32 +27,40 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, JwtFilter jwtFilter) throws Exception {
+
         return httpSecurity
-                .csrf(AbstractHttpConfigurer::disable)
+                .csrf(AbstractHttpConfigurer::disable)  // csrf 비활성화
                 .sessionManagement(session ->
-                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션 비활성화
                 .httpBasic(AbstractHttpConfigurer::disable)
-                .formLogin(AbstractHttpConfigurer::disable)
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+                .formLogin(AbstractHttpConfigurer::disable) // 폼 로그인 비활성화
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class) // jwtFilter 추가
                 .cors(Customizer.withDefaults())
+
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(
-                                "/", "/error",
-                                "/api/auth/signup", "/api/auth/login",
-                                "/api/search/**",
-                                "/api/movies/**",
-                                "/api/theaters/**",
-                                "/api/seat/**",
-                                "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html",
-                                "/swagger-resources/**", "/webjars/**"
-                        ).permitAll()
+                        .requestMatchers("/", "/api/auth/signup", "/api/auth/login").permitAll()
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        .requestMatchers(HttpMethod.GET,  "/api/movies/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/movies/search").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/seat/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/theaters/*",
+                                "/api/movies/*",
+                                "/api/theaters",
+                                "/api/movies").permitAll()
+
+                        .requestMatchers(HttpMethod.GET, "/api/movies/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/theaters/*", "/api/movies/*"
+                                , "/api/theaters", "/api/movies").permitAll()
+                        .requestMatchers("/v3/api-docs/**",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html").permitAll()
                         .anyRequest().authenticated()
                 )
                 .build();
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder() {
+    PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 }

@@ -1,16 +1,22 @@
+version: "3.8"
+
 services:
   app:
-    image: yoyo99828/filmpass:latest
+    build: .
     container_name: filmpass
-    ports:
-      - "8080:8080"
+    ports: ["8080:8080"]
+    env_file:
+      - .env
     environment:
-      DB_URL: ${SPRING_DATASOURCE_URL}
-      DB_USERNAME: ${SPRING_DATASOURCE_USERNAME}
-      DB_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+      DB_URL: ${DB_URL}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
       JWT_SECRET_KEY: ${JWT_SECRET_KEY}
-      REDIS_HOST: ${REDIS_HOST}   # GitHub Actions에서 전달
-      REDIS_PORT: ${REDIS_PORT}   # GitHub Actions에서 전달
+      REDIS_HOST: ${REDIS_HOST}
+      REDIS_PORT: ${REDIS_PORT}
+      ELASTICSEARCH_HOST: ${ELASTICSEARCH_HOST}
+      SPRING_ELASTICSEARCH_USERNAME: ${ELASTICSEARCH_USERNAME}
+      SPRING_ELASTICSEARCH_PASSWORD: ${ELASTICSEARCH_PASSWORD}
     depends_on:
       - redis
       - elasticsearch
@@ -19,46 +25,42 @@ services:
   redis:
     image: redis:7.0
     container_name: redis_server
-    ports:
-      - "6379:6379"
-    volumes:
-      - redis_data:/data
+    ports: ["6379:6379"]
+    volumes: ["redis_data:/data"]
     restart: unless-stopped
 
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.6.0
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.1
     container_name: es_server
-    ports:
-      - "9200:9200"
+    ports: ["9200:9200"]
     environment:
+      - network.host=0.0.0.0
       - node.name=es_server
       - discovery.type=single-node
-      - xpack.security.enabled=false
+      - xpack.security.enabled=true
+      - xpack.security.authc.api_key.enabled=true
+      - xpack.security.http.ssl.enabled=false
+      - xpack.security.transport.ssl.enabled=false
+      - ELASTIC_PASSWORD=${ELASTICSEARCH_PASSWORD}
+      - ES_JAVA_OPTS=-Xms1g -Xmx1g
     volumes:
       - es_data:/usr/share/elasticsearch/data
     restart: unless-stopped
 
   kibana:
-    image: docker.elastic.co/kibana/kibana:8.6.0
+    image: docker.elastic.co/kibana/kibana:8.11.1
     container_name: kibana_server
-    ports:
-      - "5601:5601"
+    ports: ["5601:5601"]
     environment:
-      - ELASTICSEARCH_HOSTS=http://es_server:9200
+      - ELASTICSEARCH_HOSTS=${ELASTICSEARCH_HOST}
+      - ELASTICSEARCH_USERNAME=${KIBANA_SYSTEM_USERNAME}
+      - ELASTICSEARCH_PASSWORD=${KIBANA_SYSTEM_PASSWORD}
+      - XPACK_SECURITY_ENABLED=true
+      - XPACK_ENCRYPTEDSAVEDOBJECTS_ENCRYPTIONKEY=${KIBANA_ENCRYPTION_KEY}
     depends_on:
       - elasticsearch
-    restart: unless-stopped
-
-  zookeeper:
-    image: zookeeper:3.7
-    container_name: zookeeper_server
-    ports:
-      - "2181:2181"
-    volumes:
-      - zk_data:/data
     restart: unless-stopped
 
 volumes:
   redis_data:
   es_data:
-  zk_data:

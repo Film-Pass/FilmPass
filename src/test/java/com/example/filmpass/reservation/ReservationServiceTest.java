@@ -8,6 +8,7 @@ import com.example.filmpass.domain.reservation.repository.ReservationRepository;
 import com.example.filmpass.domain.reservation.service.ReservationService;
 import com.example.filmpass.domain.schedule.repository.ScheduleRepository;
 import com.example.filmpass.domain.screen.entity.Screen;
+import com.example.filmpass.domain.screen.enums.ScreenType;
 import com.example.filmpass.domain.seat.entity.Seat;
 import com.example.filmpass.domain.seat.repository.SeatRepository;
 import com.example.filmpass.domain.theater.entity.Theater;
@@ -71,7 +72,7 @@ public class ReservationServiceTest {
         List<Long> seatIds = List.of(1L, 2L, 10L);
 
         Theater theater = new Theater("테스트 극장", "테스트 주소");
-        Screen screen = new Screen("테스트 1관", "테스트 주소", theater);
+        Screen screen = new Screen("테스트 1관", "테스트 주소", ScreenType.THREE_D, theater);
         Seat seat1 = new Seat(screen, "A1");
         Seat seat2 = new Seat(screen, "A2");
         Seat seat10 = new Seat(screen, "A10");

@@ -5,6 +5,11 @@ spring:
   application:
     name: FilmPass
 
+  app:
+    es:
+     sync: true
+     bootstrap: true   # Elasticsearch 초기화 사용
+
   datasource:
     url: ${DB_URL}
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -35,9 +40,9 @@ spring:
       port: ${REDIS_PORT}
 
     elasticsearch:
-      uris: https://filmpasses.es.ap-northeast-2.aws.elastic-cloud.com
-      username: elastic
-      password: WBBvVFnb7jBailgswUMFv26r
+      uris: ${ELASTICSEARCH_HOST}
+      username: ${ELASTICSEARCH_USERNAME}
+      password: ${ELASTICSEARCH_PASSWORD}
       repositories:
         enabled: true
 
@@ -50,6 +55,6 @@ server:
 
 jwt:
   secret:
-    key: ${SECRET_KEY}
+    key: ${JWT_SECRET_KEY}
 
 

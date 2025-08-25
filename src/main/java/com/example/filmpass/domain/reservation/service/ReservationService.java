@@ -113,7 +113,7 @@ public class ReservationService {
 
         // 3. 취소 여부 확인
         if (reservation.isSoftDeleted()) {
-            throw new CustomException(ErrorCode.SEAT_ALREADY_RESERVED);
+            throw new CustomException(ErrorCode.ALREADY_CANCELED);
         }
 
         // 4. 플래그를 true 처리

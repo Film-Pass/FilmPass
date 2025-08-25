@@ -2,6 +2,7 @@ package com.example.filmpass.domain.seat.controller;
 
 import com.example.filmpass.domain.seat.dto.SeatRequest;
 import com.example.filmpass.domain.seat.dto.SeatResponse;
+import com.example.filmpass.domain.seat.dto.SeatSimpleResponse;
 import com.example.filmpass.domain.seat.service.SeatService;
 import com.example.filmpass.global.aop.TrackUserActionAnnotation;
 import com.example.filmpass.global.common.CommonResponse;
@@ -44,11 +45,19 @@ public class SeatController {
         return ResponseEntity.ok(CommonResponse.success(responses, "전체 좌석 목록 조회 성공"));
     }
 
+    // 특정 상영관 좌석 목록 조회
+    @GetMapping("/screen/{screenId}")
+    @Operation(summary = "상영관별 좌석 목록 조회", description = "특정 상영관의 좌석 목록을 조회합니다.")
+    public ResponseEntity<CommonResponse> getSeatsByScreen(@PathVariable Long screenId) {
+        List<SeatSimpleResponse> responses = seatService.getSeatsByScreenId(screenId);
+        return ResponseEntity.ok(CommonResponse.success(responses, "상영관 좌석 목록 조회 성공"));
+}
+
     // 좌석 단건 조회
     @GetMapping("/{seatId}")
     @Operation(summary = "좌석 정보 조회", description = "좌석 하나의 정보를 조회합니다.")
     public ResponseEntity<CommonResponse> getSeatById(@PathVariable Long seatId) {
-        SeatResponse seat = seatService.getSeatById(seatId);
+        SeatSimpleResponse seat = seatService.getSeatById(seatId);
         return ResponseEntity.ok(CommonResponse.success(seat, "좌석 단건 조회 성공"));
     }
 

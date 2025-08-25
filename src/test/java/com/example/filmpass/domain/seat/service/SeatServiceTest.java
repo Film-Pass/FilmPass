@@ -5,6 +5,7 @@ import com.example.filmpass.domain.screen.enums.ScreenType;
 import com.example.filmpass.domain.screen.repository.ScreenRepository;
 import com.example.filmpass.domain.seat.dto.SeatRequest;
 import com.example.filmpass.domain.seat.dto.SeatResponse;
+import com.example.filmpass.domain.seat.dto.SeatSimpleResponse;
 import com.example.filmpass.domain.seat.dto.SeatStatus;
 import com.example.filmpass.domain.seat.entity.Seat;
 import com.example.filmpass.domain.seat.repository.SeatRepository;
@@ -106,7 +107,7 @@ class SeatServiceTest {
         given(seatRepository.findById(seatId)).willReturn(Optional.of(seat));
 
         // when
-        SeatResponse result = seatService.getSeatById(seatId);
+        SeatSimpleResponse result = seatService.getSeatById(seatId);
 
         // then
         assertNotNull(result);

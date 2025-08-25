@@ -50,7 +50,7 @@ public class SecurityConfig {
 
                         .requestMatchers(HttpMethod.GET, "/api/movies/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/theaters/*", "/api/movies/*"
-                                , "/api/theaters", "/api/movies").permitAll()
+                                , "/api/theaters", "/api/movies", "/api/schedules/*/*").permitAll()
                         .requestMatchers("/v3/api-docs/**",
                                 "/swagger-ui/**",
                                 "/swagger-ui.html").permitAll()

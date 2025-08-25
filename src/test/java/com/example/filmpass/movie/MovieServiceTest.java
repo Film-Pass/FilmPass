@@ -182,7 +182,7 @@ class MovieServiceTest {
 
         // then
         assertEquals(movieId, res.getId());
-        assertEquals("타이틀", res.getMovieName());
+        assertEquals("타이틀", res.getTitle());
         assertEquals("감독", res.getDirector());
     }
 
@@ -199,6 +199,6 @@ class MovieServiceTest {
         DeleteMovieResponse res = movieService.deleteMovie(movieId);
 
         // then
-        assertEquals("삭제무비", res.getMovieTitle());
+        assertEquals("삭제무비", res.getTitle());
     }
 }

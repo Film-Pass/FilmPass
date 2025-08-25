@@ -4,6 +4,7 @@ import com.example.filmpass.domain.screen.entity.Screen;
 import com.example.filmpass.domain.screen.repository.ScreenRepository;
 import com.example.filmpass.domain.seat.dto.SeatRequest;
 import com.example.filmpass.domain.seat.dto.SeatResponse;
+import com.example.filmpass.domain.seat.dto.SeatSimpleResponse;
 import com.example.filmpass.domain.seat.entity.Seat;
 import com.example.filmpass.domain.seat.repository.SeatRepository;
 import com.example.filmpass.domain.theater.entity.Theater;
@@ -16,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -83,22 +85,32 @@ public class SeatService {
         return responses;
     }
 
+    // 특정 상영관 좌석 목록 조회
+    @Transactional(readOnly = true)
+    public List<SeatSimpleResponse> getSeatsByScreenId(Long screenId) {
+        List<Seat> seats = seatRepository.findByScreenId(screenId);
+        List<SeatSimpleResponse> responses = new ArrayList<>();
+
+        for (Seat seat : seats) {
+            responses.add(new SeatSimpleResponse(
+                    seat.getId(),
+                    seat.getSeatNumber(),
+                    seat.getStatus()
+            ));
+        }
+
+        return responses;
+    }
+
     // 좌석 단건 조회
     @Transactional(readOnly = true)
-    public SeatResponse getSeatById(Long seatId) {
+    public SeatSimpleResponse getSeatById(Long seatId) {
         Seat seat = seatRepository.findById(seatId)
                 .orElseThrow(() -> new CustomException(ErrorCode.SEAT_NOT_FOUND));
 
-        Screen screen = seat.getScreen();
-        Theater theater = screen.getTheater();
-
-        return new SeatResponse(
+        return new SeatSimpleResponse(
                 seat.getId(),
                 seat.getSeatNumber(),
-                screen.getId(),
-                screen.getName(),
-                theater.getId(),
-                theater.getName(),
                 seat.getStatus()
         );
     }
